@@ -1,0 +1,815 @@
+[
+  {
+    "id": "mission-1-needs-first",
+    "missionNumber": 1,
+    "title": "المهمة 1: الاحتياجات قبل الرغبات",
+    "summary": "أنت طالب بميزانية محدودة. المطلوب أن تتعلم كيف تضع الضروري قبل الممتع.",
+    "goalLabel": "احفظ المال للمصاريف الأساسية",
+    "coachIntro": "في أكاديمية درهمي لن تنتقل إلى المهمة التالية حتى تثبت أنك تعرف الفرق بين ما تحتاجه وما تشتهيه.",
+    "learningGoal": "تمييز الاحتياجات عن الرغبات وتجنب الشراء الاندفاعي.",
+    "rewardTitle": "شارة ترتيب الأولويات",
+    "shariaFocus": "الاعتدال وعدم الإسراف",
+    "roleTitle": "طالب بميزانية أسبوعية",
+    "roleStory": "وصلتك مصروفات هذا الأسبوع، ويجب أن تكفيك للدراسة والتنقل والطوارئ البسيطة.",
+    "conceptTag": "لا إسراف",
+    "difficulty": "سهل",
+    "durationDays": 4,
+    "income": 900,
+    "startingBalance": 100,
+    "savingsGoal": 250,
+    "events": [
+      {
+        "id": "books-and-bus",
+        "day": 1,
+        "type": "fixed_expense",
+        "title": "كتب ومواصلات",
+        "description": "بدأ الأسبوع ولا بد من شراء الكتب وشحن بطاقة الحافلة قبل كل شيء. 220 درهم تكفي لتأمين الأساسيات والبدء باراحة.",
+        "amount": 220,
+        "category": "needs",
+        "coachPrompt": "في الفقه المالي البسيط، تقديم الضروري على الكمالي أول علامة على حسن التدبير.",
+        "lesson": "حين تغطي الضروري مبكرا، تقل احتمالات الوقوع في ضغط لاحقا.",
+        "choices": [
+          {
+            "id": "pay-basics",
+            "label": "اشترِ الأدوات الكاملة",
+            "balanceEffect": -220,
+            "healthEffect": 10,
+            "category": "needs",
+            "feedback": "وضعت الأساس الصحيح للميزانية.",
+            "consequence": "أصبحت قرارات المتعة بعد هذا أكثر وضوحا."
+          },
+          {
+            "id": "buy-minimal",
+            "label": "اشترِ الضروري فقط",
+            "balanceEffect": -150,
+            "healthEffect": 6,
+            "category": "needs",
+            "feedback": "وفرت مالا بتقليل المصاريف، لكن قد تحتاج لشراء المزاح لاحقا.",
+            "consequence": "الادخار مهم، لكن لا تضعف جودة دراستك."
+          }
+        ]
+      },
+      {
+        "id": "limited-shoes",
+        "day": 2,
+        "type": "optional_spending",
+        "title": "حذاء محدود الإصدار",
+        "description": "مررت بالمحل ورأيت حذاءً رياضياً يلمع تحت الضوء. كل أصدقائك يمتلكون واحداً. السعر؟ 330 درهم فقط...",
+        "amount": 330,
+        "category": "wants",
+        "coachPrompt": "السؤال ليس: هل أحبه؟ بل: هل أحتاجه الآن؟",
+        "lesson": "الإسراف يبدأ غالبا من قرار يبدو صغيرا ومبررا.",
+        "choices": [
+          {
+            "id": "buy-shoes",
+            "label": "اشترِ الحذاء",
+            "balanceEffect": -330,
+            "healthEffect": -18,
+            "category": "wants",
+            "feedback": "دفعت كثيرا على رغبة لحظية.",
+            "consequence": "إذا ظهر طارئ قريب، سيصبح الموقف صعبا."
+          },
+          {
+            "id": "skip-shoes",
+            "label": "تجاوز العرض",
+            "balanceEffect": 0,
+            "healthEffect": 16,
+            "category": "wants",
+            "feedback": "هذا اسمه ضبط النفس لا الحرمان.",
+            "consequence": "ستحافظ على قدرة أعلى للادخار والطوارئ."
+          }
+        ]
+      },
+      {
+        "id": "calculator-repair",
+        "day": 3,
+        "type": "emergency",
+        "title": "إصلاح آلة حاسبة",
+        "description": "فجأة توقفت الآلة الحاسبة عن العمل والامتحان بعد يومين! بدونها لن تستطيع المذاكرة بشكل صحيح...",
+        "amount": 150,
+        "category": "needs",
+        "coachPrompt": "الطوارئ تكشف إن كان قرار الأمس حكيما أم متسرعا.",
+        "lesson": "الاحتياط ليس مجرد مال زائد، بل أمان عند الحاجة.",
+        "choices": [
+          {
+            "id": "repair-calculator",
+            "label": "ادفع الإصلاح الكامل",
+            "balanceEffect": -150,
+            "healthEffect": 8,
+            "category": "needs",
+            "feedback": "غطيّت حاجة حقيقية في وقتها.",
+            "consequence": "الآن تظهر قيمة المال الذي لم تُهدره بالأمس."
+          },
+          {
+            "id": "borrow-calculator",
+            "label": "استعِر من زميل",
+            "balanceEffect": -30,
+            "healthEffect": 4,
+            "category": "needs",
+            "feedback": "حل مؤقت يوفر المال، لكنه قد لا يكون متاحا دائما.",
+            "consequence": "الشراكة جيدة، لكن لا تعتمد عليها بشكل مفرط."
+          }
+        ]
+      },
+      {
+        "id": "family-thanks",
+        "day": 4,
+        "type": "opportunity",
+        "title": "هدية انضباط",
+        "description": "لاحظت عائلتك انضباطك هذا الأسبوع، فأهدتك والدتك 80 درهم وقالت: 'أنت تستحق هذا، لقد أحسنت التصرف في مصروفك.'",
+        "amount": 80,
+        "category": "income",
+        "coachPrompt": "الناس يثقون أكثر بمن يحسن التصرف في القليل.",
+        "lesson": "السلوك المالي الجيد يبني ثقة قبل أن يبني رصيدا.",
+        "choices": [
+          {
+            "id": "accept-gift",
+            "label": "احفظ الهدية كاملة",
+            "balanceEffect": 80,
+            "healthEffect": 6,
+            "category": "income",
+            "feedback": "الانضباط عاد عليك بنفع ملموس.",
+            "consequence": "اقتربت أكثر من إنهاء المهمة بنجاح."
+          },
+          {
+            "id": "share-gift",
+            "label": "تصدق بنصف الهدية",
+            "balanceEffect": 40,
+            "healthEffect": 12,
+            "category": "giving",
+            "feedback": "شاركت الخير، فزاد خيرك.",
+            "consequence": "البركة في العطاء، حتى ولو كان القليل.",
+            "ethicalTag": "charity"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mission-2-halal-earning",
+    "missionNumber": 2,
+    "title": "المهمة 2: المال الحلال والمسؤولية",
+    "summary": "أنت طالب يعمل بعد المدرسة. ليس كل كسب سريع مناسبا، والمهم أن يكون المال حلالا ونظيفا.",
+    "goalLabel": "اختر الكسب الحلال ولو كان أبطأ",
+    "coachIntro": "في هذه المهمة ستتعلم أن قيمة المال لا تأتي من حجمه فقط، بل من طريقه أيضا.",
+    "learningGoal": "فهم أن مصدر المال مهم، وأن الحلال فيه بركة واستقرار.",
+    "rewardTitle": "شارة الكسب الطيب",
+    "shariaFocus": "الكسب الحلال وترك الشبهات",
+    "roleTitle": "طالب يعمل بعد المدرسة",
+    "roleStory": "عندك احتياجات مدرسية وتريد مالا إضافيا، لكنك مطالب باختيار الطريق الصحيح للكسب.",
+    "conceptTag": "رزق حلال",
+    "difficulty": "سهل",
+    "durationDays": 4,
+    "income": 1100,
+    "startingBalance": 120,
+    "savingsGoal": 300,
+    "events": [
+      {
+        "id": "school-fee",
+        "day": 1,
+        "type": "fixed_expense",
+        "title": "رسوم نشاط مدرسي",
+        "description": "علقت المدرسة إعلاناً عن نشاط تربوي مفيد. الرسوم 240 درهم وباب التسجيل يُغلق قريباً. هل تشارك قبل فوات الأوان؟",
+        "amount": 240,
+        "category": "needs",
+        "coachPrompt": "ابدأ بما ينفعك بوضوح، ثم فكّر في زيادة الدخل بطريقة سليمة.",
+        "lesson": "تقديم ما يفيدك علميا وتربويا جزء من حسن الإدارة.",
+        "choices": [
+          {
+            "id": "pay-activity",
+            "label": "ادفع الرسوم كاملة",
+            "balanceEffect": -240,
+            "healthEffect": 8,
+            "category": "needs",
+            "feedback": "وجهت المال لما ينفعك فعلا.",
+            "consequence": "الخطوة التالية ستكون كيف تكسب بطريقة صحيحة."
+          },
+          {
+            "id": "apply-discount",
+            "label": "اطلب خصما لكثرة الالتزام",
+            "balanceEffect": -200,
+            "healthEffect": 6,
+            "category": "needs",
+            "feedback": "المبادرة في طلب التخفيض مهارة مالية مهمة.",
+            "consequence": "كل درهم موفر يقترب من هدفك."
+          }
+        ]
+      },
+      {
+        "id": "dubious-deal",
+        "day": 2,
+        "type": "ethical",
+        "title": "عرض كسب سريع مشبوه",
+        "description": "همس إليك صديق: 'بع الملفات المنسوخة وستربح 260 درهم بسرعة!' لكن الطريق المشبوه سريع، والمهمة الحلال لا تدفع إلا 180. فما اختيارك؟",
+        "amount": 260,
+        "category": "income",
+        "coachPrompt": "ليس كل ما يربح مالا يصلح أن يُفعل.",
+        "lesson": "المال الحلال يبني راحة ضمير واستقرارا أطول.",
+        "choices": [
+          {
+            "id": "dubious-sale",
+            "label": "اختر الربح المشبوه",
+            "balanceEffect": 260,
+            "healthEffect": -20,
+            "category": "income",
+            "feedback": "دخل المال بسرعة، لكنك اخترت طريقا غير سليم.",
+            "consequence": "سيظهر ذلك في تقريرك كقرار غير منضبط أخلاقيا.",
+            "ethicalTag": "non_halal"
+          },
+          {
+            "id": "halal-task",
+            "label": "اختر المهمة الحلال",
+            "balanceEffect": 180,
+            "healthEffect": 18,
+            "category": "income",
+            "feedback": "أحسنت. الربح الأقل مع الطريق الصحيح أفضل.",
+            "consequence": "قد يكون المبلغ أقل، لكنه أنظف وأكثر ثباتا.",
+            "ethicalTag": "halal"
+          },
+          {
+            "id": "refuse-and-search",
+            "label": "ارفض الاثنين وابحث عن عمل آخر",
+            "balanceEffect": 80,
+            "healthEffect": 22,
+            "category": "income",
+            "feedback": "الثقة بالله والصبر هما أصل الرزق الحلال.",
+            "consequence": "الطريق الأنظف يفتح أبوابا لا تراها الآن.",
+            "ethicalTag": "halal"
+          }
+        ]
+      },
+      {
+        "id": "snack-or-save",
+        "day": 3,
+        "type": "optional_spending",
+        "title": "مكافأة لنفسك",
+        "description": "بعد يوم طويل من العمل، تشم رائحة الطعام من المطعم القريب. عشاء فاخر بـ 140 درهم يغريك، لكن يمكنك إعداد شيء بسيط في المنزل بـ 50 درهم فقط.",
+        "amount": 140,
+        "category": "wants",
+        "coachPrompt": "المكافأة مقبولة، لكن بشرط ألا تتحول إلى إهدار.",
+        "lesson": "الاعتدال يوازن بين الاستمتاع والحفاظ على الهدف.",
+        "choices": [
+          {
+            "id": "big-reward",
+            "label": "اصرف كثيرا",
+            "balanceEffect": -140,
+            "healthEffect": -8,
+            "category": "wants",
+            "feedback": "استمتعت، لكنك قلصت أثر جهدك بسرعة.",
+            "consequence": "الهدف سيصبح أبعد لو تكرر هذا السلوك."
+          },
+          {
+            "id": "small-reward",
+            "label": "كافئ نفسك باعتدال",
+            "balanceEffect": -50,
+            "healthEffect": 10,
+            "trackedAmounts": {
+              "wants": 50
+            },
+            "category": "wants",
+            "feedback": "حافظت على التوازن بين الراحة والانضباط.",
+            "consequence": "هذا هو معنى الاستمتاع المسؤول."
+          },
+          {
+            "id": "reward-with-friend",
+            "label": "كافئ نفسك مع صديق",
+            "balanceEffect": -80,
+            "healthEffect": 14,
+            "trackedAmounts": {
+              "wants": 80
+            },
+            "category": "wants",
+            "feedback": "الاستمتاع المشترك يضاعف الفرحة ويقلل التكلفة.",
+            "consequence": "العلاقات الاجتماعية جزء من الثروة الحقيقية."
+          }
+        ]
+      },
+      {
+        "id": "barakah-bonus",
+        "day": 4,
+        "type": "opportunity",
+        "title": "زادت ثقة الناس بك",
+        "description": "اتصل بك صاحب العمل: 'أنت أمين، لدينا مهمة إضافية بـ 90 درهم فيها بركة.' أمانتك فتحت أبواباً لم تكن تتوقعها.",
+        "amount": 90,
+        "category": "income",
+        "coachPrompt": "الأمانة قد تبدو بطيئة، لكنها تفتح أبوابا أفضل.",
+        "lesson": "السمعة الطيبة أصل اقتصادي أيضا.",
+        "choices": [
+          {
+            "id": "accept-bonus",
+            "label": "خذ الفرصة",
+            "balanceEffect": 90,
+            "healthEffect": 10,
+            "category": "income",
+            "feedback": "ثمرة الطريق الصحيح بدأت تظهر.",
+            "consequence": "المال الحلال قد يفتح فرصا أهدأ وأثبت."
+          },
+          {
+            "id": "invest-bonus",
+            "label": "ادخرها للاستثمار",
+            "balanceEffect": 90,
+            "healthEffect": 14,
+            "category": "income",
+            "feedback": "التفكير في المستقبل علامة النضج المالي.",
+            "consequence": "المال المدخر اليوم يعمل من أجلك غدا."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mission-3-student-budget",
+    "missionNumber": 3,
+    "title": "المهمة 3: طالب بميزانية ضيقة",
+    "summary": "أنت طالب جامعي وتحتاج موازنة مصاريفك اليومية حتى لا تضيع هدفا أكبر.",
+    "goalLabel": "وفّر لرسوم الرحلة التعليمية",
+    "coachIntro": "المصاريف الصغيرة المتكررة أخطر من قرار واحد كبير. هذه المهمة ستثبت ذلك بوضوح.",
+    "learningGoal": "فهم أثر المصاريف اليومية الصغيرة على هدف متوسط.",
+    "rewardTitle": "شارة التخطيط اليومي",
+    "shariaFocus": "الاقتصاد والبعد عن التبذير",
+    "roleTitle": "طالب جامعي",
+    "roleStory": "عليك جمع مبلغ لرحلة تعليمية مفيدة، لكن الإغراءات اليومية تحاول سحب المال بعيدا.",
+    "conceptTag": "تدبير",
+    "difficulty": "متوسط",
+    "durationDays": 5,
+    "income": 1500,
+    "startingBalance": 140,
+    "savingsGoal": 650,
+    "events": [
+      {
+        "id": "supplies",
+        "day": 1,
+        "type": "fixed_expense",
+        "title": "أدوات دراسية",
+        "description": "الجامعة بانتظارك وأدوات الأسبوع لم تشترها بعد. 250 درهم للجديد أم 150 درهم للمستعمل؟ الميزانية ضيقة والاختيار لك.",
+        "amount": 250,
+        "category": "needs",
+        "coachPrompt": "النفع الحقيقي أولى من المصروف الشكلي.",
+        "lesson": "المال الواعي يبدأ من الإنفاق على ما يخدم الهدف.",
+        "choices": [
+          {
+            "id": "buy-new",
+            "label": "اشترِ الجديد",
+            "balanceEffect": -250,
+            "healthEffect": 8,
+            "category": "needs",
+            "feedback": "ضمنت جودة الأدوات لكن بتكلفة أعلى.",
+            "consequence": "الجودة مهمّة، لكن لا تنسى هدفك."
+          },
+          {
+            "id": "buy-used",
+            "label": "اشترِ المستعمل",
+            "balanceEffect": -150,
+            "healthEffect": 5,
+            "category": "needs",
+            "feedback": "وفرت 100 درهم، لكن تأكد من جودة الأدوات.",
+            "consequence": "الادخار الذكي يبدأ من التفكير خارج الصندوق."
+          }
+        ]
+      },
+      {
+        "id": "cafe-habit",
+        "day": 2,
+        "type": "optional_spending",
+        "title": "قهوتك اليومية",
+        "description": "كل صباح تمر بالمقهى وتشم رائحة القهوة. 180 درهم أسبوعياً على القهوة الجاهزة، أم تُعِدّها في المنزل بـ 40 درهم فقط؟",
+        "amount": 180,
+        "category": "wants",
+        "coachPrompt": "العادة الصغيرة قد تصبح خصما كبيرا لميزانيتك.",
+        "lesson": "الالتزام لا يعني المنع الكامل، بل الاختيار الأذكى.",
+        "choices": [
+          {
+            "id": "fancy-coffee",
+            "label": "اشترِ القهوة الغالية",
+            "balanceEffect": -180,
+            "healthEffect": -10,
+            "category": "wants",
+            "feedback": "لذة لحظية بثمن يوم كامل من الطعام.",
+            "consequence": "العادات الصغيرة تصنع الفرق الكبير."
+          },
+          {
+            "id": "make-at-home",
+            "label": "حضّرها في البيت",
+            "balanceEffect": -40,
+            "healthEffect": 12,
+            "category": "needs",
+            "feedback": "وفرت 140 درهم في أسبوع واحد فقط!",
+            "consequence": "الاستقلالية المالية تبدأ من المطبخ."
+          }
+        ]
+      },
+      {
+        "id": "trip-fee",
+        "day": 4,
+        "type": "fixed_expense",
+        "title": "رسوم الرحلة التعليمية",
+        "description": "اليوم الحاسم: رسوم الرحلة التعليمية 650 درهم تقف أمامك. هل أتاحت قرارات الأسبوع السابق أن تصل إلى هنا مستعداً؟",
+        "amount": 650,
+        "category": "needs",
+        "coachPrompt": "هذا هو الامتحان الحقيقي لكل قرارات الأسبوع.",
+        "lesson": "الهدف الكبير يكشف قيمة الانضباط الصغير.",
+        "choices": [
+          {
+            "id": "pay-full",
+            "label": "ادفع كاملة",
+            "balanceEffect": -650,
+            "healthEffect": 15,
+            "category": "needs",
+            "feedback": "أنهيت الالتزام بفخر.",
+            "consequence": "قراراتك السابقة مكّنتك من هذا اليوم."
+          },
+          {
+            "id": "ask-help",
+            "label": "اطلب مساعدة جزئية",
+            "balanceEffect": -400,
+            "healthEffect": 8,
+            "category": "needs",
+            "feedback": "لا بأس في طلب المساعدة للتعليم.",
+            "consequence": "المجتمع يدعم من يسعى للعلم."
+          }
+        ]
+      },
+      {
+        "id": "book-resale",
+        "day": 5,
+        "type": "opportunity",
+        "title": "بيع كتب قديمة بشكل منظم",
+        "description": "نظرت إلى كتبك القديمة التي لم تعد بحاجة إليها، وعرض زميلك شراءها بـ 120 درهم. هل تبيعها وتزيد رصيدك، أم تتبرع بها للمكتبة ليبقى أجرها؟",
+        "amount": 120,
+        "category": "income",
+        "coachPrompt": "الترتيب الجيد يخلق دخلا بدون ظلم ولا إهدار.",
+        "lesson": "الاستفادة من الممتلكات المهملة نوع من الحكمة المالية.",
+        "choices": [
+          {
+            "id": "sell-books",
+            "label": "بيع الكتب",
+            "balanceEffect": 120,
+            "healthEffect": 7,
+            "category": "income",
+            "feedback": "حولت الراكد إلى نقد.",
+            "consequence": "التدوير المالي مهارة قيّمة."
+          },
+          {
+            "id": "donate-books",
+            "label": "تبرع بها للمكتبة",
+            "balanceEffect": 0,
+            "healthEffect": 15,
+            "category": "giving",
+            "feedback": "أفدت غيرك وسجلت أجرا دائما.",
+            "consequence": "العلم صدقة جارية.",
+            "ethicalTag": "charity"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mission-4-engineer-trust",
+    "missionNumber": 4,
+    "title": "المهمة 4: مهندس ومسؤوليات أكبر",
+    "summary": "في هذه المهمة أنت مهندس بدخل جيد، لكن كثرة الدخل لا تعني أن تبذّر.",
+    "goalLabel": "حافظ على الأمان المالي مع إنفاق مسؤول",
+    "coachIntro": "كلما ارتفع الدخل ارتفع أيضا خطر الثقة الزائدة. هنا ستتعلم أن الغنى لا يلغي الانضباط.",
+    "learningGoal": "مقاومة التوسع في الكماليات مع وجود دخل جيد.",
+    "rewardTitle": "شارة الانضباط مع الوفرة",
+    "shariaFocus": "شكر النعمة عبر عدم الإسراف",
+    "roleTitle": "مهندس شاب",
+    "roleStory": "دخلُك جيد، لكن عليك السكن والتنقل والتفكير في المستقبل بدلا من العيش في اندفاع.",
+    "conceptTag": "شكر بلا إسراف",
+    "difficulty": "متوسط",
+    "durationDays": 5,
+    "income": 2600,
+    "startingBalance": 180,
+    "savingsGoal": 900,
+    "events": [
+      {
+        "id": "rent-food-transport",
+        "day": 1,
+        "type": "fixed_expense",
+        "title": "التزامات الشهر",
+        "description": "بدء الشهر والفواتير تطلبه واحدة تلو الأخرى: الإيجار والطعام والمواصلات 820 درهم تذهب سريعاً. بدون هذه الأساسيات لا يستقيم الأمر.",
+        "amount": 820,
+        "category": "needs",
+        "coachPrompt": "الدخل المرتفع لا يعفيك من احترام الأساسيات.",
+        "lesson": "الاستقرار المالي يبدأ من ضبط الالتزامات لا من حجم الراتب.",
+        "choices": [
+          {
+            "id": "pay-standard",
+            "label": "ادفع الالتزامات المعتادة",
+            "balanceEffect": -820,
+            "healthEffect": 10,
+            "category": "needs",
+            "feedback": "أسس شهرك بشكل صحيح.",
+            "consequence": "الآن يمكنك التفكير في الأولويات الأخرى."
+          },
+          {
+            "id": "reduce-costs",
+            "label": "قلّل التكاليف (مواصلات مشتركة)",
+            "balanceEffect": -720,
+            "healthEffect": 8,
+            "category": "needs",
+            "feedback": "وفرت 100 درهم بذكاء.",
+            "consequence": "الرفاهية ليست في الإنفاق بل في الوفرة الحقيقية."
+          }
+        ]
+      },
+      {
+        "id": "luxury-tablet",
+        "day": 2,
+        "type": "optional_spending",
+        "title": "جهاز فاخر جديد",
+        "description": "رأيت إعلان الجهاز اللوحي الجديد والشاشة تلمع أمامك. 980 درهم... قلبك يقول 'اشتره' والعقل يسأل 'هل هو ضرورة حقاً؟'",
+        "amount": 980,
+        "category": "wants",
+        "coachPrompt": "كثرة القدرة قد تخدعك لتظن أن كل شراء ممكن هو شراء مناسب.",
+        "lesson": "القدرة على الدفع لا تعني أن القرار حكيم.",
+        "choices": [
+          {
+            "id": "buy-now",
+            "label": "اشترِ الآن",
+            "balanceEffect": -980,
+            "healthEffect": -15,
+            "category": "wants",
+            "feedback": "أرضيت رغبة، لكن بتكلفة عالية.",
+            "consequence": "التمييز بين القدرة والحاجة صعب لكنه ضروري."
+          },
+          {
+            "id": "wait-sale",
+            "label": "انتظر التخفيضات",
+            "balanceEffect": 0,
+            "healthEffect": 12,
+            "category": "wants",
+            "feedback": "الصبر في الشراء يوفر المال.",
+            "consequence": "كل شهر انتظار يعني ادخار أكبر."
+          }
+        ]
+      },
+      {
+        "id": "family-support",
+        "day": 3,
+        "type": "ethical",
+        "title": "مساهمة عائلية",
+        "description": "رن الهاتف: أخوك الصغير يحتاج دواءً والميزانية ضيقة. 200 درهم تقدر على مساعدته... هل لديك هامش للعطاء؟",
+        "amount": 200,
+        "category": "giving",
+        "coachPrompt": "المال نعمة، ومن شكرها أن تستعمله في نفع مشروع دون تهور.",
+        "lesson": "العطاء المسؤول جزء من التربية المالية الإسلامية.",
+        "choices": [
+          {
+            "id": "help-full",
+            "label": "ساهم بالكامل",
+            "balanceEffect": -200,
+            "healthEffect": 14,
+            "category": "giving",
+            "feedback": "أحسنت. أعنت في حاجة حقيقية.",
+            "consequence": "سيظهر هذا كتوازن جميل.",
+            "ethicalTag": "charity"
+          },
+          {
+            "id": "help-partial",
+            "label": "ساهم بجزء",
+            "balanceEffect": -100,
+            "healthEffect": 8,
+            "category": "giving",
+            "feedback": "ساعدت بما تقدر عليه.",
+            "consequence": "الاعتدال في العطاء أفضل من الاندفاع.",
+            "ethicalTag": "charity"
+          },
+          {
+            "id": "help-time",
+            "label": "قدّم وقتك بدلا من المال",
+            "balanceEffect": -30,
+            "healthEffect": 18,
+            "category": "giving",
+            "feedback": "الوقت أحيانا أثمن من المال.",
+            "consequence": "العطاء ليس ماديا فقط.",
+            "ethicalTag": "charity"
+          }
+        ]
+      },
+      {
+        "id": "cashback",
+        "day": 5,
+        "type": "opportunity",
+        "title": "استرجاع نقدي مشروع",
+        "description": "رسالة من البنك: 160 درهم استرجاع نقدي من عملية شراء سابقة. فرحة خفيفة تسري فيك... هل تحتفظ بها أم تتصدق بها؟",
+        "amount": 160,
+        "category": "income",
+        "coachPrompt": "الفرص المشروعة الصغيرة تدعم الميزانية دون تشويش أخلاقي.",
+        "lesson": "ليست كل زيادة في المال مغامرة، بعضها فقط تنظيم جيد.",
+        "choices": [
+          {
+            "id": "keep-cashback",
+            "label": "احتفظ بالاسترجاع",
+            "balanceEffect": 160,
+            "healthEffect": 6,
+            "category": "income",
+            "feedback": "عززت رصيدك.",
+            "consequence": "كل درهم يقترب من هدفك."
+          },
+          {
+            "id": "give-cashback",
+            "label": "تصدق به",
+            "balanceEffect": 0,
+            "healthEffect": 20,
+            "category": "giving",
+            "feedback": "جعلت البركة تدور.",
+            "consequence": "المال يكثر بالصدقة.",
+            "ethicalTag": "charity"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mission-5-zakat-balance",
+    "missionNumber": 5,
+    "title": "المهمة 5: الادخار والزكاة والرحمة",
+    "summary": "المهمة الأخيرة تجمع بين الادخار، العطاء، وعدم التعلق بالمال وحده.",
+    "goalLabel": "ابنِ مدخراتك ووازنها مع الزكاة والصدقة",
+    "coachIntro": "وصلت الآن إلى مستوى أعلى: لم يعد المطلوب فقط أن تحفظ المال، بل أن تفهم حق المال أيضا.",
+    "learningGoal": "فهم الزكاة التقديرية والصدقة المتوازنة وعدم جعل الادخار أنانية.",
+    "rewardTitle": "شارة الأمانة المالية",
+    "shariaFocus": "الزكاة والصدقة والمال أمانة",
+    "roleTitle": "شاب يدير دخله لأول مرة",
+    "roleStory": "معك دخل جيد وهدف ادخار، لكنك الآن تتعلم أن المال ليس لك وحدك بل فيه حق أيضا.",
+    "conceptTag": "حق المال",
+    "difficulty": "متقدم",
+    "durationDays": 5,
+    "income": 2200,
+    "startingBalance": 240,
+    "savingsGoal": 1000,
+    "events": [
+      {
+        "id": "core-month",
+        "day": 1,
+        "type": "fixed_expense",
+        "title": "الأساسيات أولا",
+        "description": "بدء الشهر: الإيجار يطالبك والطعام والمواصلات يستهلك 760 درهم في لحظة. هذه الأساسيات لا غنى عنها.",
+        "amount": 760,
+        "category": "needs",
+        "coachPrompt": "من لا ينظم الأساسيات لن يستطيع فهم الحقوق الأعلى للمال.",
+        "lesson": "الزكاة والصدقة لا تعني الفوضى، بل تبدأ من ضبط الأصل.",
+        "choices": [
+          {
+            "id": "pay-full",
+            "label": "ادفع كامل الالتزامات",
+            "balanceEffect": -760,
+            "healthEffect": 10,
+            "category": "needs",
+            "feedback": "ثبتَّ القاعدة التي سيُبنى عليها كل شيء.",
+            "consequence": "الأساس المتين يسمح بالبناء العالي."
+          },
+          {
+            "id": "save-on-core",
+            "label": "اقتصد في الأساسيات",
+            "balanceEffect": -600,
+            "healthEffect": 5,
+            "category": "needs",
+            "feedback": "حاولت التوفير، لكن احذر من الإخلال بالضروري.",
+            "consequence": "الادخار الجيد لا يأتي على حساب الصحة أو الراحة."
+          }
+        ]
+      },
+      {
+        "id": "bonus-money",
+        "day": 2,
+        "type": "opportunity",
+        "title": "دخل إضافي مفاجئ",
+        "description": "في نهاية الشهر جاءتك مكافأة لم تكن تتوقعها: 500 درهم! الرصيد يزداد أمام عينيك... هل كله للادخار أم أن فيه نصيب لغيرك؟",
+        "amount": 500,
+        "category": "income",
+        "coachPrompt": "زيادة المال اختبار، لا مجرد فرح.",
+        "lesson": "كيف تتصرف عند الزيادة يكشف نضجك المالي الحقيقي.",
+        "choices": [
+          {
+            "id": "save-all",
+            "label": "ادخر كل المكافأة",
+            "balanceEffect": 500,
+            "healthEffect": 12,
+            "category": "income",
+            "feedback": "زادت مدخراتك بشكل كبير.",
+            "consequence": "الادخار مهم، لكن لا تنسى حق الفقراء."
+          },
+          {
+            "id": "give-quarter",
+            "label": "تصدق بربعها",
+            "balanceEffect": 375,
+            "healthEffect": 18,
+            "category": "giving",
+            "feedback": "أحسنت! جمعت بين الادخار والعطاء.",
+            "consequence": "البركة تأتي مع التوازن.",
+            "ethicalTag": "charity"
+          }
+        ]
+      },
+      {
+        "id": "save-spend-give",
+        "day": 3,
+        "type": "ethical",
+        "title": "كيف ستتصرف في الزيادة؟",
+        "description": "رصيدك يعمل جيداً وبان لك أن لديك 300 درهم هامش. الرغبة تغريك بشراء الكماليات، والعقل يقول ادخر، والقلب يقول تصدق.",
+        "amount": 300,
+        "category": "income",
+        "coachPrompt": "أفضل قرار هو الذي يحفظك ولا يجعلك تنسى حق غيرك.",
+        "lesson": "في التربية الإسلامية، المال وسيلة نفع لا مجرد متعة أو خوف.",
+        "choices": [
+          {
+            "id": "all-spend",
+            "label": "أنفقه على الكماليات",
+            "balanceEffect": -300,
+            "healthEffect": -15,
+            "category": "wants",
+            "feedback": "حوّلت الفرصة إلى استهلاك سريع.",
+            "consequence": "ستضعف جاهزيتك للهدف وللزكاة معا.",
+            "ethicalTag": "non_halal"
+          },
+          {
+            "id": "save-most",
+            "label": "ادخره كاملا",
+            "balanceEffect": 0,
+            "healthEffect": 12,
+            "category": "income",
+            "feedback": "الادخار جيد، لكن ما زال السؤال: أين نصيب العطاء؟",
+            "consequence": "سيبقى وضعك المالي قويا لكن تقريرك سينظر للتوازن أيضا.",
+            "ethicalTag": "halal"
+          },
+          {
+            "id": "save-and-give",
+            "label": "ادخر وتصدق بجزء",
+            "balanceEffect": -120,
+            "healthEffect": 20,
+            "category": "giving",
+            "feedback": "هذا أقرب لصورة المال المتوازن: حفظ لنفسك ونفع لغيرك.",
+            "consequence": "سيظهر هذا كأعلى درجات النضج المالي في التقرير.",
+            "ethicalTag": "charity"
+          }
+        ]
+      },
+      {
+        "id": "final-emergency",
+        "day": 4,
+        "type": "emergency",
+        "title": "إصلاح ضروري في البيت",
+        "description": "فجأة: خلل في المنزل سيكلف 260 درهم للإصلاح ولم تكن مستعداً. هل أتاحت قراراتك السابقة أن تواجه هذا الطارئ؟",
+        "amount": 260,
+        "category": "needs",
+        "coachPrompt": "حتى في العطاء، يجب أن تبقي نفسك قادرا على تحمل الواجبات المفاجئة.",
+        "lesson": "التوازن هو أن لا تجعل الكرم يوقعك في عجز.",
+        "choices": [
+          {
+            "id": "pay-emergency",
+            "label": "ادفع كامل المبلغ",
+            "balanceEffect": -260,
+            "healthEffect": 8,
+            "category": "needs",
+            "feedback": "غطيّت واجبا حقيقيا في وقته.",
+            "consequence": "هنا يظهر هل كانت قرارات الأمس ناضجة أم لا."
+          },
+          {
+            "id": "borrow-help",
+            "label": "اقترض جزءا من العائلة",
+            "balanceEffect": -100,
+            "healthEffect": 4,
+            "category": "needs",
+            "feedback": "حل مرحلي يحافظ على رصيدك.",
+            "consequence": "الديون تحتاج تخطيطا للسداد."
+          }
+        ]
+      },
+      {
+        "id": "final-review",
+        "day": 5,
+        "type": "ethical",
+        "title": "مراجعة حق المال",
+        "description": "قبل أن تغادر الأكاديمية وقفت تفكر: هذا المال الذي جمعته فيه حق غيرك. الزكاة والصدقة ليستا اختياراً... بل جزء من المال نفسه.",
+        "amount": 0,
+        "category": "giving",
+        "coachPrompt": "نهاية التعلم ليست جمع المال فقط، بل فهم رسالته.",
+        "lesson": "كل مال يكثر معك يحتاج وعيا بحقوقه وآثاره.",
+        "choices": [
+          {
+            "id": "pay-zakat",
+            "label": "أخرج الزكاة الآن",
+            "balanceEffect": -50,
+            "healthEffect": 25,
+            "category": "giving",
+            "feedback": "طهرت مالك وأديت حق الله فيه.",
+            "consequence": "الزكاة تزكي النفس والمال.",
+            "ethicalTag": "charity"
+          },
+          {
+            "id": "finish-aware",
+            "label": "أنهِ بوعي بدون زكاة الآن",
+            "balanceEffect": 0,
+            "healthEffect": 10,
+            "category": "giving",
+            "feedback": "أصبحت ترى المال كأمانة.",
+            "consequence": "تذكر: بلوغ النصاب يوجب الزكاة.",
+            "ethicalTag": "halal"
+          }
+        ]
+      }
+    ]
+  }
+]
