@@ -116,6 +116,7 @@ export const applyChoice = (
   const record = {
     sceneId,
     choiceId: choice.id,
+    choiceText: choice.text,
     day,
     effects: choice.effects,
     dinarReaction: choice.dinarReaction,

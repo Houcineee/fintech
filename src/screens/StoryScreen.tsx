@@ -1,39 +1,41 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Animated,
   Pressable,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   View,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
-import { colors, shadows } from "../theme/colors";
+import { colors } from "../theme/colors";
 import { spacing } from "../theme/spacing";
 import { Text } from "../theme/typography";
 import { RootStackParamList } from "../types/navigation";
 import { useGameStore } from "../store/gameStore";
 import { getMissionById } from "../data";
 import { evaluateGoalProgress } from "../logic/engine";
-import { StateBar } from "../components/StateBar";
+import { StatsStrip } from "../components/StatsStrip";
 import { SceneCard } from "../components/SceneCard";
 import { DinarCompanion } from "../components/DinarCompanion";
-import { GoalTracker } from "../components/GoalTracker";
+import { GoalDrawer } from "../components/GoalDrawer";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Story">;
+
+type Phase = "reading" | "choosing" | "reacting";
 
 export const StoryScreen = ({ navigation }: Props) => {
   const game = useGameStore((s) => s.game);
   const makeChoice = useGameStore((s) => s.makeChoice);
-  const finishMission = useGameStore((s) => s.finishMission);
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const [showReaction, setShowReaction] = React.useState<string | null>(null);
-  const [transitioning, setTransitioning] = React.useState(false);
+  const [phase, setPhase] = useState<Phase>("reading");
+  const [showGoalDrawer, setShowGoalDrawer] = useState(false);
+  const [currentReaction, setCurrentReaction] = useState<string | null>(null);
+  const transitionTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const mission = game ? getMissionById(game.missionId) : null;
   const currentScene = mission?.scenes.find((s) => s.id === game?.currentSceneId);
 
+  // Navigation guard
   useEffect(() => {
     if (!game || !mission) {
       navigation.replace("Home");
@@ -41,13 +43,23 @@ export const StoryScreen = ({ navigation }: Props) => {
     }
   }, [game, mission, navigation]);
 
+  // Phase transition: on new scene, start at "reading"
   useEffect(() => {
-    fadeAnim.setValue(0);
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
+    if (!currentScene) return;
+    setPhase("reading");
+    setCurrentReaction(null);
+
+    // After narrative appears, switch to choosing
+    const timer = setTimeout(() => {
+      setPhase("choosing");
+    }, 1500);
+
+    return () => {
+      clearTimeout(timer);
+      if (transitionTimerRef.current) {
+        clearTimeout(transitionTimerRef.current);
+      }
+    };
   }, [currentScene?.id]);
 
   const handleChoose = useCallback(
@@ -57,23 +69,24 @@ export const StoryScreen = ({ navigation }: Props) => {
       const choice = currentScene.choices.find((c) => c.id === choiceId);
       if (!choice) return;
 
+      // Switch to reacting phase
+      setPhase("reacting");
       if (choice.dinarReaction) {
-        setShowReaction(choice.dinarReaction);
-        setTimeout(() => setShowReaction(null), 2500);
+        setCurrentReaction(choice.dinarReaction);
       }
 
-      setTransitioning(true);
-      setTimeout(() => {
+      // Apply choice after a short delay (let reaction animation start)
+      transitionTimerRef.current = setTimeout(() => {
         makeChoice(sceneId, choiceId);
 
-        setTimeout(() => {
-          setTransitioning(false);
+        // Check if mission completed after a brief delay
+        transitionTimerRef.current = setTimeout(() => {
           const updatedGame = useGameStore.getState().game;
           if (updatedGame?.completed) {
             navigation.navigate("End");
           }
         }, 100);
-      }, 300);
+      }, 2200);
     },
     [game, mission, currentScene, makeChoice, navigation]
   );
@@ -81,56 +94,75 @@ export const StoryScreen = ({ navigation }: Props) => {
   if (!game || !mission || !currentScene) return null;
 
   const goalProgress = evaluateGoalProgress(mission.goals, game);
-  const lastChoice = game.choiceLog.length > 0 ? game.choiceLog[game.choiceLog.length - 1] : null;
 
   return (
     <SafeAreaView style={s.safe}>
+      {/* Header */}
       <View style={s.header}>
-        <Pressable onPress={() => navigation.navigate("Home")} style={s.backButton}>
+        <Pressable onPress={() => navigation.replace("Home")} style={s.backButton}>
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </Pressable>
         <Text style={s.headerTitle}>{mission.title}</Text>
-        <View style={s.headerRight} />
+        <View style={s.dayIndicator}>
+          <Text style={s.dayText}>
+            {currentScene.day ? `اليوم ${currentScene.day}` : ""}
+          </Text>
+        </View>
       </View>
 
-      <ScrollView
-        contentContainerStyle={s.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        <Animated.View style={{ opacity: fadeAnim }}>
-          <StateBar
-            money={game.money}
-            trust={game.trust}
-            barakah={game.barakah}
-            day={currentScene.day}
-            goals={goalProgress}
-          />
-        </Animated.View>
+      {/* Stats Strip */}
+      <StatsStrip
+        money={game.money}
+        trust={game.trust}
+        barakah={game.barakah}
+        animated={phase === "reacting"}
+      />
 
-        <View style={s.spacer} />
+      {/* Main Content Area */}
+      <View style={s.mainContent}>
+        {/* Phase 1 & 2: Narrative + Choices */}
+        {(phase === "reading" || phase === "choosing") && (
+          <View style={s.sceneContainer}>
+            <SceneCard
+              scene={currentScene}
+              money={game.money}
+              onChoose={handleChoose}
+              disabled={phase === "reading"}
+            />
+          </View>
+        )}
 
-        <DinarCompanion
-          trust={game.trust}
-          barakah={game.barakah}
-          reaction={showReaction}
-        />
+        {/* Phase 3: Dinar Reaction */}
+        {phase === "reacting" && (
+          <View style={s.reactionContainer}>
+            <DinarCompanion
+              trust={game.trust}
+              barakah={game.barakah}
+              reaction={currentReaction}
+            />
+          </View>
+        )}
+      </View>
 
-        <View style={s.spacer} />
+      {/* Bottom area: Goal button */}
+      {phase !== "reacting" && (
+        <View style={s.bottomBar}>
+          <Pressable
+            style={s.goalButton}
+            onPress={() => setShowGoalDrawer(true)}
+          >
+            <Ionicons name="flag" size={16} color={colors.warning} />
+            <Text style={s.goalButtonText}>الأهداف</Text>
+          </Pressable>
+        </View>
+      )}
 
-        <Animated.View style={{ opacity: fadeAnim }}>
-          <SceneCard
-            scene={currentScene}
-            onChoose={handleChoose}
-            disabled={transitioning}
-          />
-        </Animated.View>
-
-        <View style={s.spacer} />
-
-        <GoalTracker goals={goalProgress} />
-
-        <View style={s.bottomPadding} />
-      </ScrollView>
+      {/* Goal Drawer */}
+      <GoalDrawer
+        visible={showGoalDrawer}
+        onClose={() => setShowGoalDrawer(false)}
+        goals={goalProgress}
+      />
     </SafeAreaView>
   );
 };
@@ -151,22 +183,54 @@ const s = StyleSheet.create({
   },
   backButton: {
     padding: spacing.xs,
+    width: 40,
   },
   headerTitle: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: "800",
     color: colors.text,
   },
-  headerRight: {
-    width: 40,
+  dayIndicator: {
+    width: 70,
+    alignItems: "flex-end",
   },
-  scrollContent: {
-    padding: spacing.lg,
+  dayText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: colors.primary,
   },
-  spacer: {
-    height: spacing.md,
+  mainContent: {
+    flex: 1,
+    paddingHorizontal: spacing.lg,
   },
-  bottomPadding: {
-    height: 40,
+  sceneContainer: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  reactionContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  bottomBar: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    alignItems: "flex-end",
+  },
+  goalButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+    backgroundColor: colors.surface,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  goalButtonText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: colors.warning,
   },
 });

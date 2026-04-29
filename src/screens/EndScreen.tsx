@@ -132,7 +132,10 @@ export const EndScreen = ({ navigation }: Props) => {
             <View key={i} style={s.timelineRow}>
               <View style={s.timelineDot} />
               <View style={s.timelineContent}>
-                <Text style={s.timelineChoice}>{record.choiceId}</Text>
+                {record.day != null && (
+                  <Text style={s.timelineDay}>اليوم {record.day}</Text>
+                )}
+                <Text style={s.timelineChoice}>{record.choiceText}</Text>
                 {record.dinarReaction && (
                   <Text style={s.timelineReaction} numberOfLines={1}>{record.dinarReaction}</Text>
                 )}
@@ -289,6 +292,12 @@ const s = StyleSheet.create({
   },
   timelineContent: {
     flex: 1,
+  },
+  timelineDay: {
+    fontSize: 11,
+    fontWeight: "600",
+    color: colors.primary,
+    marginBottom: 2,
   },
   timelineChoice: {
     fontSize: 13,

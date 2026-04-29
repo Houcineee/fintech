@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { HomeScreen } from "./src/screens/HomeScreen";
+import { MissionIntroScreen } from "./src/screens/MissionIntroScreen";
 import { StoryScreen } from "./src/screens/StoryScreen";
 import { EndScreen } from "./src/screens/EndScreen";
 import { colors } from "./src/theme/colors";
@@ -64,6 +65,7 @@ function AppContent() {
         }}
       >
         <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="MissionIntro" component={MissionIntroScreen} />
         <Stack.Screen name="Story" component={StoryScreen} />
         <Stack.Screen name="End" component={EndScreen} />
       </Stack.Navigator>

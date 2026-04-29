@@ -197,7 +197,7 @@ export const HomeScreen = ({ navigation }: Props) => {
   const handleStart = () => {
     if (selectedMission && canStart) {
       startMission(selectedMission.id);
-      navigation.navigate("Story");
+      navigation.navigate("MissionIntro");
     }
   };
 

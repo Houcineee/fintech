@@ -93,6 +93,7 @@ export type Mission = {
 export type ChoiceRecord = {
   sceneId: string;
   choiceId: string;
+  choiceText: string;
   day?: number;
   effects: ChoiceEffects;
   dinarReaction?: string;

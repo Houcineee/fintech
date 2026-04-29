@@ -1,126 +1,138 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Animated, Pressable, StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { colors, shadows } from "../theme/colors";
+import { colors } from "../theme/colors";
 import { spacing } from "../theme/spacing";
 import { Text } from "../theme/typography";
-import type { Scene, Choice } from "../types/game";
+import type { Scene } from "../types/game";
+
+const MAX_CHOICES = 5;
 
 type Props = {
   scene: Scene;
+  money: number;
   onChoose: (sceneId: string, choiceId: string) => void;
   disabled?: boolean;
 };
 
-export const SceneCard = ({ scene, onChoose, disabled }: Props) => {
-  const fadeAnim = React.useRef(new Animated.Value(0)).current;
+export const SceneCard = ({ scene, money, onChoose, disabled }: Props) => {
+  const narrativeOpacity = useRef(new Animated.Value(0)).current;
+  const choiceOpacities = useRef(
+    Array.from({ length: MAX_CHOICES }, () => new Animated.Value(0))
+  ).current;
+  const choiceTranslations = useRef(
+    Array.from({ length: MAX_CHOICES }, () => new Animated.Value(20))
+  ).current;
+  const timersRef = useRef<NodeJS.Timeout[]>([]);
 
-  React.useEffect(() => {
-    fadeAnim.setValue(0);
-    Animated.timing(fadeAnim, {
+  useEffect(() => {
+    narrativeOpacity.setValue(0);
+    choiceOpacities.forEach((a) => a.setValue(0));
+    choiceTranslations.forEach((a) => a.setValue(20));
+
+    timersRef.current.forEach(clearTimeout);
+    timersRef.current = [];
+
+    Animated.timing(narrativeOpacity, {
       toValue: 1,
       duration: 400,
       useNativeDriver: true,
     }).start();
+
+    scene.choices.forEach((_, i) => {
+      const timer = setTimeout(() => {
+        Animated.parallel([
+          Animated.timing(choiceOpacities[i], {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+          Animated.timing(choiceTranslations[i], {
+            toValue: 0,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+        ]).start();
+      }, 300 + i * 150);
+      timersRef.current.push(timer);
+    });
+
+    return () => {
+      timersRef.current.forEach(clearTimeout);
+    };
   }, [scene.id]);
 
+  const isChoiceUnaffordable = (choice: typeof scene.choices[number]): boolean => {
+    const moneyEffect = choice.effects.money ?? 0;
+    return money + moneyEffect < 0;
+  };
+
   return (
-    <Animated.View style={[s.container, { opacity: fadeAnim }]}>
+    <View style={s.container}>
       <View style={s.dayBadge}>
-        <Ionicons name="calendar" size={14} color={colors.primary} />
         <Text style={s.dayText}>{scene.day ? `اليوم ${scene.day}` : ""}</Text>
       </View>
 
-      <Text style={s.narrative}>{scene.text}</Text>
+      <Animated.View style={{ opacity: narrativeOpacity }}>
+        <Text style={s.narrative}>{scene.text}</Text>
+      </Animated.View>
 
       <View style={s.choicesContainer}>
-        {scene.choices.map((choice, index) => (
-          <ChoiceButton
-            key={choice.id}
-            choice={choice}
-            index={index}
-            onPress={() => onChoose(scene.id, choice.id)}
-            disabled={disabled}
-          />
-        ))}
+        {scene.choices.map((choice, index) => {
+          const unaffordable = isChoiceUnaffordable(choice);
+          const isDisabled = disabled || unaffordable;
+
+          return (
+            <Animated.View
+              key={choice.id}
+              style={[
+                s.choiceWrapper,
+                {
+                  opacity: choiceOpacities[index],
+                  transform: [{ translateY: choiceTranslations[index] }],
+                },
+              ]}
+            >
+              <Pressable
+                onPress={() => !unaffordable && onChoose(scene.id, choice.id)}
+                disabled={isDisabled}
+                style={({ pressed }) => [
+                  s.choiceButton,
+                  pressed && !isDisabled && s.choicePressed,
+                  isDisabled && s.choiceDisabled,
+                  unaffordable && s.choiceUnaffordable,
+                ]}
+              >
+                <Text
+                  style={[s.choiceText, unaffordable && s.choiceTextUnaffordable]}
+                  numberOfLines={2}
+                >
+                  {choice.text}
+                </Text>
+                {unaffordable && (
+                  <View style={s.unaffordableRow}>
+                    <Ionicons name="wallet-outline" size={12} color={colors.danger} />
+                    <Text style={s.unaffordableLabel}>غير كافٍ</Text>
+                  </View>
+                )}
+              </Pressable>
+            </Animated.View>
+          );
+        })}
       </View>
-    </Animated.View>
-  );
-};
-
-const ChoiceButton = ({
-  choice,
-  index,
-  onPress,
-  disabled,
-}: {
-  choice: Choice;
-  index: number;
-  onPress: () => void;
-  disabled?: boolean;
-}) => {
-  const getEffectHints = () => {
-    const hints: string[] = [];
-    if (choice.effects.money && choice.effects.money !== 0) {
-      hints.push(choice.effects.money > 0 ? `+${choice.effects.money}` : `${choice.effects.money}`);
-    }
-    if (choice.effects.trust && choice.effects.trust !== 0) {
-      hints.push(choice.effects.trust > 0 ? `ثقة +${choice.effects.trust}` : `ثقة ${choice.effects.trust}`);
-    }
-    if (choice.effects.barakah && choice.effects.barakah !== 0) {
-      hints.push(choice.effects.barakah > 0 ? `بركة +${choice.effects.barakah}` : `بركة ${choice.effects.barakah}`);
-    }
-    return hints;
-  };
-
-  const effects = getEffectHints();
-
-  return (
-    <Pressable
-      onPress={onPress}
-      disabled={disabled}
-      style={({ pressed }) => [
-        s.choiceButton,
-        index === 0 && s.choicePrimary,
-        pressed && !disabled && s.choicePressed,
-        disabled && s.choiceDisabled,
-      ]}
-    >
-      <Text
-        style={[
-          s.choiceText,
-          index === 0 && s.choiceTextPrimary,
-        ]}
-        numberOfLines={2}
-      >
-        {choice.text}
-      </Text>
-      {effects.length > 0 && (
-        <View style={s.effectsRow}>
-          {effects.map((hint, i) => (
-            <Text key={i} style={[s.effectHint, index === 0 && s.effectHintPrimary]}>
-              {hint}
-            </Text>
-          ))}
-        </View>
-      )}
-    </Pressable>
+    </View>
   );
 };
 
 const s = StyleSheet.create({
   container: {
-    backgroundColor: colors.surface,
-    borderRadius: 20,
-    padding: spacing.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
+    flex: 1,
+    justifyContent: "center",
+    gap: spacing.lg,
+    paddingVertical: spacing.lg,
   },
   dayBadge: {
-    flexDirection: "row",
     alignItems: "center",
-    gap: spacing.xs,
-    marginBottom: spacing.md,
   },
   dayText: {
     fontSize: 13,
@@ -128,27 +140,24 @@ const s = StyleSheet.create({
     color: colors.primary,
   },
   narrative: {
-    fontSize: 17,
+    fontSize: 19,
     fontWeight: "600",
     color: colors.text,
-    lineHeight: 28,
+    lineHeight: 32,
     textAlign: "right",
-    marginBottom: spacing.lg,
   },
   choicesContainer: {
     gap: spacing.md,
   },
+  choiceWrapper: {
+    width: "100%",
+  },
   choiceButton: {
     backgroundColor: colors.surfaceHighlight,
-    borderRadius: 14,
-    padding: spacing.md,
+    borderRadius: 16,
+    padding: spacing.lg,
     borderWidth: 1,
     borderColor: colors.border,
-  },
-  choicePrimary: {
-    backgroundColor: colors.primary + "15",
-    borderColor: colors.primary,
-    ...shadows.glowCyan,
   },
   choicePressed: {
     opacity: 0.8,
@@ -157,27 +166,29 @@ const s = StyleSheet.create({
   choiceDisabled: {
     opacity: 0.5,
   },
+  choiceUnaffordable: {
+    borderColor: colors.danger + "40",
+    backgroundColor: colors.danger + "08",
+  },
   choiceText: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: "700",
     color: colors.text,
     textAlign: "right",
   },
-  choiceTextPrimary: {
-    color: colors.primary,
+  choiceTextUnaffordable: {
+    color: colors.textMuted,
   },
-  effectsRow: {
+  unaffordableRow: {
     flexDirection: "row",
-    flexWrap: "wrap",
-    gap: spacing.xs,
+    alignItems: "center",
+    gap: 4,
     marginTop: spacing.xs,
+    justifyContent: "flex-end",
   },
-  effectHint: {
+  unaffordableLabel: {
     fontSize: 11,
     fontWeight: "700",
-    color: colors.textSecondary,
-  },
-  effectHintPrimary: {
-    color: colors.primary + "AA",
+    color: colors.danger,
   },
 });

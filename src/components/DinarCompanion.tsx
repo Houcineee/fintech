@@ -14,16 +14,13 @@ type Props = {
 export const DinarCompanion = ({ trust, barakah, reaction }: Props) => {
   const bounceAnim = useRef(new Animated.Value(0)).current;
   const reactionOpacity = useRef(new Animated.Value(0)).current;
+  const reactionScale = useRef(new Animated.Value(0.9)).current;
 
-  const average = (trust + barakah) / 2;
   const expression =
-    average >= 65 ? "happy" : average >= 35 ? "neutral" : "sad";
-
-  const expressionIcon =
-    expression === "happy"
+    trust >= 40 && barakah >= 30
       ? "happy"
-      : expression === "neutral"
-        ? "remove"
+      : trust >= 20 || barakah >= 15
+        ? "neutral"
         : "sad";
 
   const glowColor =
@@ -37,13 +34,13 @@ export const DinarCompanion = ({ trust, barakah, reaction }: Props) => {
     Animated.loop(
       Animated.sequence([
         Animated.timing(bounceAnim, {
-          toValue: -6,
-          duration: 1000,
+          toValue: -8,
+          duration: 1200,
           useNativeDriver: true,
         }),
         Animated.timing(bounceAnim, {
           toValue: 0,
-          duration: 1000,
+          duration: 1200,
           useNativeDriver: true,
         }),
       ])
@@ -53,44 +50,53 @@ export const DinarCompanion = ({ trust, barakah, reaction }: Props) => {
   useEffect(() => {
     if (reaction) {
       reactionOpacity.setValue(0);
-      Animated.timing(reactionOpacity, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
+      reactionScale.setValue(0.9);
+      Animated.parallel([
+        Animated.timing(reactionOpacity, {
+          toValue: 1,
+          duration: 400,
+          useNativeDriver: true,
+        }),
+        Animated.timing(reactionScale, {
+          toValue: 1,
+          duration: 400,
+          useNativeDriver: true,
+        }),
+      ]).start();
     }
   }, [reaction]);
 
   return (
     <View style={s.container}>
-      <View style={s.companionRow}>
-        <Animated.View
-          style={[s.orbWrapper, { transform: [{ translateY: bounceAnim }] }]}
-        >
-          <View style={[s.orb, { borderColor: glowColor }, shadows.glowCyan]}>
-            <Ionicons
-              name={expression === "happy" ? "happy-outline" : expression === "neutral" ? "remove-circle-outline" : "sad-outline"}
-              size={32}
-              color={glowColor}
-            />
-          </View>
-        </Animated.View>
-
-        <View style={s.statsMini}>
-          <Text style={s.companionName}> درهمي</Text>
-          <View style={s.miniRow}>
-            <Ionicons name="people" size={12} color={colors.primary} />
-            <Text style={s.miniStat}>{trust}</Text>
-          </View>
-          <View style={s.miniRow}>
-            <Ionicons name="star" size={12} color={colors.purple} />
-            <Text style={s.miniStat}>{barakah}</Text>
-          </View>
+      <Animated.View
+        style={[s.orbWrapper, { transform: [{ translateY: bounceAnim }] }]}
+      >
+        <View style={[s.orb, { borderColor: glowColor }]}>
+          <Ionicons
+            name={
+              expression === "happy"
+                ? "happy-outline"
+                : expression === "neutral"
+                  ? "remove-circle-outline"
+                  : "sad-outline"
+            }
+            size={48}
+            color={glowColor}
+          />
         </View>
-      </View>
+        <Text style={s.name}>درهمي</Text>
+      </Animated.View>
 
       {reaction && (
-        <Animated.View style={[s.bubble, { opacity: reactionOpacity }]}>
+        <Animated.View
+          style={[
+            s.bubble,
+            {
+              opacity: reactionOpacity,
+              transform: [{ scale: reactionScale }],
+            },
+          ]}
+        >
           <Text style={s.bubbleText}>{reaction}</Text>
         </Animated.View>
       )}
@@ -101,57 +107,44 @@ export const DinarCompanion = ({ trust, barakah, reaction }: Props) => {
 const s = StyleSheet.create({
   container: {
     alignItems: "center",
-    gap: spacing.sm,
-  },
-  companionRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.md,
+    justifyContent: "center",
+    gap: spacing.lg,
+    flex: 1,
   },
   orbWrapper: {
     alignItems: "center",
+    gap: spacing.sm,
   },
   orb: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     backgroundColor: colors.surface,
-    borderWidth: 2,
+    borderWidth: 3,
     justifyContent: "center",
     alignItems: "center",
+    ...shadows.md,
   },
-  statsMini: {
-    gap: 4,
-  },
-  companionName: {
-    fontSize: 14,
+  name: {
+    fontSize: 16,
     fontWeight: "800",
     color: colors.text,
   },
-  miniRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  miniStat: {
-    fontSize: 12,
-    fontWeight: "700",
-    color: colors.textSecondary,
-  },
   bubble: {
     backgroundColor: colors.surface,
-    borderRadius: 16,
-    padding: spacing.md,
+    borderRadius: 20,
+    padding: spacing.lg,
     borderWidth: 1,
-    borderColor: colors.border,
-    maxWidth: 280,
-    alignSelf: "center",
+    borderColor: colors.primary + "40",
+    maxWidth: 300,
+    minWidth: 200,
+    ...shadows.sm,
   },
   bubbleText: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: "600",
     color: colors.text,
     textAlign: "center",
-    lineHeight: 22,
+    lineHeight: 26,
   },
 });
