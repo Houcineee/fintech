@@ -4,45 +4,74 @@ import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
-  Text as RNText,
   View,
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
-import { scenarioData } from "../data";
-import { useSimulationStore, getRankForXP, getNextRankXP, RANKS } from "../store/simulationStore";
+import { missionData, getMissionById } from "../data";
+import { useGameStore, getRankForXP, getNextRankXP } from "../store/gameStore";
 import { colors, shadows } from "../theme/colors";
 import { spacing } from "../theme/spacing";
-import { RootStackParamList } from "../types/navigation";
 import { Text } from "../theme/typography";
+import { RootStackParamList } from "../types/navigation";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
-// Mission Card Component
+type MissionStatus = "locked" | "current" | "completed";
+
 const MissionCard = ({
-  mission,
-  scenario,
+  missionId,
+  number,
+  title,
+  roleTitle,
+  difficulty,
+  status,
   isSelected,
   onPress,
 }: {
-  mission: {
-    id: string;
-    number: number;
-    title: string;
-    status: "locked" | "current" | "completed";
-  };
-  scenario: (typeof scenarioData)[0];
+  missionId: string;
+  number: number;
+  title: string;
+  roleTitle: string;
+  difficulty: string;
+  status: MissionStatus;
   isSelected: boolean;
   onPress: () => void;
 }) => {
+  const getDifficultyColor = () => {
+    switch (difficulty) {
+      case "easy":
+        return colors.success;
+      case "medium":
+        return colors.warning;
+      case "hard":
+        return colors.danger;
+      default:
+        return colors.textSecondary;
+    }
+  };
+
+  const getDifficultyLabel = () => {
+    switch (difficulty) {
+      case "easy":
+        return "سهل";
+      case "medium":
+        return "متوسط";
+      case "hard":
+        return "متقدم";
+      default:
+        return difficulty;
+    }
+  };
+
   const getStatusIcon = () => {
-    switch (mission.status) {
+    switch (status) {
       case "completed":
         return <Ionicons name="checkmark" size={20} color={colors.success} />;
       case "current":
         return (
-          <View style={styles.pulseDot}>
-            <View style={styles.pulseInner} />
+          <View style={s.pulseDot}>
+            <View style={s.pulseInner} />
           </View>
         );
       case "locked":
@@ -50,93 +79,74 @@ const MissionCard = ({
     }
   };
 
-  const getDifficultyColor = () => {
-    switch (scenario.difficulty) {
-      case "سهل":
-        return colors.success;
-      case "متوسط":
-        return colors.warning;
-      case "متقدم":
-        return colors.danger;
-      default:
-        return colors.textSecondary;
-    }
-  };
-
-  const isLocked = mission.status === "locked";
+  const isLocked = status === "locked";
 
   return (
     <Pressable
       onPress={onPress}
       disabled={isLocked}
       style={({ pressed }) => [
-        styles.missionCard,
-        isSelected && !isLocked && styles.missionCardSelected,
-        isLocked && styles.missionCardLocked,
-        pressed && !isLocked && styles.missionCardPressed,
+        s.missionCard,
+        isSelected && !isLocked && s.missionCardSelected,
+        isLocked && s.missionCardLocked,
+        pressed && !isLocked && s.missionCardPressed,
       ]}
     >
-      {/* Status Orb */}
-      <View style={styles.orbContainer}>{getStatusIcon()}</View>
+      <View style={s.orbContainer}>{getStatusIcon()}</View>
 
-      {/* Mission Info */}
-      <View style={styles.missionInfo}>
-        <View style={styles.missionHeader}>
-          <Text style={[styles.missionNumber, isLocked && styles.textLocked]}>
-            مهمة {mission.number}
+      <View style={s.missionInfo}>
+        <View style={s.missionHeader}>
+          <Text style={[s.missionNumber, isLocked && s.textLocked]}>
+            مهمة {number}
           </Text>
           <View
             style={[
-              styles.difficultyBadge,
+              s.difficultyBadge,
               { backgroundColor: getDifficultyColor() + "25" },
             ]}
           >
             <Text
               style={[
-                styles.difficultyText,
+                s.difficultyText,
                 { color: isLocked ? colors.lockedText : getDifficultyColor() },
               ]}
             >
-              {scenario.difficulty}
+              {getDifficultyLabel()}
             </Text>
           </View>
         </View>
 
-        <Text style={[styles.missionTitle, isLocked && styles.textLocked]}>
-          {mission.title.replace("المهمة ", "")}
+        <Text style={[s.missionTitle, isLocked && s.textLocked]}>
+          {title}
         </Text>
 
-        <Text style={[styles.missionRole, isLocked && styles.textLocked]}>
-          {scenario.roleTitle}
+        <Text style={[s.missionRole, isLocked && s.textLocked]}>
+          {roleTitle}
         </Text>
 
-        {/* Progress Bar */}
-        <View style={styles.progressContainer}>
-          <View style={styles.progressTrack}>
+        <View style={s.progressContainer}>
+          <View style={s.progressTrack}>
             <View
               style={[
-                styles.progressFill,
+                s.progressFill,
                 {
-                  width: mission.status === "completed" ? "100%" : "0%",
+                  width: status === "completed" ? "100%" : "0%",
                   backgroundColor:
-                    mission.status === "completed"
-                      ? colors.success
-                      : colors.primary,
+                    status === "completed" ? colors.success : colors.primary,
                 },
               ]}
             />
           </View>
-          <Text style={styles.progressText}>
-            {mission.status === "completed"
+          <Text style={s.progressText}>
+            {status === "completed"
               ? "مكتملة"
-              : mission.status === "current"
-              ? "متاحة"
-              : "مقفلة"}
+              : status === "current"
+                ? "متاحة"
+                : "مقفلة"}
           </Text>
         </View>
       </View>
 
-      {/* Arrow */}
       {!isLocked && (
         <Ionicons
           name="chevron-back"
@@ -149,152 +159,137 @@ const MissionCard = ({
 };
 
 export const HomeScreen = ({ navigation }: Props) => {
-  const startSimulation = useSimulationStore((state) => state.startSimulation);
-  const completedMissionIds = useSimulationStore(
-    (state) => state.completedMissionIds
-  );
-  const isMissionUnlocked = useSimulationStore(
-    (state) => state.isMissionUnlocked
-  );
-  const totalXP = useSimulationStore((state) => state.totalXP);
+  const startMission = useGameStore((s) => s.startMission);
+  const completedMissionIds = useGameStore((s) => s.completedMissionIds);
+  const isMissionUnlockedFn = useGameStore((s) => s.isMissionUnlocked);
+  const totalXP = useGameStore((s) => s.totalXP);
 
-  const [selectedMissionId, setSelectedMissionId] = useState<string | null>(
-    null
-  );
+  const [selectedMissionId, setSelectedMissionId] = useState<string | null>(null);
 
-  // Create mission nodes
   const missions = useMemo(() => {
-    return scenarioData.map((scenario) => {
-      const isCompleted = completedMissionIds.includes(scenario.id);
-      const isUnlocked = isMissionUnlocked(scenario.id);
-
+    return missionData.map((mission) => {
+      const isCompleted = completedMissionIds.includes(mission.id);
+      const isUnlocked = isMissionUnlockedFn(mission.id);
       return {
-        id: scenario.id,
-        number: scenario.missionNumber,
-        title: scenario.title,
+        id: mission.id,
+        number: mission.missionNumber,
+        title: mission.title,
+        roleTitle: mission.roleTitle,
+        difficulty: mission.difficulty,
         status: isCompleted
-          ? ("completed" as const)
+          ? ("completed" as MissionStatus)
           : isUnlocked
-          ? ("current" as const)
-          : ("locked" as const),
-        scenario,
+            ? ("current" as MissionStatus)
+            : ("locked" as MissionStatus),
       };
     });
-  }, [completedMissionIds]);
+  }, [completedMissionIds, isMissionUnlockedFn]);
 
-  // Find first current mission if none selected
   const selectedMission =
     missions.find((m) => m.id === selectedMissionId) ||
     missions.find((m) => m.status === "current") ||
     missions[0];
 
   const canStart = selectedMission
-    ? isMissionUnlocked(selectedMission.id)
+    ? isMissionUnlockedFn(selectedMission.id)
     : false;
 
   const handleStart = () => {
     if (selectedMission && canStart) {
-      startSimulation(selectedMission.id);
-      navigation.navigate("Simulation");
+      startMission(selectedMission.id);
+      navigation.navigate("Story");
     }
   };
 
+  const rank = getRankForXP(totalXP);
+  const nextRankXP = getNextRankXP(totalXP);
+
   return (
-    <SafeAreaView style={styles.safe}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.logoRow}>
-          <View style={styles.logoContainer}>
-            <Text style={styles.logo}>درهمي</Text>
-            <View style={styles.logoDot} />
+    <SafeAreaView style={s.safe}>
+      <View style={s.header}>
+        <View style={s.logoRow}>
+          <View style={s.logoContainer}>
+            <Text style={s.logo}>درهمي</Text>
+            <View style={s.logoDot} />
           </View>
-          {/* Rank Badge */}
-          <View style={styles.rankBadge}>
-            <Ionicons name={getRankForXP(totalXP).icon} size={18} color={colors.primary} />
-            <Text style={styles.rankName}>{getRankForXP(totalXP).name}</Text>
+          <View style={s.rankBadge}>
+            <Ionicons name={rank.icon as any} size={18} color={colors.primary} />
+            <Text style={s.rankName}>{rank.name}</Text>
           </View>
         </View>
-        <View style={styles.subtitleRow}>
-          <Text style={styles.subtitle}>أكاديمية التعليم المالي</Text>
-          <Text style={styles.xpText}>{totalXP} XP</Text>
+        <View style={s.subtitleRow}>
+          <Text style={s.subtitle}>أكاديمية التعليم المالي</Text>
+          <Text style={s.xpText}>{totalXP} XP</Text>
         </View>
-        {/* XP Progress Bar */}
-        {getNextRankXP(totalXP) !== null && (
-          <View style={styles.xpBar}>
-            <View style={styles.xpTrack}>
+        {nextRankXP !== null && (
+          <View style={s.xpBar}>
+            <View style={s.xpTrack}>
               <View
                 style={[
-                  styles.xpFill,
+                  s.xpFill,
                   {
                     width: `${Math.min(
-                      ((totalXP - getRankForXP(totalXP).minXP) /
-                        ((getNextRankXP(totalXP) ?? 1000) - getRankForXP(totalXP).minXP)) *
-                        100,
+                      ((totalXP - rank.minXP) / (nextRankXP - rank.minXP)) * 100,
                       100
                     )}%`,
                   },
                 ]}
               />
             </View>
-            <Text style={styles.xpNext}>
-              {getNextRankXP(totalXP)} XP للرتبة التالية
-            </Text>
+            <Text style={s.xpNext}>{nextRankXP} XP للرتبة التالية</Text>
           </View>
         )}
       </View>
 
       <ScrollView
-        contentContainerStyle={styles.container}
+        contentContainerStyle={s.container}
         showsVerticalScrollIndicator={false}
       >
-        {/* Progress Ring */}
-        <View style={styles.progressRingContainer}>
-          <View style={styles.progressRing}>
-            <Text style={styles.progressNumber}>
+        <View style={s.progressRingContainer}>
+          <View style={s.progressRing}>
+            <Text style={s.progressNumber}>
               {completedMissionIds.length}
             </Text>
-            <Text style={styles.progressLabel}>من {scenarioData.length}</Text>
+            <Text style={s.progressLabel}>من {missionData.length}</Text>
           </View>
-          <Text style={styles.progressRingLabel}>تقدمك</Text>
+          <Text style={s.progressRingLabel}>تقدمك</Text>
         </View>
 
-        {/* Mission Cards */}
-        <View style={styles.missionsContainer}>
+        <View style={s.missionsContainer}>
           {missions.map((mission) => (
             <MissionCard
               key={mission.id}
-              mission={mission}
-              scenario={mission.scenario}
+              missionId={mission.id}
+              number={mission.number}
+              title={mission.title}
+              roleTitle={mission.roleTitle}
+              difficulty={mission.difficulty}
+              status={mission.status}
               isSelected={selectedMission?.id === mission.id}
               onPress={() => setSelectedMissionId(mission.id)}
             />
           ))}
         </View>
 
-        <View style={styles.bottomPadding} />
+        <View style={s.bottomPadding} />
       </ScrollView>
 
-      {/* Start Button */}
       {selectedMission && (
-        <View style={styles.buttonContainer}>
+        <View style={s.buttonContainer}>
           <Pressable
             onPress={handleStart}
             disabled={!canStart}
             style={({ pressed }) => [
-              styles.startButton,
-              !canStart && styles.startButtonDisabled,
-              pressed && canStart && styles.startButtonPressed,
+              s.startButton,
+              !canStart && s.startButtonDisabled,
+              pressed && canStart && s.startButtonPressed,
             ]}
           >
-            <Text style={styles.startButtonText}>
+            <Text style={s.startButtonText}>
               {canStart ? "ابدأ المهمة" : "أكمل المهمة السابقة"}
             </Text>
             {canStart && (
-              <Ionicons
-                name="arrow-forward"
-                size={20}
-                color={colors.textInverse}
-              />
+              <Ionicons name="arrow-forward" size={20} color={colors.textInverse} />
             )}
           </Pressable>
         </View>
@@ -303,7 +298,7 @@ export const HomeScreen = ({ navigation }: Props) => {
   );
 };
 
-const styles = StyleSheet.create({
+const s = StyleSheet.create({
   safe: {
     flex: 1,
     backgroundColor: colors.background,

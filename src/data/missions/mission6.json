@@ -1,0 +1,405 @@
+{
+  "id": "mission-6-business",
+  "missionNumber": 6,
+  "title": "ابنِ مشروعك",
+  "summary": "كل ما تعلمته يتجمع هنا. ابدأ مشروعاً صغيراً وأدِره بأمانة وذكاء.",
+  "difficulty": "hard",
+  "roleTitle": "صاحب مشروع صغير",
+  "roleStory": "درهمي يبدأ مشروعاً صغيراً بـ 150 درهماً. هل يجمع بين الكسب الحلال والنمو المسؤول؟",
+  "initialMoney": 150,
+  "initialTrust": 40,
+  "initialBarakah": 30,
+  "goals": [
+    { "type": "money", "target": 400, "label": "اربح 400 دراهم" },
+    { "type": "trust", "target": 60, "label": "ابنِ ثقة الزبائن" },
+    { "type": "barakah", "target": 50, "label": "حافظ على البركة" }
+  ],
+  "rewardTitle": "شارة ريادة الأعمال",
+  "rewardIcon": "rocket",
+  "scenes": [
+    {
+      "id": "m6_s1_choose",
+      "day": 1,
+      "text": "أي مشروع يبدأ درهمي؟ كل له مميزاته وتحدياته.",
+      "choices": [
+        {
+          "id": "m6_c1_snack",
+          "text": "متجر وجبات خفيفة",
+          "effects": { "money": -80, "trust": 10, "setFlag": "snack_shop" },
+          "dinarReaction": "الطعام يحتاج جودة ونظافة! هل ستكون أميناً في مكوناتك؟"
+        },
+        {
+          "id": "m6_c1_delivery",
+          "text": "خدمة توصيل",
+          "effects": { "money": -50, "trust": 5, "setFlag": "delivery" },
+          "dinarReaction": "التوصيل يحتاج سرعة وموثوقية!"
+        },
+        {
+          "id": "m6_c1_books",
+          "text": "مكتبة إعارة كتب",
+          "effects": { "money": -30, "barakah": 10, "setFlag": "book_lending" },
+          "dinarReaction": "العلم والمعرفة مشروع مبارك!"
+        }
+      ]
+    },
+    {
+      "id": "m6_s2_materials",
+      "day": 1,
+      "text": "شراء المواد الأولية. المورد يعرض سعرين: عادي بجودة عالية، ورخيص بجودة أقل.",
+      "choices": [
+        {
+          "id": "m6_c2_quality",
+          "text": "يشتري مواد عالية الجودة",
+          "effects": { "money": -60, "trust": 8, "barakah": 5, "setFlag": "quality_materials" },
+          "dinarReaction": "الجودة تكلف أكثر لكنها تبني سمعة تدوم!"
+        },
+        {
+          "id": "m6_c2_cheap",
+          "text": "يشتري مواد رخيصة",
+          "effects": { "money": -30, "trust": -5, "barakah": -3, "setFlag": "cheap_materials" },
+          "dinarReaction": "وفرت مالاً... لكن هل سيلاحظ الزبون الفرق؟"
+        }
+      ]
+    },
+    {
+      "id": "m6_s3_first_sale",
+      "day": 2,
+      "text": "أول زبون! كيف يعامله درهمي؟",
+      "choices": [
+        {
+          "id": "m6_c3_fair",
+          "text": "يعامله بعدل ولطف",
+          "effects": { "trust": 12, "barakah": 8, "setFlag": "good_first_impression" },
+          "dinarReaction": "الانطباع الأول يدوم! والعدل أساس التجارة."
+        },
+        {
+          "id": "m6_c3_push_profit",
+          "text": "يسعى لأقصى ربح",
+          "effects": { "money": 40, "trust": -8, "barakah": -5 },
+          "dinarReaction": "ربح سريع اليوم... لكن الزبون قد لا يعود غداً."
+        }
+      ]
+    },
+    {
+      "id": "m6_s4_hire",
+      "day": 3,
+      "text": "العمل يزداد! هل يستأجر درهمي مساعداً؟ أجرة المساعد 30 درهماً لكنه يساعد في التوسع.",
+      "choices": [
+        {
+          "id": "m6_c4_hire",
+          "text": "يستأجر صديقاً كمساعد",
+          "effects": { "money": -30, "trust": 10, "barakah": 8, "setFlag": "hired_friend" },
+          "dinarReaction": "العمل الجماعي يضاعف الإنتاج ويوزع البركة!"
+        },
+        {
+          "id": "m6_c4_solo",
+          "text": "يعمل وحده لتوفير الأجرة",
+          "effects": { "trust": 3 },
+          "dinarReaction": "العمل الفردي يوفر لكنه يحد النمو."
+        }
+      ]
+    },
+    {
+      "id": "m6_s5_supplier",
+      "day": 3,
+      "text": "مورد جديد يعرض بضاعة أرخص بـ 40% لكن مصدرها غير واضح. هل تقبل؟",
+      "choices": [
+        {
+          "id": "m6_c5_refuse",
+          "text": "يرفض ويحافظ على المورد الموثوق",
+          "effects": { "trust": 12, "barakah": 10, "setFlag": "ethical_sourcing" },
+          "dinarReaction": "الأمانة في المصدر أهم من الأمانة في البيع!"
+        },
+        {
+          "id": "m6_c5_accept",
+          "text": "يقبل العرض الرخيص",
+          "effects": { "money": 40, "trust": -15, "barakah": -20, "setFlag": "shady_sourcing" },
+          "dinarReaction": "المصدر المشبوه يفسد المنتج كله..."
+        }
+      ]
+    },
+    {
+      "id": "m6_s6_complaint",
+      "day": 4,
+      "condition": { "flag": "cheap_materials" },
+      "text": "زبون يشتكي: 'المنتج ليس كما وعدتني!' منتجات الرديئة تكشف نفسها.",
+      "choices": [
+        {
+          "id": "m6_c6_apologize",
+          "text": "يعتذر ويعيد المال كاملاً",
+          "effects": { "money": -30, "trust": 20, "barakah": 10, "setFlag": "handled_well" },
+          "dinarReaction": "الاعتذار الصادق يبني جسوراً جديدة!"
+        },
+        {
+          "id": "m6_c6_deny",
+          "text": "يتجاهل الشكوى",
+          "effects": { "trust": -25, "barakah": -10 },
+          "dinarReaction": "كل زبون غاضب هو دعاية سلبية متجولة."
+        }
+      ]
+    },
+    {
+      "id": "m6_s6b_good",
+      "day": 4,
+      "condition": { "flag": "quality_materials" },
+      "text": "تعليقات إيجابية تتوالى! زبائن سعداء يخبرون أصدقاءهم. السمعة تنمو.",
+      "choices": [
+        {
+          "id": "m6_c6b_thank",
+          "text": "يشكر زبائنه ويستمر",
+          "effects": { "trust": 10, "barakah": 5 },
+          "dinarReaction": "الشكر يبارك العمل!"
+        },
+        {
+          "id": "m6_c6b_loyalty",
+          "text": "يقدم خصومات للزبائن الدائمين",
+          "effects": { "money": -15, "trust": 12, "setFlag": "loyalty_discount" },
+          "dinarReaction": "الولاء يُبنى بالعطاء المستمر!"
+        }
+      ]
+    },
+    {
+      "id": "m6_s7_zakat",
+      "day": 4,
+      "text": "درهمي ربح جيداً. هل يخرج الزكاة؟ 2.5% من ربحه heißt حقه.",
+      "choices": [
+        {
+          "id": "m6_c7_zakat",
+          "text": "يخرج الزكاة كاملة",
+          "effects": { "money": -10, "barakah": 25, "trust": 10, "setFlag": "paid_business_zakat" },
+          "dinarReaction": "الزكاة تطهر المال وتنميه!"
+        },
+        {
+          "id": "m6_c7_delay",
+          "text": "يؤجل الزكاة",
+          "effects": { "barakah": -5 },
+          "dinarReaction": "التأجيل لا يلغي الحق..."
+        },
+        {
+          "id": "m6_c7_extra_sadaqah",
+          "text": "يتصدق بزيادة",
+          "effects": { "money": -50, "barakah": 30, "setFlag": "extra_sadaqah" },
+          "dinarReaction": "ما زدت في العطاء زاد في البركة!"
+        }
+      ]
+    },
+    {
+      "id": "m6_s8_expand",
+      "day": 5,
+      "text": "فرصة توسع! محل أكبر يكلف 120 درهماً. التوسع يعني زبائن أكثر لكن مخاطرة أكبر.",
+      "choices": [
+        {
+          "id": "m6_c8_expand",
+          "text": "يتوسع بحذر",
+          "effects": { "money": -120, "trust": 8, "setFlag": "expanded" },
+          "dinarReaction": "التوسع المدروس أفضل من التوسع المتهور!"
+        },
+        {
+          "id": "m6_c8_stay",
+          "text": "يبقى صغيراً ومستقراً",
+          "effects": { "trust": 3, "barakah": 3 },
+          "dinarReaction": "الصغيرة المستمرة خير من الكبيرة المتعثرة."
+        },
+        {
+          "id": "m6_c8_partner",
+          "text": "يشارك مع شخص آخر",
+          "effects": { "money": -60, "trust": 12, "setFlag": "partnered" },
+          "dinarReaction": "الشراكة توزع المخاطر وتزيد القوة!"
+        }
+      ]
+    },
+    {
+      "id": "m6_s9_emergency",
+      "day": 5,
+      "text": "طارئ! إصلاح معدات يكلف 40 درهماً. بدونها يتوقف العمل.",
+      "choices": [
+        {
+          "id": "m6_c9_repair",
+          "text": "يدفع للإصلاح فوراً",
+          "effects": { "money": -40, "trust": 5 },
+          "dinarReaction": "الصيانة السريعة تمنع كوارث أكبر!"
+        },
+        {
+          "id": "m6_c9_skip",
+          "text": "يستغني عن الإصلاح",
+          "effects": { "trust": -8, "barakah": -5, "setFlag": "neglected_maintenance" },
+          "dinarReaction": "إهمال الصيانة يكلف أكثر في النهاية."
+        }
+      ]
+    },
+    {
+      "id": "m6_s10_competitor",
+      "day": 6,
+      "text": "منافس يفتح بجانب درهمي وينسخ أفكاره! المنافسة شرسة.",
+      "choices": [
+        {
+          "id": "m6_c10_quality",
+          "text": "يحسّن الجودة والخدمة",
+          "effects": { "trust": 10, "setFlag": "quality_drive" },
+          "dinarReaction": "المنافسة تدفعك للأفضل!"
+        },
+        {
+          "id": "m6_c10_price_war",
+          "text": "يبدأ حرب أسعار",
+          "effects": { "money": -30, "trust": -5 },
+          "dinarReaction": "حرب الأسعار لا يربح فيها أحد..."
+        },
+        {
+          "id": "m6_c10_unique",
+          "text": "يضيف قيمة مميزة (خدمة توصيل مجانية)",
+          "effects": { "barakah": 10, "trust": 8, "setFlag": "unique_value" },
+          "dinarReaction": "التميز ليس في السعر فقط بل في القيمة!"
+        }
+      ]
+    },
+    {
+      "id": "m6_s11_big_order",
+      "day": 6,
+      "condition": { "trust": 55, "barakah": 40 },
+      "text": "عرض كبير! المؤسسة المحلية تطلب طلبية بقيمة 150 درهماً. فرصة ذهبية إذا استطاع درهمي الوفاء بها.",
+      "choices": [
+        {
+          "id": "m6_c11_fair_bulk",
+          "text": "يقبل بسعر عادل",
+          "effects": { "money": 150, "trust": 15, "barakah": 8 },
+          "dinarReaction": "العدل في البيع حتى مع الأوامر الكبيرة!"
+        },
+        {
+          "id": "m6_c11_share",
+          "text": "يقبل ويتبرع بجزء للمجتمع",
+          "effects": { "money": 120, "barakah": 15, "trust": 10, "setFlag": "shared_with_community" },
+          "dinarReaction": "الربح مع العطاء = بركة مضاعفة!"
+        }
+      ]
+    },
+    {
+      "id": "m6_s12_shady_offer",
+      "day": 6,
+      "condition": { "flag": "shady_sourcing" },
+      "text": "رجل يعرض شراء مخزونك بسعر أعلى من السوق... لكن المصدر غير واضح. هل تقبل؟",
+      "choices": [
+        {
+          "id": "m6_c12_refuse_shady",
+          "text": "يرفض العرض المشبوه",
+          "effects": { "trust": 15, "barakah": 20, "setFlag": "refused_shady_business" },
+          "dinarReaction": "المال الحلال أفضل وإن كان قليلاً!"
+        },
+        {
+          "id": "m6_c12_accept_shady",
+          "text": "يقبل للربح السريع",
+          "effects": { "money": 80, "trust": -20, "barakah": -25, "setFlag": "accepted_shady_business" },
+          "dinarReaction": "الربح المشبوه يأتي بكسر الخسارة..."
+        }
+      ]
+    },
+    {
+      "id": "m6_s13_evaluation",
+      "day": 7,
+      "text": "آخر يوم! درهمي يحسب أرباحه. هل كان نزيهاً في حسابه؟",
+      "choices": [
+        {
+          "id": "m6_c13_honest",
+          "text": "حساب صادق ومنضبط",
+          "effects": { "trust": 10, "setFlag": "honest_accounting" },
+          "dinarReaction": "الأمانة في المال والjualan أساس كل نجاح!"
+        },
+        {
+          "id": "m6_c13_round",
+          "text": "تقريب الأرقام 'لمصلحته'",
+          "effects": { "trust": -5 },
+          "dinarReaction": "التلاعب بالأرقام لا يمر unnoticed..."
+        }
+      ]
+    },
+    {
+      "id": "m6_s14_employees",
+      "day": 7,
+      "condition": { "flag": "hired_friend" },
+      "text": "درهمي يسأل نفسه: هل دفع لمساعديه وشركائه عادلاً؟",
+      "choices": [
+        {
+          "id": "m6_c14_fair_wages",
+          "text": "أجور عادلة مع مكافأة",
+          "effects": { "money": -30, "barakah": 15, "trust": 10, "setFlag": "fair_wages" },
+          "dinarReaction": "أجرة العامل حق لا يسقط!"
+        },
+        {
+          "id": "m6_c14_minimum",
+          "text": "الحد الأدنى فقط",
+          "effects": { "trust": -8, "barakah": -5 },
+          "dinarReaction": "الاقتصاد على أجور العمال ليس اقتصاداً حقيقياً."
+        }
+      ]
+    }
+  ],
+  "endings": [
+    {
+      "id": "thriving_business",
+      "condition": { "money": 400, "trust": 60, "barakah": 50 },
+      "title": "مشروع مزدهر!",
+      "description": "درهمي بنى مشروعاً على الأسس الصحيحة: أمانة + جودة + بركة. الثقة عالية والربح حلال والمستقبل واعد. هذا هو النجاح الحقيقي!",
+      "isGood": true,
+      "xpReward": 160
+    },
+    {
+      "id": "steady_profit",
+      "condition": { "trust": 45, "money": 300 },
+      "title": "ربح ثابت",
+      "description": "المشروع يعمل بشكل لائق. ليس الأفضل لكنه مستقر. درهمي تعلم دروساً قيمة عن التجارة والأمانة.",
+      "isGood": false,
+      "xpReward": 100
+    },
+    {
+      "id": "unethical_collapse",
+      "condition": { "flag": "accepted_shady_business" },
+      "title": "انهيار غير أخلاقي",
+      "description": "الاختصارات غير الأخلاقية أوصلت درهمي لمشاكل. الزبائن فقدوا الثقة والمشروع تراجع. لكنه يمكن أن يبدأ من جديد بطريقة أنظف.",
+      "isGood": false,
+      "xpReward": 20
+    },
+    {
+      "id": "incomplete",
+      "title": "حاول مرة أخرى",
+      "description": "المشروع لم يصل لمستوى جيد. رياادة الأعمال تحتاج صبراً وتعلماً مستمراً.",
+      "isGood": false,
+      "xpReward": 10
+    }
+  ],
+  "milestones": [
+    {
+      "id": "first_sale",
+      "condition": { "previousChoice": "m6_c3_fair" },
+      "xp": 15,
+      "label": "أول بيع عادل",
+      "once": true
+    },
+    {
+      "id": "ethical_sourcing",
+      "condition": { "flag": "ethical_sourcing" },
+      "xp": 20,
+      "label": "مصادر أخلاقية",
+      "once": true
+    },
+    {
+      "id": "business_zakat",
+      "condition": { "flag": "paid_business_zakat" },
+      "xp": 25,
+      "label": "زكاة التجارة",
+      "once": true
+    },
+    {
+      "id": "community_business",
+      "condition": { "flag": "shared_with_community" },
+      "xp": 20,
+      "label": "تجارة المجتمع",
+      "once": true
+    },
+    {
+      "id": "high_trust",
+      "condition": { "trust": 70 },
+      "xp": 30,
+      "label": "ثقة عالية",
+      "once": true
+    }
+  ]
+}

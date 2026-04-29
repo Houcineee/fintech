@@ -1,20 +1,16 @@
 import React from "react";
-import { StyleSheet, Text as RNText, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { NavigationContainer, DarkTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { HomeScreen } from "./src/screens/HomeScreen";
-import { ResultScreen } from "./src/screens/ResultScreen";
-import { SimulationScreen } from "./src/screens/SimulationScreen";
+import { StoryScreen } from "./src/screens/StoryScreen";
+import { EndScreen } from "./src/screens/EndScreen";
 import { colors } from "./src/theme/colors";
-import { RootStackParamList } from "./src/types/navigation";
 import { useAppFonts } from "./src/theme/typography";
-
-// Override default Text to always use Cairo font
 import { Text } from "./src/theme/typography";
-(RNText as any).defaultProps = (RNText as any).defaultProps || {};
-(RNText as any).defaultProps.style = { fontFamily: "Cairo_400Regular" };
+import { RootStackParamList } from "./src/types/navigation";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -68,8 +64,8 @@ function AppContent() {
         }}
       >
         <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Simulation" component={SimulationScreen} />
-        <Stack.Screen name="Results" component={ResultScreen} />
+        <Stack.Screen name="Story" component={StoryScreen} />
+        <Stack.Screen name="End" component={EndScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,0 +1,314 @@
+{
+  "id": "mission-2-seller",
+  "missionNumber": 2,
+  "title": "البائع الأمين",
+  "summary": "ابدأ متجر الليموناضة وتعلم كيف الصدق يبني الثقة والربح.",
+  "difficulty": "easy",
+  "roleTitle": "بائع ليموناضة شاب",
+  "roleStory": "درهمي يفتح متجراً صغيراً لليموناضة! معه 50 درهماً رأس مال. هل سيبني سمعة طيبة أم يسعى للربح السريع؟",
+  "initialMoney": 50,
+  "initialTrust": 20,
+  "initialBarakah": 20,
+  "goals": [
+    { "type": "money", "target": 200, "label": "اربح 200 دراهم" },
+    { "type": "trust", "target": 60, "label": "ابنِ ثقة الزبائن" }
+  ],
+  "rewardTitle": "شارة الأمانة في التجارة",
+  "rewardIcon": "storefront",
+  "scenes": [
+    {
+      "id": "m2_s1_setup",
+      "day": 1,
+      "text": "درهمي يريد فتح متجر ليموناضة! معه 50 درهماً رأس مال. ингредиенты الجيدة تكلف 30 درهماً والمستعملة 15 فقط. كيف يبدأ؟",
+      "choices": [
+        {
+          "id": "m2_c1_quality",
+          "text": "يشتري مكونات جيدة",
+          "effects": { "money": -30, "trust": 10, "setFlag": "quality_ingredients" },
+          "dinarReaction": "البداية الصحيحة تحتاج جودة! الزبائن سيلاحظون."
+        },
+        {
+          "id": "m2_c1_cheap",
+          "text": "يشتري مكونات رخيصة",
+          "effects": { "money": -15, "trust": -5, "setFlag": "cheap_ingredients" },
+          "dinarReaction": "وفرت مالاً... لكن هل سيلاحظ الزبونون الفرق؟"
+        }
+      ]
+    },
+    {
+      "id": "m2_s2_pricing",
+      "day": 1,
+      "text": "كم يبيع درهمي الكوب؟ السعر العادل 5 دراهم. السعر المرتفع 8. والسعر الخيّر 3 دراهم فقط.",
+      "choices": [
+        {
+          "id": "m2_c2_fair",
+          "text": "سعر عادل: 5 دراهم",
+          "effects": { "trust": 8, "setFlag": "fair_price" },
+          "dinarReaction": "العدل في السعر يبني الثقة من أول يوم."
+        },
+        {
+          "id": "m2_c2_high",
+          "text": "سعر مرتفع: 8 دراهم",
+          "effects": { "trust": -5, "money": 30 },
+          "dinarReaction": "ربح سريع... لكن هل سيعود الزبون؟"
+        },
+        {
+          "id": "m2_c2_generous",
+          "text": "سعر خيّر: 3 دراهم",
+          "effects": { "trust": 5, "barakah": 8, "setFlag": "generous_price" },
+          "dinarReaction": "السعر المنخفض يجذب الجميع! لكن هل يكفي لتغطية التكاليف؟"
+        }
+      ]
+    },
+    {
+      "id": "m2_s3_first_customer",
+      "day": 2,
+      "text": "أول زبون! طفل يريد كوب ليموناضة. كيف يستقبله درهمي؟",
+      "choices": [
+        {
+          "id": "m2_c3_warm",
+          "text": "يرحب بحرارة ويبتسم",
+          "effects": { "trust": 8, "barakah": 5 },
+          "dinarReaction": "الابتسامة أول خطوة في التجارة الناجحة!"
+        },
+        {
+          "id": "m2_c3_quick",
+          "text": "معاملة سريعة فقط",
+          "effects": { "trust": 3 },
+          "dinarReaction": "البيع تم... لكن لم يبق انطباع خاص."
+        }
+      ]
+    },
+    {
+      "id": "m2_s4_complaint",
+      "day": 3,
+      "condition": { "flag": "cheap_ingredients" },
+      "text": "زبون يشتكي: 'الليموناضة طعمها غريب!' يبدو أن المكونات الرخيصة أثرت على الجودة. كيف يتعامل درهمي مع الشكوى؟",
+      "choices": [
+        {
+          "id": "m2_c4_apologize_refund",
+          "text": "يعتذر ويعيد المال",
+          "effects": { "money": -10, "trust": 15, "barakah": 10, "setFlag": "handled_complaint" },
+          "dinarReaction": "الاعتذار يبني الثقة أكثر من أي شيء!"
+        },
+        {
+          "id": "m2_c4_dismiss",
+          "text": "يتجاهل الشكوى",
+          "effects": { "trust": -20, "setFlag": "ignored_complaint" },
+          "dinarReaction": "كل زبون ساخط هو إعلان سلبي متجول..."
+        }
+      ]
+    },
+    {
+      "id": "m2_s4b_good_review",
+      "day": 3,
+      "condition": { "flag": "quality_ingredients" },
+      "text": "زبون سعيد يقول: 'أفضل ليموناضة في الحي!' ويخبر صديقين عن المتجر. سمعة جيدة تنتشر بسرعة!",
+      "choices": [
+        {
+          "id": "m2_c4b_thank",
+          "text": "يشكره ويستمر بالعمل",
+          "effects": { "trust": 10, "barakah": 5 },
+          "dinarReaction": "الكلمة الطيبة أفضل إعلان!"
+        },
+        {
+          "id": "m2_c4b_discount",
+          "text": "يعرض خصماً لمن يحضر صديقاً",
+          "effects": { "money": -5, "trust": 15, "setFlag": "loyalty_program" },
+          "dinarReaction": "برنامج ولاء ذكي! الزبون يجلب زبوناً."
+        }
+      ]
+    },
+    {
+      "id": "m2_s5_bad_supplier",
+      "day": 4,
+      "text": "مورد جديد يقترح مكونات أرخص بـ 40% لكن مذاقها أقل جودة. التوفير مغرٍ لكن...",
+      "choices": [
+        {
+          "id": "m2_c5_accept_cheap",
+          "text": "يقبل العرض الرخيص",
+          "effects": { "money": 20, "trust": -15, "barakah": -10, "setFlag": "compromised_quality" },
+          "dinarReaction": "ربح آني... لكن الجودة هي ما يبقي الزبائن."
+        },
+        {
+          "id": "m2_c5_refuse",
+          "text": "يرفض ويحافظ على الجودة",
+          "effects": { "trust": 12, "barakah": 8, "setFlag": "maintained_quality" },
+          "dinarReaction": "الجودة = ثقة = زبائن = ربح مستمر!"
+        }
+      ]
+    },
+    {
+      "id": "m2_s6_competitor",
+      "day": 5,
+      "text": "فتح متجر ليموناضة جديد بجانب درهمي! يبيع بسعر أقل. المنافسة شرسة.",
+      "choices": [
+        {
+          "id": "m2_c6_improve",
+          "text": "يحسّن وصفته ويضيف نكهة مميزة",
+          "effects": { "money": -15, "trust": 10, "setFlag": "improved_recipe" },
+          "dinarReaction": "التطوير المستمر يجعلك مختلفاً عن البقية!"
+        },
+        {
+          "id": "m2_c6_lower_price",
+          "text": "يخفض السعر لينافس",
+          "effects": { "money": -10, "trust": 3 },
+          "dinarReaction": "حرب الأسعار لا يربح فيها أحد..."
+        },
+        {
+          "id": "m2_c6_add_mint",
+          "text": "يضيف نعناع مجاني لكل كوب",
+          "effects": { "barakah": 10, "trust": 8, "setFlag": "added_mint" },
+          "dinarReaction": "لمسة بسيطة تصنع فرقاً كبيراً!"
+        }
+      ]
+    },
+    {
+      "id": "m2_s7_bulk_order",
+      "day": 5,
+      "condition": { "trust": 40 },
+      "text": "مدرسة الحي تطلب 40 كوب ليموناضة لحفلة! فرصة كبيرة لدرهمي لكنها تحتاج ثقة.",
+      "choices": [
+        {
+          "id": "m2_c7_fair_bulk",
+          "text": "يقبل بسعر عادل",
+          "effects": { "money": 80, "trust": 15, "barakah": 8 },
+          "dinarReaction": "العدل في البيع يبني سمعة ذهبية!"
+        },
+        {
+          "id": "m2_c7_overprice",
+          "text": "يرفع السعر لأنهم محتاجون",
+          "effects": { "money": 120, "trust": -20, "barakah": -10 },
+          "dinarReaction": "استغلال الحاجة يجلب مالاً سريعاً لكن يخسر الثقة."
+        }
+      ]
+    },
+    {
+      "id": "m2_s8_honest_mistake",
+      "day": 6,
+      "text": "درهمي اكتشف أنه أعطى زبوناً 5 دراهم زيادة بالخطأ! الرجل لم يلاحظ. ماذا يفعل؟",
+      "choices": [
+        {
+          "id": "m2_c8_return_money",
+          "text": "يرجع المال فوراً",
+          "effects": { "money": -5, "trust": 20, "barakah": 15, "setFlag": "honest_return" },
+          "dinarReaction": "الأمانة في التجارة أهم من أي ربح!"
+        },
+        {
+          "id": "m2_c8_keep_quiet",
+          "text": "يسكت ويحتفظ بالمال",
+          "effects": { "money": 5, "trust": -25, "barakah": -15 },
+          "dinarReaction": "5 دراهم الآن... لكن كم تساوي الثقة المفقودة؟"
+        }
+      ]
+    },
+    {
+      "id": "m2_s9_community_respect",
+      "day": 6,
+      "condition": { "flag": "honest_return" },
+      "text": "الجيران يتحدثون بإعجاب عن متجر درهمي! 'هذا الصبي أمين لا يغش.' زبائن جدد يأتون كل يوم. السمعة تنتشر كالنار!",
+      "choices": [
+        {
+          "id": "m2_c9_celebrate",
+          "text": "يحتفل ويعطي عينات مجانية",
+          "effects": { "money": -10, "trust": 10, "barakah": 12 },
+          "dinarReaction": "العطاء يزيد الكرم! والسمعة الطيبة أفضل رأس مال."
+        },
+        {
+          "id": "m2_c9_thank_work",
+          "text": "يشكر الله ويستمر بالعمل",
+          "effects": { "trust": 8, "barakah": 5 },
+          "dinarReaction": "الشكر يبارك العمل!"
+        }
+      ]
+    },
+    {
+      "id": "m2_s10_final",
+      "day": 7,
+      "text": "آخر يوم! درهمي يحسب أرباحه. هل المتجر سيستمر؟ ذلك يعتمد على ما بناه: الثقة أم المال السريع؟",
+      "choices": [
+        {
+          "id": "m2_c10_invest",
+          "text": "يستثمر في معدات أفضل",
+          "effects": { "money": -40, "trust": 12, "setFlag": "invested_in_business" },
+          "dinarReaction": "الاستثمار في الجودة استثمار في المستقبل!"
+        },
+        {
+          "id": "m2_c10_save",
+          "text": "يدخر كل شيء",
+          "effects": { "trust": 3 },
+          "dinarReaction": "الادخار مهم... لكن هل المتجر سيكبر؟"
+        },
+        {
+          "id": "m2_c10_share_profits",
+          "text": "يشارك الأرباح مع من ساعده",
+          "effects": { "money": -20, "barakah": 15, "trust": 10, "setFlag": "shared_profits" },
+          "dinarReaction": "العطاء يعود أضعافاً!"
+        }
+      ]
+    }
+  ],
+  "endings": [
+    {
+      "id": "trusted_seller",
+      "condition": { "trust": 60, "money": 200 },
+      "title": "المتجر الموثوق!",
+      "description": "درهمي بنى متجراً على أساس الثقة والأمانة! الزبائن يعودون والسمعة تتحدث عن نفسها. الربح الحلال أبطأ لكنه أبقى.",
+      "isGood": true,
+      "xpReward": 120
+    },
+    {
+      "id": "steady_business",
+      "condition": { "trust": 40, "money": 150 },
+      "title": "عمل مستقر",
+      "description": "المتجر يعمل بشكل لائق. ليس الأفضل لكنه مستمر. درهمي تعلم أن الصبر على القليل خير من الكثير الحرام.",
+      "isGood": false,
+      "xpReward": 80
+    },
+    {
+      "id": "collapsed",
+      "condition": { "trustBelow": 25 },
+      "title": "خسارة الثقة",
+      "description": "الزبائن لم يعودوا يأتون. سمعة المتجر تأثرت بالقرارات المتسرعة. لكن كل فشل هو درس! هل سيبني بشكل مختلف المرة القادمة؟",
+      "isGood": false,
+      "xpReward": 20
+    },
+    {
+      "id": "incomplete",
+      "title": "حاول مرة أخرى",
+      "description": "المتجر لم يصل بعد لمستوى جيد. درهمي يحتاج لإعادة المحاولة مع دروس جديدة.",
+      "isGood": false,
+      "xpReward": 10
+    }
+  ],
+  "milestones": [
+    {
+      "id": "first_sale",
+      "condition": { "previousChoice": "m2_c3_warm" },
+      "xp": 15,
+      "label": "أول بيع!",
+      "once": true
+    },
+    {
+      "id": "honest_trader",
+      "condition": { "flag": "honest_return" },
+      "xp": 25,
+      "label": "تاجر أمين",
+      "once": true
+    },
+    {
+      "id": "quality_keeper",
+      "condition": { "flag": "maintained_quality" },
+      "xp": 20,
+      "label": "حافظ على الجودة",
+      "once": true
+    },
+    {
+      "id": "community_trust",
+      "condition": { "trust": 60 },
+      "xp": 30,
+      "label": "ثقة المجتمع",
+      "once": true
+    }
+  ]
+}

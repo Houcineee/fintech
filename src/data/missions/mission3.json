@@ -1,0 +1,355 @@
+{
+  "id": "mission-3-riba",
+  "missionNumber": 3,
+  "title": "فخ المال السريع",
+  "summary": "درهمي يحتاج المال بسرعة. هل سيختار الطريق السليم أم المعاملة المشبوهة؟",
+  "difficulty": "medium",
+  "roleTitle": "طفل في ورطة مالية",
+  "roleStory": "أم درهمي مريضة وتحتاج 200 درهم للعلاج. معه فقط 30. شخص يعرض عليه 100 تصبح 150 غداً — لكن هل هذا حلال؟",
+  "initialMoney": 30,
+  "initialTrust": 25,
+  "initialBarakah": 15,
+  "goals": [
+    { "type": "money", "target": 200, "label": "اجمع 200 درهم لعلاج الأم" },
+    { "type": "barakah", "target": 40, "label": "حافظ على البركة في مالك" }
+  ],
+  "rewardTitle": "شارة الكسب الطيب",
+  "rewardIcon": "shield-checkmark",
+  "scenes": [
+    {
+      "id": "m3_s1_urgent",
+      "day": 1,
+      "text": "أم درهمي مريضة والعلاج يكلف 200 درهم. معه فقط 30 درهماً. الأجل ضيق والقلق شديد. كيف يبدأ؟",
+      "choices": [
+        {
+          "id": "m3_c1_seek_halal",
+          "text": "يبحث عن عمل حلال",
+          "effects": { "trust": 8, "setFlag": "seeking_halal" },
+          "dinarReaction": "الطريق الصحيح قد يكون أبطأ لكنه أوثق."
+        },
+        {
+          "id": "m3_c1_ask_family",
+          "text": "يطلب المساعدة من العائلة",
+          "effects": { "trust": 5, "setFlag": "family_support" },
+          "dinarReaction": "الاستعانة بالعائلة ليست عيباً!"
+        },
+        {
+          "id": "m3_c1_panic",
+          "text": "يصاب بالهلع ولا يعرف ماذا يفعل",
+          "effects": { "trust": -5 },
+          "dinarReaction": "الهدوء أول خطوة لحل أي مشكلة..."
+        }
+      ]
+    },
+    {
+      "id": "m3_s2_riba_offer",
+      "day": 2,
+      "text": "رجل يقترب من درهمي: 'أعطيك 100 درهم وتعيدها 150 غداً! طريقة سريعة ومضمونة!' عرض مغرٍ لكنه مشبوه — هذا ربا.",
+      "choices": [
+        {
+          "id": "m3_c2_accept_riba",
+          "text": "يقبل العرض السريع",
+          "effects": { "money": 100, "trust": -20, "barakah": -30, "setFlag": "took_riba" },
+          "dinarReaction": "المال جاء سريعاً... لكن المال المشبوه لا بركة فيه."
+        },
+        {
+          "id": "m3_c2_refuse_riba",
+          "text": "يرفض بحزم",
+          "effects": { "trust": 15, "barakah": 20, "setFlag": "refused_riba" },
+          "dinarReaction": "الطريق الصعب هو الطريق الصحيح!"
+        },
+        {
+          "id": "m3_c2_think",
+          "text": "يطلب وقتاً للتفكير",
+          "effects": { "trust": 5 },
+          "dinarReaction": "لا بأس بالتفكير... لكن الحقيقة واضحة."
+        }
+      ]
+    },
+    {
+      "id": "m3_s3_friend_advice",
+      "day": 2,
+      "text": "صديقك نصار ينبهك: 'هذا ربا! المال السريع يأتي بندم. لا تفعلها.' هل تستمع للنصيحة؟",
+      "choices": [
+        {
+          "id": "m3_c3_listen",
+          "text": "يستمع ويرفض أي عرض مشبوه",
+          "effects": { "trust": 10, "barakah": 10, "setFlag": "listened_to_friend" },
+          "dinarReaction": "الصديق الناصح كالمرآة يريك الحقيقة."
+        },
+        {
+          "id": "m3_c3_urgent",
+          "text": "'لكنني أحتاج المال بإلحاح!'",
+          "effects": { "barakah": -5 },
+          "dinarReaction": "الإلحاح لا يبرر الحرام."
+        }
+      ]
+    },
+    {
+      "id": "m3_s4_halal_work",
+      "day": 3,
+      "condition": { "flag": "seeking_halal" },
+      "text": "درهمي وجد عملاً حلالاً: مساعدة في مطبخ مطعم المحلة. العمل الشريف يدفع 60 درهماً في اليوم. ليس سريعاً لكنه نظيف.",
+      "choices": [
+        {
+          "id": "m3_c4_work_honorable",
+          "text": "يعمل بجد ويكسب 60 درهماً",
+          "effects": { "money": 60, "trust": 12, "barakah": 15, "setFlag": "halal_earning" },
+          "dinarReaction": "العمل الحلال فيه بركة حتى لو كان بطيئاً!"
+        },
+        {
+          "id": "m3_c4_negotiate",
+          "text": "يتفاوض على 80 درهماً مقابل عمل إضافي",
+          "effects": { "money": 80, "trust": 5, "barakah": 10, "setFlag": "halal_earning" },
+          "dinarReaction": "المبادرة في العمل تفتح أبواباً!"
+        }
+      ]
+    },
+    {
+      "id": "m3_s5_riba_consequence",
+      "day": 3,
+      "condition": { "flag": "took_riba" },
+      "text": "المُقرض يعود يطالب بـ 150 درهماً! 'الدفع غداً أو العواقب كبيرة.' درهمي خائف ومضغوط. الربا أكل ماله。",
+      "choices": [
+        {
+          "id": "m3_c5_pay_debt",
+          "text": "يدفع الـ 150 درهماً",
+          "effects": { "money": -150, "trust": -10, "barakah": -10, "setFlag": "paid_riba_debt" },
+          "dinarReaction": "خسرت أكثر مما ربحت. هذا هو الربا."
+        },
+        {
+          "id": "m3_c5_extension",
+          "text": "يطلب مهلة إضافية",
+          "effects": { "trust": -15, "barakah": -5, "setFlag": "riba_extension" },
+          "dinarReaction": "المهلة لا تنهي المشكلة... تزيد الدين!"
+        }
+      ]
+    },
+    {
+      "id": "m3_s6_books",
+      "day": 4,
+      "text": "فرصة أخرى: بيع كتب قديمة في السوق. الكتب بقيمة 40 درهماً. كيف يبيعها؟",
+      "choices": [
+        {
+          "id": "m3_c6_fair_price",
+          "text": "يبيع بسعر عادل: 40 درهماً",
+          "effects": { "money": 40, "trust": 8, "barakah": 5 },
+          "dinarReaction": "العدل في البيع يجلب الزبائن مرات ومرات."
+        },
+        {
+          "id": "m3_c6_inflate",
+          "text": "يرفع السعر إلى 70 درهماً",
+          "effects": { "money": 70, "trust": -10, "barakah": -8, "setFlag": "overpriced_books" },
+          "dinarReaction": "ربح أكثر لكن هل سيعود المشتري؟"
+        },
+        {
+          "id": "m3_c6_donate",
+          "text": "يتبرع بالكتب للمكتبة المجانية",
+          "effects": { "barakah": 20, "trust": 5, "setFlag": "donated_books" },
+          "dinarReaction": "العلم صدقة جارية! والبركة في العطاء لا في الحبس."
+        }
+      ]
+    },
+    {
+      "id": "m3_s7_stress",
+      "day": 4,
+      "condition": { "flag": "took_riba" },
+      "text": "درهمي لا يستطيع النوم. الهم يطارده. الدين فوق رأسه والخوف يملأ قلبه. هل يطلب المساعدة؟",
+      "choices": [
+        {
+          "id": "m3_c7_tell_parent",
+          "text": "يخبر والده بالحقيقة",
+          "effects": { "trust": 15, "barakah": 10, "setFlag": "told_parent" },
+          "dinarReaction": "الاعتراف أول خطوة للتخلص من الهم. والداك سيفهما!"
+        },
+        {
+          "id": "m3_c7_hide",
+          "text": "يخفي الموضوع",
+          "effects": { "trust": -10, "barakah": -10 },
+          "dinarReaction": "الهم المخفي ينمو... لا تحمل المشكلة وحدك."
+        }
+      ]
+    },
+    {
+      "id": "m3_s8_second_riba",
+      "day": 5,
+      "condition": { "flag": "took_riba" },
+      "text": "نفس المُقرض يعود: 'خذ 200 درهم وأعطني 300 بعد أسبوع!' هذا الفخ أكبر من الأول.",
+      "choices": [
+        {
+          "id": "m3_c8_refuse_definitive",
+          "text": "يرفض نهائياً ولن يعود",
+          "effects": { "trust": 20, "barakah": 25, "setFlag": "final_refused_riba" },
+          "dinarReaction": "أخيراً! التوقف عن الربا هو البداية الحقيقية."
+        },
+        {
+          "id": "m3_c8_accept_deeper",
+          "text": "يقبل مرة أخرى",
+          "effects": { "money": 200, "trust": -30, "barakah": -40, "setFlag": "deeper_riba" },
+          "dinarReaction": "الفخ يكبر... والخروج أصبح أصعب."
+        }
+      ]
+    },
+    {
+      "id": "m3_s9_community_help",
+      "day": 5,
+      "condition": { "flag": "refused_riba" },
+      "text": "الجيران سمعوا بظروف درهمي! تبرعوا 50 درهماً لمساعدته. البركة تأتي من حيث لا تحتسب.",
+      "choices": [
+        {
+          "id": "m3_c9_accept_gratefully",
+          "text": "يقبل بامتنان",
+          "effects": { "money": 50, "trust": 10, "barakah": 15, "setFlag": "community_helped" },
+          "dinarReaction": "البركة في الناس الطيبين حولك!"
+        },
+        {
+          "id": "m3_c9_give_away",
+          "text": "يقترح إعطاءها لمحتاج أكثر",
+          "effects": { "barakah": 20, "setFlag": "selfless_donor" },
+          "dinarReaction": "العطاء في وقت الضيق أعظم أنواع الكرم!"
+        }
+      ]
+    },
+    {
+      "id": "m3_s10_transport",
+      "day": 5,
+      "text": "المواصلات لعيادة الأم تكلف 30 درهماً. المشي ممكن لكنه متعب ويأخذ وقتاً.",
+      "choices": [
+        {
+          "id": "m3_c10_pay_transport",
+          "text": "يدفع المواصلات",
+          "effects": { "money": -30, "trust": 5 },
+          "dinarReaction": "الوصول بأمان يستحق الثمن."
+        },
+        {
+          "id": "m3_c10_walk",
+          "text": "يمشي ويوفر المال",
+          "effects": { "trust": 3, "barakah": 5, "setFlag": "walked_to_doctor" },
+          "dinarReaction": "الصبر والجهد يباركهما الله."
+        }
+      ]
+    },
+    {
+      "id": "m3_s11_halal_growth",
+      "day": 6,
+      "condition": { "flag": "halal_earning" },
+      "text": "درهمي استمر في العمل الحلال! ربحه يزيد كل يوم. المطعم يعرض عليه دواماً ثابتاً. الطريق البطيء أثبت أنه الأقوى.",
+      "choices": [
+        {
+          "id": "m3_c11_steady",
+          "text": "يستمر بالعمل المنتظم",
+          "effects": { "money": 50, "trust": 15, "barakah": 10, "setFlag": "steady_halal_growth" },
+          "dinarReaction": "الاستمرارية هي سر النجاح الحقيقي!"
+        }
+      ]
+    },
+    {
+      "id": "m3_s11b_riba_collapse",
+      "day": 6,
+      "condition": { "flag": "deeper_riba" },
+      "text": "المُقرض يطالب بـ 300 درهم! درهمي خسر كل شيء تقريباً. الربا أكل ماله وهدّ أمانه.",
+      "choices": [
+        {
+          "id": "m3_c11b_ask_help",
+          "text": "يطلب مساعدة من شخص موثوق",
+          "effects": { "trust": 5, "barakah": 10, "setFlag": "asked_help_after_riba" },
+          "dinarReaction": "الخروج من الفخ ممكن... لكن بالاستعانة بالله ومشورة الناس."
+        },
+        {
+          "id": "m3_c11b_sell_everything",
+          "text": "يبيع ما يملك ليرد الدين",
+          "effects": { "money": -80, "trust": -20, "barakah": -15 },
+          "dinarReaction": "الخسارة كبيرة... لكنها درس لا ينسى."
+        }
+      ]
+    },
+    {
+      "id": "m3_s12_final_treatment",
+      "day": 7,
+      "text": "اليوم الحاسم! درهمي يقف أمام عيادة الطبيب. هل جمع ما يكفي لعلاج أمه؟",
+      "choices": [
+        {
+          "id": "m3_c12_pay_treatment",
+          "text": "يدفع للعلاج",
+          "effects": { "money": -200, "trust": 20, "barakah": 15, "setFlag": "paid_treatment" },
+          "dinarReaction": "العلاج أهم من أي شيء! أمك تستحق كل جهد."
+        },
+        {
+          "id": "m3_c12_partial",
+          "text": "يدفع ما يستطيع ويطلب تقسيط الباقي",
+          "effects": { "money": -100, "trust": 8, "barakah": 5 },
+          "dinarReaction": "كل ما تستطيعه يكفي كخطوة أولى."
+        },
+        {
+          "id": "m3_c12_cant_pay",
+          "text": "يكتشف أنه لا يملك ما يكفي",
+          "effects": { "trust": -10, "barakah": -5 },
+          "dinarReaction": "ليس كل ما نتمناه يتحقق... لكن المحاولة لا تتوقف."
+        }
+      ]
+    }
+  ],
+  "endings": [
+    {
+      "id": "halal_cure",
+      "condition": { "flag": "paid_treatment", "barakah": 40 },
+      "title": "الطريق الحلال أوصل!",
+      "description": "درهمي عالج أمه بالكسب الحلال! الطريق كان أطول لكنه كان مباركاً. أمه شفيت والبركة في ماله ظهرت.",
+      "isGood": true,
+      "xpReward": 130
+    },
+    {
+      "id": "halal_partial",
+      "condition": { "flag": "halal_earning", "money": 150 },
+      "title": "تقدم بطيء لكن سليم",
+      "description": "درهمي سلك طريق الحلال وجمع مبلغاً معقولاً. ليس كل ما يحتاجه لكنه كان نظيفاً وسليماً. المحاولة مستمرة.",
+      "isGood": false,
+      "xpReward": 80
+    },
+    {
+      "id": "riba_trap",
+      "condition": { "flag": "took_riba" },
+      "title": "فخ الربا",
+      "description": "المال السريع كلف درهمي أكثر مما ربح. الربا أكله ولم يبق منه شيئاً مباركاً. لكن الدرس كان قاسياً وواضحاً.",
+      "isGood": false,
+      "xpReward": 15
+    },
+    {
+      "id": "incomplete",
+      "title": "حاول مرة أخرى",
+      "description": "درهمي لم يصل للهدف بعد. لكن كل محاولة تقربه منه أكثر.",
+      "isGood": false,
+      "xpReward": 10
+    }
+  ],
+  "milestones": [
+    {
+      "id": "refused_riba",
+      "condition": { "flag": "refused_riba" },
+      "xp": 25,
+      "label": "مقاومة الربا",
+      "once": true
+    },
+    {
+      "id": "halal_earner",
+      "condition": { "flag": "halal_earning" },
+      "xp": 20,
+      "label": "كسب حلال",
+      "once": true
+    },
+    {
+      "id": "high_barakah",
+      "condition": { "barakah": 50 },
+      "xp": 30,
+      "label": "بركة عالية",
+      "once": true
+    },
+    {
+      "id": "told_someone",
+      "condition": { "flag": "told_parent" },
+      "xp": 15,
+      "label": "طلب المشورة",
+      "once": true
+    }
+  ]
+}

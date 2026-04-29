@@ -1,0 +1,357 @@
+{
+  "id": "mission-4-amanah",
+  "missionNumber": 4,
+  "title": "الأمانة والثقة",
+  "summary": "خالك أسندك 500 درهم لتحفظها. هل ستسلم في الأمانة؟",
+  "difficulty": "medium",
+  "roleTitle": "مأمون على مال الغير",
+  "roleStory": "خالك يسافر ويترك عندك 500 درهم لل حفظها حتى يعود. هل ستقاوم إغراء استخدامها؟",
+  "initialMoney": 80,
+  "initialTrust": 40,
+  "initialBarakah": 30,
+  "goals": [
+    { "type": "trust", "target": 70, "label": "حافظ على الثقة" },
+    { "type": "flag", "flagId": "returned_full", "label": "أعد المال كاملاً" }
+  ],
+  "rewardTitle": "شارة الأمانة",
+  "rewardIcon": "lock-closed",
+  "scenes": [
+    {
+      "id": "m4_s1_entrusted",
+      "day": 1,
+      "text": "خالك يعطيك 500 درهم: 'احفظها لي حتى أعود من السفر. أثق فيك.' هل تتقبل هذه الأمانة؟",
+      "choices": [
+        {
+          "id": "m4_c1_accept_determined",
+          "text": "يقبل بعزم: 'لن أخذب ثقتك!'",
+          "effects": { "trust": 10, "setFlag": "accepted_amanah" },
+          "dinarReaction": "الأمانة ثقيلة لكنها رفيعة القدر عند الله."
+        },
+        {
+          "id": "m4_c1_accept_nervous",
+          "text": "يقبل بتردد",
+          "effects": { "trust": 5 },
+          "dinarReaction": "التردد طبيعي... لكن العزيمة تأتي بالممارسة."
+        },
+        {
+          "id": "m4_c1_decline",
+          "text": "يحاول الاعتذار خوفاً من المسؤولية",
+          "effects": { "trust": -5, "setFlag": "declined_amanah" },
+          "dinarReaction": "الهرب من المسؤولية لا يعلم الصبر."
+        }
+      ]
+    },
+    {
+      "id": "m4_s2_personal_need",
+      "day": 2,
+      "text": "درهمي يحتاج 50 درهماً لأمر مهم شخصياً. المال الأمين أمامه... لا أحد سيعرف.",
+      "choices": [
+        {
+          "id": "m4_c2_own_money",
+          "text": "يستخدم ماله الشخصي فقط",
+          "effects": { "money": -50, "trust": 10 },
+          "dinarReaction": "الحدود واضحة: مال الأمانة لا يُمس!"
+        },
+        {
+          "id": "m4_c2_borrow_amanah",
+          "text": "يستعير من الأمانة 'مؤقتاً'",
+          "effects": { "money": 50, "trust": -15, "barakah": -20, "setFlag": "used_amanah_partial" },
+          "dinarReaction": "'مؤقتاً'... هكذا تبدأ خيانة الأمانة دائماً."
+        },
+        {
+          "id": "m4_c2_find_another_way",
+          "text": "يبحث عن طريقة أخرى",
+          "effects": { "trust": 8, "barakah": 5 },
+          "dinarReaction": "حيث يوجد إصرار، يوجد طريق!"
+        }
+      ]
+    },
+    {
+      "id": "m4_s3_peer_pressure",
+      "day": 3,
+      "text": "صديقك يهمس: 'خد قليل وسنعيده. لن يعرف أحد!' الإغراء قوي خاصة أن المال أمامك.",
+      "choices": [
+        {
+          "id": "m4_c3_refuse_peer",
+          "text": "'لا، هذا أمانة!'",
+          "effects": { "trust": 20, "barakah": 15, "setFlag": "refused_peer_pressure" },
+          "dinarReaction": "الموقف القوي في وجه الإغراء هو القوة الحقيقية!"
+        },
+        {
+          "id": "m4_c3_take_little",
+          "text": "ربما قليلاً فقط...",
+          "effects": { "money": 30, "trust": -10, "barakah": -10, "setFlag": "used_amanah_small" },
+          "dinarReaction": "القليل يكبر... والخطوة الأولى في الأمانة هي الأخطر."
+        },
+        {
+          "id": "m4_c3_tell_parent",
+          "text": "يخبر والده عن الإغراء",
+          "effects": { "trust": 15, "barakah": 10, "setFlag": "told_parent" },
+          "dinarReaction": "المشورة تحمي من الزلة!"
+        }
+      ]
+    },
+    {
+      "id": "m4_s4_emergency",
+      "day": 3,
+      "text": "أخوك الصغير يحتاج دواءً بتكلفة 40 درهماً وليس لديه أحد غيرك. لكن مالك الشخصي لا يكفي.",
+      "choices": [
+        {
+          "id": "m4_c4_pay_own",
+          "text": "يدفع من جيبه الشخصي",
+          "effects": { "money": -40, "trust": 12, "barakah": 10, "setFlag": "helped_from_own" },
+          "dinarReaction": "العطاء من جيبك أفضل من الأخذ من أمانة غيرك!"
+        },
+        {
+          "id": "m4_c4_use_amanah",
+          "text": "يستخدم مال الأمانة للضرورة",
+          "effects": { "money": -40, "trust": -15, "barakah": -8, "setFlag": "used_amanah_emergency" },
+          "dinarReaction": "حتى الضرورة لا تبرر مس الأمانة."
+        },
+        {
+          "id": "m4_c4_ask_adult",
+          "text": "يطلب المساعدة من شخص بالغ",
+          "effects": { "trust": 8, "barakah": 5 },
+          "dinarReaction": "طلب المساعدة نضج وليس ضعفاً."
+        }
+      ]
+    },
+    {
+      "id": "m4_s5_justification",
+      "day": 4,
+      "condition": { "flag": "used_amanah_partial" },
+      "text": "درهمي يبرر لنفسه: 'أنا فقط أستعيره وسأعيده...' هذا التفكير خطير. كيف يتصرف الآن؟",
+      "choices": [
+        {
+          "id": "m4_c5_return_now",
+          "text": "يقرر إعادة كل ما أخذه فوراً",
+          "effects": { "money": -50, "trust": 10, "barakah": 10, "setFlag": "decided_to_return" },
+          "dinarReaction": "التدارك سريعاً أفضل من الاستمرار في الخطأ!"
+        },
+        {
+          "id": "m4_c5_take_more",
+          "text": "يستأنف الأخذ... 'سأعيده كلما استطعت'",
+          "effects": { "money": 30, "trust": -20, "barakah": -15, "setFlag": "used_more_amanah" },
+          "dinarReaction": "كل مرة تسهّل التالية... هذا منحدر خطير."
+        }
+      ]
+    },
+    {
+      "id": "m4_s6_resistance",
+      "day": 4,
+      "condition": { "flag": "refused_peer_pressure" },
+      "text": "درهمي لم يمس مال الأمانة أبداً! يشعر بالفخر لكن الصبر ليس سهلاً. كيف يقوي عزيمته؟",
+      "choices": [
+        {
+          "id": "m4_c6_remind_trust",
+          "text": "يتذكر ثقة خاله ويشعر بالمسؤولية",
+          "effects": { "trust": 15, "barakah": 10, "setFlag": "stayed_strong" },
+          "dinarReaction": "الثقة أمانة والله حافظها!"
+        },
+        {
+          "id": "m4_c6_check_safe",
+          "text": "يتأكد أن المال في مكان آمن",
+          "effects": { "trust": 5 },
+          "dinarReaction": "الحفظ العملي جزء من الأمانة."
+        }
+      ]
+    },
+    {
+      "id": "m4_s7_charity_night",
+      "day": 5,
+      "text": "جمعية خيرية تطلب تبرعاً. درهمي عنده 500 درهم — لكنها ليست له! هل يتصدق من جيبه أم يمتنع؟",
+      "choices": [
+        {
+          "id": "m4_c7_give_own",
+          "text": "يتصدق من ماله الشخصي — 20 درهماً",
+          "effects": { "money": -20, "barakah": 15, "trust": 8 },
+          "dinarReaction": "العطاء من جيبك أجره مضاعف!"
+        },
+        {
+          "id": "m4_c7_nothing_left",
+          "text": "لا يملك من ماله ليتصدق",
+          "effects": { "barakah": 5 },
+          "dinarReaction": "نية العطاء تُحسب حتى ولو لم تجد ما تعطي."
+        },
+        {
+          "id": "m4_c7_take_from_amanah",
+          "text": "يتصدق من مال الأمانة 'لله'",
+          "effects": { "money": -50, "trust": -25, "barakah": -20, "setFlag": "used_amanah_charity" },
+          "dinarReaction": "حتى النية الحسنة لا تبرر أخذ ما ليس لك!"
+        }
+      ]
+    },
+    {
+      "id": "m4_s8_income",
+      "day": 5,
+      "text": "درهمي يجد فرصة عمل: 60 درهماً في يوم واحد! العمل الحلال يوفر له مالاً شخصياً.",
+      "choices": [
+        {
+          "id": "m4_c8_work",
+          "text": "يعمل بجد ويربح 60 درهماً",
+          "effects": { "money": 60, "trust": 10, "setFlag": "earned_honestly" },
+          "dinarReaction": "الكسب الحلال أفضل ضمان للأمانة!"
+        },
+        {
+          "id": "m4_c8_rest",
+          "text": "يرتاح اليوم",
+          "effects": { "trust": 3 },
+          "dinarReaction": "الراحة مهمة... لكن الفرص لا تأتي كل يوم."
+        }
+      ]
+    },
+    {
+      "id": "m4_s9_repayment",
+      "day": 6,
+      "condition": { "flag": "used_amanah_partial" },
+      "text": "درهمي بدأ يرد ما استخدمه من الأمانة. كم يعيد؟",
+      "choices": [
+        {
+          "id": "m4_c9_return_partial",
+          "text": "يعيد 30 درهماً الآن",
+          "effects": { "money": -30, "trust": 10, "barakah": 5, "setFlag": "returning_partially" },
+          "dinarReaction": "خطوة في الطريق الصحيح... أكمل ما بدأت!"
+        },
+        {
+          "id": "m4_c9_return_all",
+          "text": "يعيد كل ما أخذه",
+          "effects": { "money": -50, "trust": 15, "barakah": 10, "setFlag": "returning_fully" },
+          "dinarReaction": "الأمانة كلها أو لا شيء! خطوة شجاعة."
+        },
+        {
+          "id": "m4_c9_delay",
+          "text": "يؤجل الإعادة مرة أخرى",
+          "effects": { "trust": -10 },
+          "dinarReaction": "كل تأجيل يزيد الثقب في جدار الثقة..."
+        }
+      ]
+    },
+    {
+      "id": "m4_s10_reputation",
+      "day": 6,
+      "text": "الناس يتحدثون عن درهمي. 'هذا الصبي أمين' — أو ربما العكس. السمعة تسبق صاحبها.",
+      "choices": [
+        {
+          "id": "m4_c10_good_rep",
+          "text": "السمعة طيبة — درهمي أمين وموثوق",
+          "effects": { "trust": 8, "barakah": 5, "setFlag": "good_reputation" },
+          "dinarReaction": "السمة الطيبة كنز لا يُسرق!"
+        },
+        {
+          "id": "m4_c10_bad_rep",
+          "text": "السمعة متضررة — درهمي لم يثبت بعد",
+          "effects": { "trust": -10 },
+          "dinarReaction": "السمة تُبنى في سنين وتنهار في لحظة."
+        }
+      ]
+    },
+    {
+      "id": "m4_s11_return",
+      "day": 7,
+      "text": "عاد خالك! يقف أمام درهمي: 'أين المال؟' لحظة الحقيقة.",
+      "choices": [
+        {
+          "id": "m4_c11_return_all",
+          "text": "يعيد كل درهم بدون نقصان",
+          "effects": { "trust": 25, "barakah": 20, "setFlag": "returned_full" },
+          "dinarReaction": "هذا هو يوم الفخر! الأمانة كاملة لا نقص فيها."
+        },
+        {
+          "id": "m4_c11_return_most",
+          "text": "يعيد معظم المال ويحتاج وقتاً للباقي",
+          "effects": { "trust": -10, "setFlag": "returned_partial" },
+          "dinarReaction": "شرفه لم يكن كاملاً... لكنه يعترف بالخطأ."
+        },
+        {
+          "id": "m4_c11_cannot_return",
+          "text": "لا يستطيع إرجاع المال كاملاً",
+          "effects": { "trust": -40, "barakah": -30 },
+          "dinarReaction": "الثقة المفقودة أصعب من المال المفقود."
+        }
+      ]
+    },
+    {
+      "id": "m4_s12_consequence",
+      "day": 7,
+      "condition": { "flag": "returned_full" },
+      "text": "خالك يبتسم: 'كنت أعلم أنك أمين. أنت رسمت صورة جميلة لنفسك.' ثم يعطيك 50 درهماً كمكافأة!",
+      "choices": [
+        {
+          "id": "m4_c12_thank",
+          "text": "يشكره بكل فخر",
+          "effects": { "trust": 10, "barakah": 10 },
+          "dinarReaction": "الأمانة تجلب الاحترام والثقة والمكافأة!"
+        },
+        {
+          "id": "m4_c12_learn",
+          "text": "يسأله عن كيفية بناء الثقة دائماً",
+          "effects": { "trust": 5, "barakah": 5, "setFlag": "learned_amanah" },
+          "dinarReaction": "التعلم المستمر هو سر النمو!"
+        }
+      ]
+    }
+  ],
+  "endings": [
+    {
+      "id": "full_amanah",
+      "condition": { "flag": "returned_full", "trust": 70 },
+      "title": "أمين حتى النهاية!",
+      "description": "درهمي أعاد كل درهم وحافظ على الثقة الكاملة! خاله فخور به والناس تحترمه. هذا هو معنى الأمانة الحقيقية.",
+      "isGood": true,
+      "xpReward": 140
+    },
+    {
+      "id": "partial_amanah",
+      "condition": { "trust": 40 },
+      "title": "أمانة متعثرة",
+      "description": "درهمي تعثر في الطريق لكنه حاول. لم يكن أميناً بالكامل لكنه اعترف بخطأه. التوبة بداية.",
+      "isGood": false,
+      "xpReward": 50
+    },
+    {
+      "id": "broken_trust",
+      "condition": { "trustBelow": 25 },
+      "title": "ثقة مكسورة",
+      "description": "خاله خيب ظنه. الثقة التي استغرق سنوات لبنائها انهارت في لحظة. لكن درهمي يمكنه أن يتعلم ويبدأ من جديد.",
+      "isGood": false,
+      "xpReward": 15
+    },
+    {
+      "id": "incomplete",
+      "title": "حاول مرة أخرى",
+      "description": "الأمانة ليست سهلة لكنها ثمينة. درهمي يحتاج لمحاولة أخرى.",
+      "isGood": false,
+      "xpReward": 10
+    }
+  ],
+  "milestones": [
+    {
+      "id": "refused_pressure",
+      "condition": { "flag": "refused_peer_pressure" },
+      "xp": 25,
+      "label": "مقاومة ضغط الأقران",
+      "once": true
+    },
+    {
+      "id": "stayed_strong",
+      "condition": { "flag": "stayed_strong" },
+      "xp": 20,
+      "label": "صمد أمام الإغراء",
+      "once": true
+    },
+    {
+      "id": "honest_earnings",
+      "condition": { "flag": "earned_honestly" },
+      "xp": 15,
+      "label": "كسب حلال",
+      "once": true
+    },
+    {
+      "id": "full_return",
+      "condition": { "flag": "returned_full" },
+      "xp": 30,
+      "label": "أعاد الأمانة كاملة",
+      "once": true
+    }
+  ]
+}

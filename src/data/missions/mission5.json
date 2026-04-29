@@ -1,0 +1,376 @@
+{
+  "id": "mission-5-sadaqah",
+  "missionNumber": 5,
+  "title": "مساعدة الآخرين",
+  "summary": "درهمي لديه مال محدود والناس يحتاجون مساعدته. من يساعد وكيف؟",
+  "difficulty": "medium",
+  "roleTitle": "طفل كريم القلب",
+  "roleStory": "درهمي يبدأ الشهر مع 200 درهم. كل حوله أناس محتاجون. كيف يوازن بين احتياجاته ومساعدة الآخرين؟",
+  "initialMoney": 200,
+  "initialTrust": 50,
+  "initialBarakah": 30,
+  "goals": [
+    { "type": "barakah", "target": 70, "label": "ارفع البركة عبر العطاء" },
+    { "type": "money", "target": 150, "label": "حافظ على 150 درهماً لأهدافك" }
+  ],
+  "rewardTitle": "شارة العطاء",
+  "rewardIcon": "heart",
+  "scenes": [
+    {
+      "id": "m5_s1_budget",
+      "day": 1,
+      "text": "درهمي يبدأ الشهر مع 200 درهم. هل يخطط كيف ينفقها أم يترك الأمور عشوائية؟",
+      "choices": [
+        {
+          "id": "m5_c1_budget",
+          "text": "يضع ميزانية واضحة",
+          "effects": { "trust": 10, "barakah": 5, "setFlag": "budgeted" },
+          "dinarReaction": "التخطيط أول خطوات الحكمة المالية!"
+        },
+        {
+          "id": "m5_c1_flex",
+          "text": "يترك الأمر مرناً",
+          "effects": { "trust": 3 },
+          "dinarReaction": "المرونة جيدة لكن التخطيط أفضل."
+        }
+      ]
+    },
+    {
+      "id": "m5_s2_neighbor",
+      "day": 2,
+      "text": "جارته أم فاطمة جائعة. تحتاج 30 درهماً للطعام. درهمي يعرفها — امرأة طيبة في ضائقة.",
+      "choices": [
+        {
+          "id": "m5_c2_give_30",
+          "text": "يعطيها 30 درهماً",
+          "effects": { "money": -30, "barakah": 20, "trust": 8, "setFlag": "helped_neighbor" },
+          "dinarReaction": "ما أنقصته من مالك زاد في أجره!"
+        },
+        {
+          "id": "m5_c2_share_meal",
+          "text": "يشاركها وجبة بدلاً من المال",
+          "effects": { "money": -10, "barakah": 12, "trust": 5 },
+          "dinarReaction": "المشاركة أحياناً أفضل من المال!"
+        },
+        {
+          "id": "m5_c2_cant_help",
+          "text": "يعتذر لأنه لا يستطيع",
+          "effects": { "barakah": -10 },
+          "dinarReaction": "هناك دائماً ما يمكننا تقديمه..."
+        }
+      ]
+    },
+    {
+      "id": "m5_s3_books",
+      "day": 2,
+      "text": "زميلك سامي ليس لديه كتب مدرسية. تكلف 50 درهماً. بدونها لا يستطيع المذاكرة.",
+      "choices": [
+        {
+          "id": "m5_c3_buy_books",
+          "text": "يشتري له الكتب",
+          "effects": { "money": -50, "barakah": 15, "trust": 10, "setFlag": "helped_student" },
+          "dinarReaction": "العلم أفقر ما يُبذل فيه المال! هذا استثمار حقيقي."
+        },
+        {
+          "id": "m5_c3_library",
+          "text": "يقترح عليه المكتبة المجانية",
+          "effects": { "barakah": 5, "trust": 3 },
+          "dinarReaction": "الحلول المجانية أحياناً أفضل من المدفوعة!"
+        },
+        {
+          "id": "m5_c3_lend_old",
+          "text": "يعطيه كتبه القديمة",
+          "effects": { "barakah": 10, "trust": 8 },
+          "dinarReaction": "إعادة الاستخدام حكمة وعطاء!"
+        }
+      ]
+    },
+    {
+      "id": "m5_s4_shoes",
+      "day": 3,
+      "text": "درهمي يريد حذاءً رياضياً جديداً بـ 80 درهماً. ليس ضرورياً لكنه يريده. في نفس الوقت، أناس حوله يحتاجون مساعدة حقيقية.",
+      "choices": [
+        {
+          "id": "m5_c4_buy_shoes",
+          "text": "يشتري الحذاء",
+          "effects": { "money": -80, "barakah": -5 },
+          "dinarReaction": "رغبة شخصية ليست خطأ... لكن التوقيت مهم."
+        },
+        {
+          "id": "m5_c4_save",
+          "text": "يدخر المال للأهم",
+          "effects": { "trust": 8, "barakah": 5, "setFlag": "resisted_personal" },
+          "dinarReaction": "الصبر على الرغبات يفتح باب البركة!"
+        },
+        {
+          "id": "m5_c4_cheap_shoes",
+          "text": "يشتري حذاءً أرخص بـ 30 درهماً",
+          "effects": { "money": -30, "trust": 5 },
+          "dinarReaction": "حل وسط ذكي!"
+        }
+      ]
+    },
+    {
+      "id": "m5_s5_sick_child",
+      "day": 3,
+      "text": "طفل مريض في الحي يحتاج دواءً بـ 40 درهماً. أهله لا يستطيعون تحمل التكلفة.",
+      "choices": [
+        {
+          "id": "m5_c5_pay_treatment",
+          "text": "يدفع للعلاج كاملاً",
+          "effects": { "money": -40, "barakah": 25, "trust": 10, "setFlag": "helped_sick_child" },
+          "dinarReaction": "شفاء طفل بسبتك — أي بركة أكبر من هذا؟"
+        },
+        {
+          "id": "m5_c5_contribute",
+          "text": "يساهم بـ 20 درهماً",
+          "effects": { "money": -20, "barakah": 12 },
+          "dinarReaction": "حتى المساهمة الجزئية تصنع فرقاً!"
+        },
+        {
+          "id": "m5_c5_check_others",
+          "text": "يسأل هل يستطيع أحد المساعدة",
+          "effects": { "trust": 3 },
+          "dinarReaction": "تنظيم المساعدة أيضاً خدمة!"
+        }
+      ]
+    },
+    {
+      "id": "m5_s6_playground",
+      "day": 4,
+      "text": "مدرسة الحي تطلب تبرع 60 درهماً لإصلاح ساحة اللعب. الأطفال يحتاجون مكاناً آمناً.",
+      "choices": [
+        {
+          "id": "m5_c6_donate_full",
+          "text": "يتبرع بالكامل: 60 درهماً",
+          "effects": { "money": -60, "barakah": 20, "trust": 12, "setFlag": "donated_playground" },
+          "dinarReaction": "إصلاح مكان يلعب فيه أطفال — بركة في كل درهم!"
+        },
+        {
+          "id": "m5_c6_donate_partial",
+          "text": "يتبرع بـ 20 درهماً",
+          "effects": { "money": -20, "barakah": 10 },
+          "dinarReaction": "كل درهم في سبيل الله له أجر."
+        },
+        {
+          "id": "m5_c6_organize",
+          "text": "ينظم حملة جمع تبرعات",
+          "effects": { "trust": 15, "barakah": 10, "setFlag": "collective_effort" },
+          "dinarReaction": "العمل الجماعي يصنع المعجزات!"
+        }
+      ]
+    },
+    {
+      "id": "m5_s7_sacrifice",
+      "day": 5,
+      "text": "درهمي أصبح معه مال أقل. هل يستمر بالعطاء أم يحتاج للاحتفاظ بما بقي؟",
+      "choices": [
+        {
+          "id": "m5_c7_give_remain",
+          "text": "يعطي مما بقي",
+          "effects": { "money": -30, "barakah": 15, "setFlag": "generous_to_end" },
+          "dinarReaction": "العطاء في وقت الضيق أعظم="
+        },
+        {
+          "id": "m5_c7_hold",
+          "text": "يحتفظ بما بقي",
+          "effects": { "trust": 5 },
+          "dinarReaction": "الاحتفاظ بالباقي ليس أنانية... بل حكمة."
+        }
+      ]
+    },
+    {
+      "id": "m5_s8_return_help",
+      "day": 5,
+      "condition": { "flag": "helped_neighbor" },
+      "text": "أم فاطمة تعود لتشكرك: 'أبناؤك ساعدوني وقت الضيق. هاهو ما أستطيع رده.' تعطيه 40 درهماً!",
+      "choices": [
+        {
+          "id": "m5_c8_accept",
+          "text": "يقبل بامتنان",
+          "effects": { "money": 40, "barakah": 10, "trust": 8 },
+          "dinarReaction": "المعروف يعود لصاحبه — هذا قانون البركة!"
+        },
+        {
+          "id": "m5_c8_refuse_gracefully",
+          "text": "'لا أريد شيئاً بالمقابل'",
+          "effects": { "barakah": 15, "trust": 10, "setFlag": "selfless_refusal" },
+          "dinarReaction": "العطاء بلا مقابل أعظم أنواع الكرم!"
+        }
+      ]
+    },
+    {
+      "id": "m5_s9_community",
+      "day": 6,
+      "condition": { "barakah": 50 },
+      "text": "الحي يتعاون! الناس تبدأ تساعد بعضها بفضل ما بدأه درهمي. هل يقود المبادرة التالية؟",
+      "choices": [
+        {
+          "id": "m5_c9_lead",
+          "text": "يقود المبادرة التالية",
+          "effects": { "trust": 15, "barakah": 10, "setFlag": "community_leader" },
+          "dinarReaction": "القادة لا يأمرون فقط — بل يبدأون بأنفسهم!"
+        },
+        {
+          "id": "m5_c9_join",
+          "text": "يشارك ويساعد",
+          "effects": { "trust": 8, "barakah": 8 },
+          "dinarReaction": "المشاركة في الخير بركة!"
+        }
+      ]
+    },
+    {
+      "id": "m5_s10_loss",
+      "day": 6,
+      "text": "درهمي فقد 30 درهماً في الطريق! حادث مؤسف. كيف يتعامل مع الخسارة؟",
+      "choices": [
+        {
+          "id": "m5_c10_accept",
+          "text": "يقبل ويمضي قدماً",
+          "effects": { "money": -30, "barakah": 5, "setFlag": "accepted_loss" },
+          "dinarReaction": "الصبر على المصيبة يفتح أبواباً جديدة."
+        },
+        {
+          "id": "m5_c10_search",
+          "text": "يبحث في كل مكان",
+          "effects": { "trust": 3 },
+          "dinarReaction": "المحاولة لا تضر... لكن لا تحزن إن لم تجد."
+        },
+        {
+          "id": "m5_c10_ask_help",
+          "text": "يطلب المساعدة من الجيران",
+          "effects": { "trust": 8, "setFlag": "asked_help" },
+          "dinarReaction": "طلب المساعدة قوة وليس ضعفاً!"
+        }
+      ]
+    },
+    {
+      "id": "m5_s11_charity_challenge",
+      "day": 7,
+      "text": "تحدي العطاء الأخير: كم يمكن لدرهمي أن يساعد في يوم واحد؟ هذا يوم التقييم النهائي.",
+      "choices": [
+        {
+          "id": "m5_c11_challenge_50",
+          "text": "يتحدي نفسه ويتبرع بـ 50 درهماً",
+          "effects": { "money": -50, "barakah": 25, "trust": 10, "setFlag": "charity_challenge" },
+          "dinarReaction": "أعطى كثيراً... لكن البركة لا تُقاس بالكمّ!"
+        },
+        {
+          "id": "m5_c11_give_20",
+          "text": "يتبرع بما يستطيع: 20 درهماً",
+          "effects": { "money": -20, "barakah": 12 },
+          "dinarReaction": "النية صادقة والقدرة محدودة — وكلاهما مقبول."
+        }
+      ]
+    },
+    {
+      "id": "m5_s12_zakat",
+      "day": 7,
+      "condition": { "barakah": 50 },
+      "text": "درهمي يتذكر: 'المال فيه حق.' معه ما يكفي للزكاة. هل يخرجها؟",
+      "choices": [
+        {
+          "id": "m5_c12_zakat",
+          "text": "يخرج الزكاة",
+          "effects": { "barakah": 30, "setFlag": "paid_zakat" },
+          "dinarReaction": "الزكاة طهرة للمال وبركة فيما بقي!"
+        },
+        {
+          "id": "m5_c12_sadaqah",
+          "text": "يتصدق بجزء كبير",
+          "effects": { "money": -30, "barakah": 20, "setFlag": "gave_sadaqah" },
+          "dinarReaction": "الصدقة تطفئ غضب الرب وتزيد البركة!"
+        },
+        {
+          "id": "m5_c12_not_now",
+          "text": "يؤجل لوقت آخر",
+          "effects": { "barakah": -10 },
+          "dinarReaction": "كل تأجيل يقلل البركة... تذكّر."
+        }
+      ]
+    },
+    {
+      "id": "m5_s13_bonus",
+      "day": 7,
+      "condition": { "trust": 60, "barakah": 60 },
+      "text": "الحي كله يقدر درهمي! جمعوا له هدية: 80 درهماً ورسالة شكر. ✨",
+      "choices": [
+        {
+          "id": "m5_c13_accept_gift",
+          "text": "يقبل الهدية بامتنان",
+          "effects": { "money": 80, "barakah": 10, "trust": 10 },
+          "dinarReaction": "العطاء يعود أضعافاً مضاعفة!"
+        },
+        {
+          "id": "m5_c13_donate_gift",
+          "text": "يتبرع بالهدية لمحتاج",
+          "effects": { "barakah": 25, "trust": 15, "setFlag": "extreme_generosity" },
+          "dinarReaction": "هذا هو ذروة الكرم — العطاء مما أُعطيت!"
+        }
+      ]
+    }
+  ],
+  "endings": [
+    {
+      "id": "high_barakah",
+      "condition": { "barakah": 70, "money": 150 },
+      "title": "بركة العطاء!",
+      "description": "درهمي اكتشف أن العطاء لا ينقص المال بل يزيده بركة! كل ما أعطاه عاد إليه مضاعفاً. هذا هو سر الحياة الكريمة.",
+      "isGood": true,
+      "xpReward": 140
+    },
+    {
+      "id": "balanced_giver",
+      "condition": { "barakah": 50, "trust": 50 },
+      "title": "عطاء متوازن",
+      "description": "درهمي وازن بين حاجته وحاجة الآخرين. ليس مثالياً لكنه تعلم أن العطاء فن يحتاج توازناً.",
+      "isGood": false,
+      "xpReward": 90
+    },
+    {
+      "id": "selfish",
+      "condition": { "barakahBelow": 30 },
+      "title": "أنانية تبعد الناس",
+      "description": "درهمي أنفق على نفسه فقط ونسى من حوله. المال بقي لكن البركة غابت. هل سيتعلم أن العطاء يزيد؟",
+      "isGood": false,
+      "xpReward": 15
+    },
+    {
+      "id": "incomplete",
+      "title": "حاول مرة أخرى",
+      "description": "رحلة العطاء لم تكتمل بعد. درهمي يحتاج لمحاولة أخرى.",
+      "isGood": false,
+      "xpReward": 10
+    }
+  ],
+  "milestones": [
+    {
+      "id": "first_charity",
+      "condition": { "previousChoice": "m5_c2_give_30" },
+      "xp": 15,
+      "label": "أول صدقة",
+      "once": true
+    },
+    {
+      "id": "resisted_personal",
+      "condition": { "flag": "resisted_personal" },
+      "xp": 20,
+      "label": "قاوم الرغبة الشخصية",
+      "once": true
+    },
+    {
+      "id": "community_builder",
+      "condition": { "flag": "collective_effort" },
+      "xp": 20,
+      "label": "بنا مجتمع عطاء",
+      "once": true
+    },
+    {
+      "id": "extreme_generosity",
+      "condition": { "flag": "extreme_generosity" },
+      "xp": 25,
+      "label": "كرم استثنائي",
+      "once": true
+    }
+  ]
+}
