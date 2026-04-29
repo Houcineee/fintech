@@ -20,4 +20,4 @@ web-build/
 *.sublime-project
 *.sublime-workspace
 
-coverage/
+coverage/.opencode/
