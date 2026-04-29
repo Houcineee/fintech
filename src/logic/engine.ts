@@ -25,10 +25,17 @@ export const evaluateCondition = (
   if (condition.barakahBelow !== undefined && state.barakah >= condition.barakahBelow)
     return false;
   if (condition.flag && !state.flags.includes(condition.flag)) return false;
+  if (condition.flagAbsent && state.flags.includes(condition.flagAbsent)) return false;
   if (condition.hasItem && !state.inventory.includes(condition.hasItem)) return false;
+  if (condition.notHasItem && state.inventory.includes(condition.notHasItem)) return false;
   if (
     condition.previousChoice &&
     !state.choiceLog.some((c) => c.choiceId === condition.previousChoice)
+  )
+    return false;
+  if (
+    condition.notPreviousChoice &&
+    state.choiceLog.some((c) => c.choiceId === condition.notPreviousChoice)
   )
     return false;
 
@@ -42,19 +49,33 @@ export const getNextScene = (
 ): Scene | null => {
   if (lastChoice?.nextSceneId) {
     const explicitScene = mission.scenes.find((s) => s.id === lastChoice.nextSceneId);
-    if (explicitScene) return explicitScene;
+    if (
+      explicitScene &&
+      !state.visitedSceneIds.includes(explicitScene.id) &&
+      evaluateCondition(explicitScene.condition, state)
+    ) {
+      return explicitScene;
+    }
   }
 
-  const eligible = mission.scenes.filter(
-    (scene) =>
-      !state.visitedSceneIds.includes(scene.id) && evaluateCondition(scene.condition, state)
-  );
+  const eligible = mission.scenes
+    .map((scene, index) => ({ scene, index }))
+    .filter(
+      ({ scene }) =>
+        !state.visitedSceneIds.includes(scene.id) && evaluateCondition(scene.condition, state)
+    );
 
   if (eligible.length === 0) return null;
 
-  eligible.sort((a, b) => (a.day ?? 999) - (b.day ?? 999));
+  eligible.sort(
+    (a, b) => (a.scene.day ?? 999) - (b.scene.day ?? 999) || a.index - b.index
+  );
 
-  return eligible[0];
+  return eligible[0].scene;
+};
+
+export const canApplyChoice = (state: GameState, choice: Choice): boolean => {
+  return state.money + (choice.effects.money ?? 0) >= 0;
 };
 
 export const getFirstScene = (mission: Mission): Scene => {
@@ -130,7 +151,6 @@ export const applyChoice = (
     xp: state.xp + (choice.effects.xp ?? 0),
     inventory: newInventory,
     flags: newFlags,
-    visitedSceneIds: [...state.visitedSceneIds, sceneId],
     choiceLog: [...state.choiceLog, record],
   };
 };

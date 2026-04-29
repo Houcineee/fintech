@@ -30,7 +30,10 @@ export const StoryScreen = ({ navigation }: Props) => {
   const [phase, setPhase] = useState<Phase>("reading");
   const [showGoalDrawer, setShowGoalDrawer] = useState(false);
   const [currentReaction, setCurrentReaction] = useState<string | null>(null);
+  const [selectedChoiceId, setSelectedChoiceId] = useState<string | null>(null);
   const transitionTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const readingTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const suppressSceneResetRef = useRef(false);
 
   const mission = game ? getMissionById(game.missionId) : null;
   const currentScene = mission?.scenes.find((s) => s.id === game?.currentSceneId);
@@ -46,49 +49,61 @@ export const StoryScreen = ({ navigation }: Props) => {
   // Phase transition: on new scene, start at "reading"
   useEffect(() => {
     if (!currentScene) return;
+    if (suppressSceneResetRef.current) return;
     setPhase("reading");
     setCurrentReaction(null);
+    setSelectedChoiceId(null);
 
     // After narrative appears, switch to choosing
-    const timer = setTimeout(() => {
+    readingTimerRef.current = setTimeout(() => {
       setPhase("choosing");
     }, 1500);
 
     return () => {
-      clearTimeout(timer);
-      if (transitionTimerRef.current) {
-        clearTimeout(transitionTimerRef.current);
+      if (readingTimerRef.current) {
+        clearTimeout(readingTimerRef.current);
       }
     };
   }, [currentScene?.id]);
 
   const handleChoose = useCallback(
     (sceneId: string, choiceId: string) => {
-      if (!game || !mission || !currentScene) return;
+      if (!game || !mission || !currentScene || selectedChoiceId) return;
 
       const choice = currentScene.choices.find((c) => c.id === choiceId);
       if (!choice) return;
 
-      // Switch to reacting phase
-      setPhase("reacting");
+      setSelectedChoiceId(choiceId);
       if (choice.dinarReaction) {
         setCurrentReaction(choice.dinarReaction);
       }
 
-      // Apply choice after a short delay (let reaction animation start)
+      // Let the selected choice burst first, then apply the state change.
       transitionTimerRef.current = setTimeout(() => {
+        suppressSceneResetRef.current = true;
+        setPhase("reacting");
         makeChoice(sceneId, choiceId);
 
-        // Check if mission completed after a brief delay
         transitionTimerRef.current = setTimeout(() => {
           const updatedGame = useGameStore.getState().game;
           if (updatedGame?.completed) {
             navigation.navigate("End");
+            suppressSceneResetRef.current = false;
+            return;
           }
-        }, 100);
-      }, 2200);
+
+          setSelectedChoiceId(null);
+          setCurrentReaction(null);
+          setPhase("reading");
+          suppressSceneResetRef.current = false;
+
+          readingTimerRef.current = setTimeout(() => {
+            setPhase("choosing");
+          }, 1500);
+        }, 1400);
+      }, 560);
     },
-    [game, mission, currentScene, makeChoice, navigation]
+    [game, mission, currentScene, makeChoice, navigation, selectedChoiceId]
   );
 
   if (!game || !mission || !currentScene) return null;
@@ -127,6 +142,7 @@ export const StoryScreen = ({ navigation }: Props) => {
               scene={currentScene}
               money={game.money}
               onChoose={handleChoose}
+              selectedChoiceId={selectedChoiceId}
               disabled={phase === "reading"}
             />
           </View>

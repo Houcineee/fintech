@@ -5,7 +5,7 @@
   "summary": "خالك أسندك 500 درهم لتحفظها. هل ستسلم في الأمانة؟",
   "difficulty": "medium",
   "roleTitle": "مأمون على مال الغير",
-  "roleStory": "خالك يسافر ويترك عندك 500 درهم لل حفظها حتى يعود. هل ستقاوم إغراء استخدامها؟",
+  "roleStory": "خالك يسافر ويترك عندك 500 درهم لتحفظها حتى يعود. هل ستقاوم إغراء استخدامها؟",
   "initialMoney": 80,
   "initialTrust": 40,
   "initialBarakah": 30,
@@ -23,7 +23,7 @@
       "choices": [
         {
           "id": "m4_c1_accept_determined",
-          "text": "يقبل بعزم: 'لن أخذب ثقتك!'",
+          "text": "يقبل بعزم: 'لن أخون ثقتك!'",
           "effects": { "trust": 10, "setFlag": "accepted_amanah" },
           "dinarReaction": "الأمانة ثقيلة لكنها رفيعة القدر عند الله."
         },

@@ -13,48 +13,116 @@ type Props = {
   animated?: boolean;
 };
 
-const MiniBar = ({ value, maxValue, color }: { value: number; maxValue: number; color: string }) => {
-  const percentage = Math.min(100, Math.max(0, (value / maxValue) * 100));
+const MiniBar = ({
+  animatedValue,
+  color,
+}: {
+  animatedValue: Animated.Value;
+  color: string;
+}) => {
+  const width = animatedValue.interpolate({
+    inputRange: [0, 100],
+    outputRange: ["0%", "100%"],
+    extrapolate: "clamp",
+  });
+
   return (
     <View style={[s.miniTrack, { backgroundColor: color + "20" }]}>
-      <View style={[s.miniFill, { width: `${percentage}%`, backgroundColor: color }]} />
+      <Animated.View style={[s.miniFill, { width, backgroundColor: color }]} />
     </View>
   );
 };
 
 export const StatsStrip = ({ money, trust, barakah, animated }: Props) => {
   const moneyAnim = useRef(new Animated.Value(0)).current;
+  const moneyScale = useRef(new Animated.Value(1)).current;
+  const trustScale = useRef(new Animated.Value(1)).current;
+  const barakahScale = useRef(new Animated.Value(1)).current;
+  const trustAnim = useRef(new Animated.Value(trust)).current;
+  const barakahAnim = useRef(new Animated.Value(barakah)).current;
   const prevMoneyRef = useRef(money);
+  const prevTrustRef = useRef(trust);
+  const prevBarakahRef = useRef(barakah);
+
+  const pulse = (value: Animated.Value) => {
+    value.setValue(1);
+    Animated.sequence([
+      Animated.spring(value, {
+        toValue: 1.12,
+        friction: 4,
+        tension: 140,
+        useNativeDriver: true,
+      }),
+      Animated.spring(value, {
+        toValue: 1,
+        friction: 5,
+        tension: 120,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
 
   useEffect(() => {
     if (animated && money !== prevMoneyRef.current) {
       const diff = money - prevMoneyRef.current;
       moneyAnim.setValue(diff > 0 ? -20 : 20);
-      Animated.timing(moneyAnim, {
+      pulse(moneyScale);
+      Animated.spring(moneyAnim, {
         toValue: 0,
-        duration: 400,
+        friction: 5,
+        tension: 120,
         useNativeDriver: true,
       }).start();
       prevMoneyRef.current = money;
     }
-  }, [money, animated]);
+  }, [money, animated, moneyAnim, moneyScale]);
+
+  useEffect(() => {
+    if (trust !== prevTrustRef.current) {
+      if (animated) pulse(trustScale);
+      Animated.timing(trustAnim, {
+        toValue: trust,
+        duration: 450,
+        useNativeDriver: false,
+      }).start();
+      prevTrustRef.current = trust;
+    }
+  }, [trust, animated, trustAnim, trustScale]);
+
+  useEffect(() => {
+    if (barakah !== prevBarakahRef.current) {
+      if (animated) pulse(barakahScale);
+      Animated.timing(barakahAnim, {
+        toValue: barakah,
+        duration: 450,
+        useNativeDriver: false,
+      }).start();
+      prevBarakahRef.current = barakah;
+    }
+  }, [barakah, animated, barakahAnim, barakahScale]);
 
   return (
     <View style={s.container}>
-      <Animated.View style={[s.statPill, s.moneyPill, { transform: [{ translateY: moneyAnim }] }]}>
+      <Animated.View
+        style={[
+          s.statPill,
+          s.moneyPill,
+          { transform: [{ translateY: moneyAnim }, { scale: moneyScale }] },
+        ]}
+      >
         <Ionicons name="wallet" size={14} color={colors.warning} />
         <Text style={[s.statValue, { color: colors.warning }]}>{formatMoney(money)}</Text>
       </Animated.View>
 
-      <View style={s.statPill}>
+      <Animated.View style={[s.statPill, { transform: [{ scale: trustScale }] }]}>
         <Ionicons name="people" size={14} color={colors.success} />
-        <MiniBar value={trust} maxValue={100} color={colors.success} />
-      </View>
+        <MiniBar animatedValue={trustAnim} color={colors.success} />
+      </Animated.View>
 
-      <View style={s.statPill}>
+      <Animated.View style={[s.statPill, { transform: [{ scale: barakahScale }] }]}>
         <Ionicons name="star" size={14} color={colors.barakah} />
-        <MiniBar value={barakah} maxValue={100} color={colors.barakah} />
-      </View>
+        <MiniBar animatedValue={barakahAnim} color={colors.barakah} />
+      </Animated.View>
     </View>
   );
 };

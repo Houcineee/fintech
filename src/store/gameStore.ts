@@ -3,14 +3,17 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import {
   applyChoice,
+  canApplyChoice,
   createResultSummary,
   evaluateMilestones,
   getNextScene,
   getFirstScene,
-  resolveEnding,
 } from "../logic/engine";
 import { getMissionById, missionData } from "../data";
 import type { Choice, GameState, PersistedState, ResultSummary } from "../types/game";
+
+const appendUnique = <T,>(items: T[], item: T): T[] =>
+  items.includes(item) ? items : [...items, item];
 
 const RANKS = [
   { name: "مسافر", minXP: 0, icon: "walk" as const },
@@ -107,12 +110,15 @@ export const useGameStore = create<StoreState>()(
         if (!mission) return;
 
         const scene = mission.scenes.find((s) => s.id === sceneId);
-        if (!scene) return;
+        if (!scene || current.currentSceneId !== sceneId) return;
 
         const choice = scene.choices.find((c) => c.id === choiceId);
-        if (!choice) return;
+        if (!choice || !canApplyChoice(current, choice)) return;
 
-        const newState = applyChoice(current, choice, sceneId, scene.day);
+        const newState = {
+          ...applyChoice(current, choice, sceneId, scene.day),
+          visitedSceneIds: appendUnique(current.visitedSceneIds, sceneId),
+        };
         const triggered = evaluateMilestones(
           mission,
           newState,
@@ -129,25 +135,17 @@ export const useGameStore = create<StoreState>()(
           triggeredMilestones: newTriggeredIds,
         };
 
-        let nextScene: ReturnType<typeof getNextScene> = null;
-        let isComplete = false;
-
-        if (!choice.nextSceneId) {
-          nextScene = getNextScene(mission, updatedState, choice);
-        } else {
-          nextScene = mission.scenes.find((s) => s.id === choice.nextSceneId) ?? null;
-        }
+        const nextScene = getNextScene(mission, updatedState, choice);
 
         if (nextScene) {
           set({
             game: {
               ...updatedState,
               currentSceneId: nextScene.id,
-              visitedSceneIds: [...updatedState.visitedSceneIds, nextScene.id],
+              visitedSceneIds: appendUnique(updatedState.visitedSceneIds, nextScene.id),
             },
           });
         } else {
-          isComplete = true;
           set({
             game: { ...updatedState, completed: true },
           });
@@ -158,6 +156,7 @@ export const useGameStore = create<StoreState>()(
       finishMission: () => {
         const current = get().game;
         if (!current) return;
+        if (current.completed && get().result?.endingId === current.endingId) return;
 
         const mission = getMissionById(current.missionId);
         if (!mission) return;
@@ -173,7 +172,7 @@ export const useGameStore = create<StoreState>()(
           result: summary,
           completedMissionIds: newCompleted,
           totalXP: get().totalXP + summary.xpEarned + current.xp,
-          game: { ...current, completed: true },
+          game: { ...current, completed: true, endingId: summary.endingId },
         });
       },
 

@@ -5,8 +5,11 @@ export type StateCondition = {
   trust?: number;
   barakah?: number;
   hasItem?: string;
+  notHasItem?: string;
   flag?: string;
+  flagAbsent?: string;
   previousChoice?: string;
+  notPreviousChoice?: string;
   moneyBelow?: number;
   trustBelow?: number;
   barakahBelow?: number;
