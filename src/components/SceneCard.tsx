@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { Animated, Pressable, StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { colors } from "../theme/colors";
-import { spacing } from "../theme/spacing";
+import { colors, shadows } from "../theme/colors";
+import { spacing, radius } from "../theme/spacing";
 import { Text } from "../theme/typography";
 import type { Scene } from "../types/game";
 
@@ -152,23 +152,26 @@ const s = StyleSheet.create({
   choiceWrapper: {
     width: "100%",
   },
+  // Claymorphic button style
   choiceButton: {
-    backgroundColor: colors.surfaceHighlight,
-    borderRadius: 16,
+    backgroundColor: colors.surface,
+    borderRadius: radius.xl,
     padding: spacing.lg,
-    borderWidth: 1,
+    borderWidth: 3,
     borderColor: colors.border,
+    ...shadows.clay,
   },
   choicePressed: {
-    opacity: 0.8,
     transform: [{ scale: 0.98 }],
+    backgroundColor: colors.surfaceRaised,
+    ...shadows.clayPressed,
   },
   choiceDisabled: {
     opacity: 0.5,
   },
   choiceUnaffordable: {
     borderColor: colors.danger + "40",
-    backgroundColor: colors.danger + "08",
+    backgroundColor: colors.dangerLight,
   },
   choiceText: {
     fontSize: 16,

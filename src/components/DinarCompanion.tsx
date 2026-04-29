@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { Animated, StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, shadows } from "../theme/colors";
-import { spacing } from "../theme/spacing";
+import { spacing, radius } from "../theme/spacing";
 import { Text } from "../theme/typography";
 
 type Props = {
@@ -28,7 +28,7 @@ export const DinarCompanion = ({ trust, barakah, reaction }: Props) => {
       ? colors.success
       : expression === "neutral"
         ? colors.warning
-        : colors.danger;
+        : colors.barakah;
 
   useEffect(() => {
     Animated.loop(
@@ -115,30 +115,32 @@ const s = StyleSheet.create({
     alignItems: "center",
     gap: spacing.sm,
   },
+  // Light claymorphic orb
   orb: {
     width: 100,
     height: 100,
-    borderRadius: 50,
+    borderRadius: radius.full,
     backgroundColor: colors.surface,
-    borderWidth: 3,
+    borderWidth: 4,
     justifyContent: "center",
     alignItems: "center",
-    ...shadows.md,
+    ...shadows.clayLarge,
   },
   name: {
     fontSize: 16,
     fontWeight: "800",
     color: colors.text,
   },
+  // Light speech bubble
   bubble: {
     backgroundColor: colors.surface,
-    borderRadius: 20,
+    borderRadius: radius.xl,
     padding: spacing.lg,
-    borderWidth: 1,
-    borderColor: colors.primary + "40",
+    borderWidth: 3,
+    borderColor: colors.primary + "30",
     maxWidth: 300,
     minWidth: 200,
-    ...shadows.sm,
+    ...shadows.clay,
   },
   bubbleText: {
     fontSize: 16,

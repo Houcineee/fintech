@@ -1,87 +1,95 @@
-// Dark immersive theme with neon accents
+// Claymorphism Light Theme - Playful & Kid-Friendly
 export const colors = {
-  // Base - Deep dark navy
-  background: "#0B1120",
-  surface: "#151D2E",
-  surfaceHighlight: "#1E293B",
+  // Base - Warm cream background
+  background: "#FFF8F0",
+  surface: "#FFFFFF",
+  surfaceRaised: "#F5F0EB",
+  surfaceHighlight: "#EDE8E3",
 
-  // Action colors - Neon electric
-  primary: "#00E5FF",      // Electric cyan
-  primaryDim: "#00E5FF20", // 12% opacity for backgrounds
-  success: "#00FF88",      // Neon green (money)
-  successDim: "#00FF8820",
-  danger: "#FF2E6C",       // Hot pink-red
-  dangerDim: "#FF2E6C20",
-  warning: "#FFB800",      // Amber gold
-  warningDim: "#FFB80020",
-  purple: "#A78BFA",       // Soft purple for ethical
-  purpleDim: "#A78BFA20",
+  // Action colors - Soft & Friendly
+  primary: "#4F9CF7",        // Friendly blue
+  primaryDim: "#DBEAFE",     // Light blue background
+  primaryLight: "#EFF6FF",   // Very light blue
+  
+  success: "#34D399",        // Soft green (trust)
+  successDim: "#D1FAE5",
+  successLight: "#ECFDF5",
+  
+  warning: "#F59E0B",        // Warm gold (money)
+  warningDim: "#FEF3C7",
+  warningLight: "#FFFBEB",
+  
+  danger: "#EF4444",         // Soft red
+  dangerDim: "#FEE2E2",
+  dangerLight: "#FEF2F2",
+  
+  barakah: "#C084FC",        // Light purple (barakah)
+  barakahDim: "#F3E8FF",
+  barakahLight: "#FAF5FF",
 
   // Text
-  text: "#E8EDF5",         // Bright white
-  textSecondary: "#6B7A99", // Muted blue-gray
-  textMuted: "#475569",    // Very muted
-  textInverse: "#0B1120",  // Dark for light backgrounds
+  text: "#1E1B4B",           // Dark indigo (primary)
+  textSecondary: "#6B7280",  // Gray
+  textMuted: "#9CA3AF",      // Lighter gray
+  textInverse: "#FFFFFF",    // White
 
   // Borders
-  border: "#1E293B",
-  borderHighlight: "#334155",
+  border: "#E5E7EB",
+  borderHighlight: "#D1D5DB",
 
   // Status
-  locked: "#1E293B",
-  lockedText: "#475569",
+  locked: "#F3F4F6",
+  lockedText: "#9CA3AF",
 };
 
-// Glow shadows for neon effect
+// Claymorphism shadows - Double shadow technique
 export const shadows = {
-  sm: {
-    shadowColor: "rgba(0, 229, 255, 0.08)",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 1,
-    shadowRadius: 10,
-    elevation: 4,
+  // Outer drop shadow (lifts element up)
+  clay: {
+    shadowColor: "#000000",
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 6,
   },
-  md: {
-    shadowColor: "rgba(0, 229, 255, 0.12)",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 1,
+  // Pressed state (concave, inner shadow feel)
+  clayPressed: {
+    shadowColor: "#000000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  // Large elements
+  clayLarge: {
+    shadowColor: "#000000",
+    shadowOffset: { width: 6, height: 6 },
+    shadowOpacity: 0.1,
     shadowRadius: 20,
+    elevation: 10,
+  },
+  // Primary accent glow
+  clayPrimary: {
+    shadowColor: "#4F9CF7",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
     elevation: 8,
   },
-  lg: {
-    shadowColor: "rgba(0, 229, 255, 0.2)",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 1,
-    shadowRadius: 30,
-    elevation: 12,
+  // Success glow
+  claySuccess: {
+    shadowColor: "#34D399",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
   },
-  // Colored glows
-  glowCyan: {
-    shadowColor: "#00E5FF",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.4,
-    shadowRadius: 15,
-    elevation: 10,
-  },
-  glowGreen: {
-    shadowColor: "#00FF88",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.4,
-    shadowRadius: 15,
-    elevation: 10,
-  },
-  glowAmber: {
-    shadowColor: "#FFB800",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.4,
-    shadowRadius: 15,
-    elevation: 10,
-  },
-  glowPink: {
-    shadowColor: "#FF2E6C",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.4,
-    shadowRadius: 15,
-    elevation: 10,
+  // Warning glow
+  clayWarning: {
+    shadowColor: "#F59E0B",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
   },
 };

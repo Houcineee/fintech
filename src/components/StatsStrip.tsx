@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { Animated, StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../theme/colors";
-import { spacing } from "../theme/spacing";
+import { spacing, radius } from "../theme/spacing";
 import { Text } from "../theme/typography";
 import { formatMoney } from "../logic/format";
 
@@ -41,23 +41,19 @@ export const StatsStrip = ({ money, trust, barakah, animated }: Props) => {
 
   return (
     <View style={s.container}>
-      <Animated.View style={[s.statItem, { transform: [{ translateY: moneyAnim }] }]}>
+      <Animated.View style={[s.statPill, s.moneyPill, { transform: [{ translateY: moneyAnim }] }]}>
         <Ionicons name="wallet" size={14} color={colors.warning} />
         <Text style={[s.statValue, { color: colors.warning }]}>{formatMoney(money)}</Text>
       </Animated.View>
 
-      <View style={s.divider} />
-
-      <View style={s.statItem}>
-        <Ionicons name="people" size={14} color={colors.primary} />
-        <MiniBar value={trust} maxValue={100} color={colors.primary} />
+      <View style={s.statPill}>
+        <Ionicons name="people" size={14} color={colors.success} />
+        <MiniBar value={trust} maxValue={100} color={colors.success} />
       </View>
 
-      <View style={s.divider} />
-
-      <View style={s.statItem}>
-        <Ionicons name="star" size={14} color={colors.purple} />
-        <MiniBar value={barakah} maxValue={100} color={colors.purple} />
+      <View style={s.statPill}>
+        <Ionicons name="star" size={14} color={colors.barakah} />
+        <MiniBar value={barakah} maxValue={100} color={colors.barakah} />
       </View>
     </View>
   );
@@ -70,21 +66,26 @@ const s = StyleSheet.create({
     justifyContent: "center",
     gap: spacing.md,
     paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
+    paddingVertical: spacing.sm,
   },
-  statItem: {
+  statPill: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.xs,
+    backgroundColor: colors.surface,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radius.lg,
+    borderWidth: 2,
+    borderColor: colors.border,
+  },
+  moneyPill: {
+    borderColor: colors.warning + "40",
+    backgroundColor: colors.warningLight,
   },
   statValue: {
     fontSize: 14,
     fontWeight: "800",
-  },
-  divider: {
-    width: 1,
-    height: 16,
-    backgroundColor: colors.borderHighlight,
   },
   miniTrack: {
     width: 28,

@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { NavigationContainer, DarkTheme } from "@react-navigation/native";
+import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -15,10 +15,11 @@ import { RootStackParamList } from "./src/types/navigation";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+// Light theme for navigation
 const navTheme = {
-  ...DarkTheme,
+  ...DefaultTheme,
   colors: {
-    ...DarkTheme.colors,
+    ...DefaultTheme.colors,
     background: colors.background,
     card: colors.surface,
     border: colors.border,
@@ -55,7 +56,7 @@ class AppErrorBoundary extends React.Component<
 function AppContent() {
   return (
     <NavigationContainer theme={navTheme}>
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
       <Stack.Navigator
         initialRouteName="Home"
         screenOptions={{

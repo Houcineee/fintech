@@ -8,8 +8,8 @@ import {
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
-import { colors } from "../theme/colors";
-import { spacing } from "../theme/spacing";
+import { colors, shadows } from "../theme/colors";
+import { spacing, radius } from "../theme/spacing";
 import { Text } from "../theme/typography";
 import { RootStackParamList } from "../types/navigation";
 import { useGameStore } from "../store/gameStore";
@@ -148,7 +148,7 @@ export const StoryScreen = ({ navigation }: Props) => {
       {phase !== "reacting" && (
         <View style={s.bottomBar}>
           <Pressable
-            style={s.goalButton}
+            style={[s.goalButton, shadows.clay]}
             onPress={() => setShowGoalDrawer(true)}
           >
             <Ionicons name="flag" size={16} color={colors.warning} />
@@ -178,8 +178,10 @@ const s = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    borderBottomWidth: 1,
+    backgroundColor: colors.surface,
+    borderBottomWidth: 3,
     borderBottomColor: colors.border,
+    ...shadows.clay,
   },
   backButton: {
     padding: spacing.xs,
@@ -224,8 +226,8 @@ const s = StyleSheet.create({
     backgroundColor: colors.surface,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    borderRadius: 12,
-    borderWidth: 1,
+    borderRadius: radius.lg,
+    borderWidth: 2,
     borderColor: colors.border,
   },
   goalButtonText: {

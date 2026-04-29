@@ -7,8 +7,8 @@ import {
   View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { colors } from "../theme/colors";
-import { spacing } from "../theme/spacing";
+import { colors, shadows } from "../theme/colors";
+import { spacing, radius } from "../theme/spacing";
 import { Text } from "../theme/typography";
 import type { GoalProgress } from "../types/game";
 
@@ -121,7 +121,7 @@ export const GoalDrawer = ({ visible, onClose, goals }: Props) => {
 const s = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(0,0,0,0.3)",
     justifyContent: "flex-end",
   },
   overlayPress: {
@@ -129,13 +129,14 @@ const s = StyleSheet.create({
   },
   drawer: {
     backgroundColor: colors.surface,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+    borderTopLeftRadius: radius.xl,
+    borderTopRightRadius: radius.xl,
     paddingHorizontal: spacing.lg,
     paddingBottom: spacing.xl,
     paddingTop: spacing.sm,
-    borderTopWidth: 1,
+    borderTopWidth: 3,
     borderTopColor: colors.border,
+    ...shadows.clayLarge,
   },
   handle: {
     width: 40,
@@ -166,15 +167,15 @@ const s = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm,
-    backgroundColor: colors.surfaceHighlight,
+    backgroundColor: colors.surfaceRaised,
     padding: spacing.md,
-    borderRadius: 14,
-    borderWidth: 1,
+    borderRadius: radius.lg,
+    borderWidth: 2,
     borderColor: colors.border,
   },
   goalRowAchieved: {
     borderColor: colors.success + "40",
-    backgroundColor: colors.success + "10",
+    backgroundColor: colors.successLight,
   },
   goalContent: {
     flex: 1,

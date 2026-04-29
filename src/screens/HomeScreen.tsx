@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import {
+  Animated,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -8,10 +9,10 @@ import {
 } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
-import { missionData, getMissionById } from "../data";
+import { missionData } from "../data";
 import { useGameStore, getRankForXP, getNextRankXP } from "../store/gameStore";
 import { colors, shadows } from "../theme/colors";
-import { spacing } from "../theme/spacing";
+import { spacing, radius } from "../theme/spacing";
 import { Text } from "../theme/typography";
 import { RootStackParamList } from "../types/navigation";
 
@@ -19,141 +20,121 @@ type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
 type MissionStatus = "locked" | "current" | "completed";
 
-const MissionCard = ({
-  missionId,
+const MISSION_ICONS = ["bicycle", "storefront", "shield-checkmark", "lock-closed", "heart", "rocket"] as const;
+
+const MissionNode = ({
   number,
   title,
   roleTitle,
   difficulty,
   status,
-  isSelected,
+  isLast,
   onPress,
 }: {
-  missionId: string;
   number: number;
   title: string;
   roleTitle: string;
   difficulty: string;
   status: MissionStatus;
-  isSelected: boolean;
+  isLast: boolean;
   onPress: () => void;
 }) => {
   const getDifficultyColor = () => {
     switch (difficulty) {
-      case "easy":
-        return colors.success;
-      case "medium":
-        return colors.warning;
-      case "hard":
-        return colors.danger;
-      default:
-        return colors.textSecondary;
+      case "easy": return colors.success;
+      case "medium": return colors.warning;
+      case "hard": return colors.danger;
+      default: return colors.textSecondary;
     }
   };
 
   const getDifficultyLabel = () => {
     switch (difficulty) {
-      case "easy":
-        return "سهل";
-      case "medium":
-        return "متوسط";
-      case "hard":
-        return "متقدم";
-      default:
-        return difficulty;
+      case "easy": return "سهل";
+      case "medium": return "متوسط";
+      case "hard": return "متقدم";
+      default: return difficulty;
     }
   };
 
-  const getStatusIcon = () => {
-    switch (status) {
-      case "completed":
-        return <Ionicons name="checkmark" size={20} color={colors.success} />;
-      case "current":
-        return (
-          <View style={s.pulseDot}>
-            <View style={s.pulseInner} />
-          </View>
-        );
-      case "locked":
-        return <Ionicons name="lock-closed" size={18} color={colors.lockedText} />;
+  const getNodeContent = () => {
+    if (status === "completed") {
+      return <Ionicons name="checkmark" size={24} color={colors.surface} />;
     }
+    if (status === "locked") {
+      return <Ionicons name="lock-closed" size={20} color={colors.lockedText} />;
+    }
+    return <Ionicons name={MISSION_ICONS[number - 1] || "star"} size={22} color={colors.surface} />;
   };
 
   const isLocked = status === "locked";
+  const isCurrent = status === "current";
 
   return (
-    <Pressable
-      onPress={onPress}
-      disabled={isLocked}
-      style={({ pressed }) => [
-        s.missionCard,
-        isSelected && !isLocked && s.missionCardSelected,
-        isLocked && s.missionCardLocked,
-        pressed && !isLocked && s.missionCardPressed,
-      ]}
-    >
-      <View style={s.orbContainer}>{getStatusIcon()}</View>
+    <Pressable onPress={onPress} disabled={isLocked} style={s.missionRow}>
+      {/* Path line + Node */}
+      <View style={s.pathColumn}>
+        {/* Connection line above (except first) */}
+        <View style={[
+          s.pathLine,
+          number > 1 && (status === "completed" || status === "current") && s.pathLineCompleted,
+          number > 1 && status === "locked" && s.pathLineLocked,
+        ]} />
+        
+        {/* The node */}
+        <Animated.View style={[
+          s.node,
+          status === "completed" && [s.nodeCompleted, shadows.claySuccess],
+          isCurrent && [s.nodeCurrent, shadows.clayPrimary],
+          isLocked && s.nodeLocked,
+          isCurrent && s.nodePulse,
+        ]}>
+          {getNodeContent()}
+        </Animated.View>
 
-      <View style={s.missionInfo}>
+        {/* Connection line below (except last) */}
+        {!isLast && (
+          <View style={[
+            s.pathLine,
+            status === "completed" && s.pathLineCompleted,
+            (status === "current" || status === "locked") && s.pathLineLocked,
+          ]} />
+        )}
+      </View>
+
+      {/* Mission details card */}
+      <View style={[
+        s.missionCard,
+        isCurrent && [s.missionCardCurrent, shadows.clay],
+        status === "completed" && s.missionCardCompleted,
+        isLocked && s.missionCardLocked,
+      ]}>
         <View style={s.missionHeader}>
-          <Text style={[s.missionNumber, isLocked && s.textLocked]}>
+          <Text style={[s.missionNumber, isLocked && s.textMuted]}>
             مهمة {number}
           </Text>
-          <View
-            style={[
-              s.difficultyBadge,
-              { backgroundColor: getDifficultyColor() + "25" },
-            ]}
-          >
-            <Text
-              style={[
-                s.difficultyText,
-                { color: isLocked ? colors.lockedText : getDifficultyColor() },
-              ]}
-            >
+          <View style={[s.difficultyBadge, { backgroundColor: getDifficultyColor() + "20" }]}>
+            <Text style={[s.difficultyText, { color: isLocked ? colors.lockedText : getDifficultyColor() }]}>
               {getDifficultyLabel()}
             </Text>
           </View>
         </View>
 
-        <Text style={[s.missionTitle, isLocked && s.textLocked]}>
+        <Text style={[s.missionTitle, isLocked && s.textMuted]}>
           {title}
         </Text>
-
-        <Text style={[s.missionRole, isLocked && s.textLocked]}>
+        
+        <Text style={[s.missionRole, isLocked && s.textMuted]}>
           {roleTitle}
         </Text>
 
-        <View style={s.progressContainer}>
-          <View style={s.progressTrack}>
-            <View
-              style={[
-                s.progressFill,
-                {
-                  width: status === "completed" ? "100%" : "0%",
-                  backgroundColor:
-                    status === "completed" ? colors.success : colors.primary,
-                },
-              ]}
-            />
+        {isCurrent && (
+          <View style={s.currentBadge}>
+            <View style={s.currentDot} />
+            <Text style={s.currentText}>متاحة الآن!</Text>
           </View>
-          <Text style={s.progressText}>
-            {status === "completed"
-              ? "مكتملة"
-              : status === "current"
-                ? "متاحة"
-                : "مقفلة"}
-          </Text>
-        </View>
+        )}
       </View>
-
-      {!isLocked && (
-        <Ionicons
-          name="chevron-back"
-          size={24}
-          color={isSelected ? colors.primary : colors.textSecondary}
-        />
-      )}
     </Pressable>
   );
 };
@@ -203,69 +184,57 @@ export const HomeScreen = ({ navigation }: Props) => {
 
   const rank = getRankForXP(totalXP);
   const nextRankXP = getNextRankXP(totalXP);
+  const progressPercent = nextRankXP
+    ? Math.min(100, ((totalXP - rank.minXP) / (nextRankXP - rank.minXP)) * 100)
+    : 100;
 
   return (
     <SafeAreaView style={s.safe}>
+      {/* Header */}
       <View style={s.header}>
         <View style={s.logoRow}>
           <View style={s.logoContainer}>
+            <View style={s.logoIcon}>
+              <Ionicons name="wallet" size={20} color={colors.surface} />
+            </View>
             <Text style={s.logo}>درهمي</Text>
-            <View style={s.logoDot} />
           </View>
+          
           <View style={s.rankBadge}>
-            <Ionicons name={rank.icon as any} size={18} color={colors.primary} />
+            <Ionicons name={rank.icon as any} size={16} color={colors.primary} />
             <Text style={s.rankName}>{rank.name}</Text>
           </View>
         </View>
-        <View style={s.subtitleRow}>
-          <Text style={s.subtitle}>أكاديمية التعليم المالي</Text>
-          <Text style={s.xpText}>{totalXP} XP</Text>
-        </View>
-        {nextRankXP !== null && (
-          <View style={s.xpBar}>
-            <View style={s.xpTrack}>
-              <View
-                style={[
-                  s.xpFill,
-                  {
-                    width: `${Math.min(
-                      ((totalXP - rank.minXP) / (nextRankXP - rank.minXP)) * 100,
-                      100
-                    )}%`,
-                  },
-                ]}
-              />
-            </View>
-            <Text style={s.xpNext}>{nextRankXP} XP للرتبة التالية</Text>
+
+        {/* XP Progress */}
+        <View style={s.xpContainer}>
+          <View style={s.xpHeader}>
+            <Text style={s.xpLabel}>{totalXP} XP</Text>
+            {nextRankXP && <Text style={s.xpNext}>{nextRankXP} للترقية</Text>}
           </View>
-        )}
+          <View style={s.xpTrack}>
+            <View style={[s.xpFill, { width: `${progressPercent}%` }]} />
+          </View>
+        </View>
       </View>
 
+      {/* Roadmap */}
       <ScrollView
-        contentContainerStyle={s.container}
+        contentContainerStyle={s.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <View style={s.progressRingContainer}>
-          <View style={s.progressRing}>
-            <Text style={s.progressNumber}>
-              {completedMissionIds.length}
-            </Text>
-            <Text style={s.progressLabel}>من {missionData.length}</Text>
-          </View>
-          <Text style={s.progressRingLabel}>تقدمك</Text>
-        </View>
+        <Text style={s.sectionTitle}>رحلتك التعليمية</Text>
 
-        <View style={s.missionsContainer}>
-          {missions.map((mission) => (
-            <MissionCard
+        <View style={s.roadmap}>
+          {missions.map((mission, index) => (
+            <MissionNode
               key={mission.id}
-              missionId={mission.id}
               number={mission.number}
               title={mission.title}
               roleTitle={mission.roleTitle}
               difficulty={mission.difficulty}
               status={mission.status}
-              isSelected={selectedMission?.id === mission.id}
+              isLast={index === missions.length - 1}
               onPress={() => setSelectedMissionId(mission.id)}
             />
           ))}
@@ -274,6 +243,7 @@ export const HomeScreen = ({ navigation }: Props) => {
         <View style={s.bottomPadding} />
       </ScrollView>
 
+      {/* Start Button */}
       {selectedMission && (
         <View style={s.buttonContainer}>
           <Pressable
@@ -289,7 +259,7 @@ export const HomeScreen = ({ navigation }: Props) => {
               {canStart ? "ابدأ المهمة" : "أكمل المهمة السابقة"}
             </Text>
             {canStart && (
-              <Ionicons name="arrow-forward" size={20} color={colors.textInverse} />
+              <Ionicons name="arrow-forward" size={20} color={colors.surface} />
             )}
           </Pressable>
         </View>
@@ -306,164 +276,167 @@ const s = StyleSheet.create({
   header: {
     padding: spacing.lg,
     paddingBottom: spacing.md,
-    borderBottomWidth: 1,
+    backgroundColor: colors.surface,
+    borderBottomWidth: 3,
     borderBottomColor: colors.border,
+    ...shadows.clay,
   },
   logoRow: {
     flexDirection: "row-reverse",
     alignItems: "center",
     justifyContent: "space-between",
+    marginBottom: spacing.md,
   },
   logoContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.xs,
+    gap: spacing.sm,
+  },
+  logoIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: radius.lg,
+    backgroundColor: colors.primary,
+    justifyContent: "center",
+    alignItems: "center",
+    ...shadows.clayPrimary,
   },
   logo: {
     fontSize: 28,
     fontWeight: "900",
     color: colors.text,
-    letterSpacing: -0.5,
-  },
-  logoDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.primary,
-    ...shadows.glowCyan,
   },
   rankBadge: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.xs,
-    backgroundColor: colors.primaryDim,
+    backgroundColor: colors.primaryLight,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
-    borderRadius: 12,
+    borderRadius: radius.lg,
+    borderWidth: 2,
+    borderColor: colors.primaryDim,
   },
   rankName: {
     fontSize: 14,
     fontWeight: "800",
     color: colors.primary,
   },
-  subtitleRow: {
+  xpContainer: {
+    gap: spacing.xs,
+  },
+  xpHeader: {
     flexDirection: "row-reverse",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: spacing.xs,
   },
-  subtitle: {
-    fontSize: 14,
-    color: colors.textSecondary,
-  },
-  xpText: {
+  xpLabel: {
     fontSize: 14,
     fontWeight: "800",
-    color: colors.warning,
+    color: colors.text,
   },
-  xpBar: {
-    marginTop: spacing.sm,
+  xpNext: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: colors.textSecondary,
   },
   xpTrack: {
-    height: 4,
+    height: 8,
     backgroundColor: colors.border,
-    borderRadius: 2,
+    borderRadius: radius.full,
     overflow: "hidden",
   },
   xpFill: {
     height: "100%",
     backgroundColor: colors.primary,
-    borderRadius: 2,
+    borderRadius: radius.full,
   },
-  xpNext: {
-    fontSize: 11,
-    color: colors.textSecondary,
-    marginTop: 4,
-  },
-  container: {
+  scrollContent: {
     padding: spacing.lg,
   },
-  progressRingContainer: {
-    alignItems: "center",
-    marginBottom: spacing.lg,
-  },
-  progressRing: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    borderWidth: 4,
-    borderColor: colors.borderHighlight,
-    justifyContent: "center",
-    alignItems: "center",
-    borderTopColor: colors.primary,
-    transform: [{ rotate: "45deg" }],
-  },
-  progressNumber: {
-    fontSize: 32,
+  sectionTitle: {
+    fontSize: 18,
     fontWeight: "900",
     color: colors.text,
-    transform: [{ rotate: "-45deg" }],
+    marginBottom: spacing.lg,
+    textAlign: "right",
   },
-  progressLabel: {
-    fontSize: 12,
-    color: colors.textSecondary,
-    transform: [{ rotate: "-45deg" }],
+  roadmap: {
+    gap: 0,
   },
-  progressRingLabel: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    marginTop: spacing.sm,
-  },
-  missionsContainer: {
+  missionRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
     gap: spacing.md,
   },
-  missionCard: {
-    flexDirection: "row-reverse",
+  pathColumn: {
+    width: 56,
     alignItems: "center",
-    backgroundColor: colors.surface,
-    borderRadius: 16,
-    padding: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.border,
   },
-  missionCardSelected: {
+  pathLine: {
+    width: 3,
+    flex: 1,
+    minHeight: 40,
+    backgroundColor: colors.border,
+  },
+  pathLineCompleted: {
+    backgroundColor: colors.success,
+  },
+  pathLineLocked: {
+    backgroundColor: colors.border,
+    borderStyle: "dashed",
+    borderWidth: 1,
+    borderColor: colors.borderHighlight,
+  },
+  node: {
+    width: 56,
+    height: 56,
+    borderRadius: radius.full,
+    backgroundColor: colors.surface,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 3,
+    borderColor: colors.border,
+    marginVertical: spacing.xs,
+  },
+  nodeCompleted: {
+    backgroundColor: colors.success,
+    borderColor: colors.success,
+  },
+  nodeCurrent: {
+    backgroundColor: colors.primary,
     borderColor: colors.primary,
-    borderWidth: 2,
-    ...shadows.sm,
+  },
+  nodeLocked: {
+    backgroundColor: colors.locked,
+    borderColor: colors.borderHighlight,
+  },
+  nodePulse: {
+    // Pulsing animation handled by Animated
+  },
+  missionCard: {
+    flex: 1,
+    backgroundColor: colors.surface,
+    borderRadius: radius.xl,
+    padding: spacing.md,
+    borderWidth: 3,
+    borderColor: colors.border,
+    marginBottom: spacing.md,
+    ...shadows.clay,
+  },
+  missionCardCurrent: {
+    borderColor: colors.primary,
+    backgroundColor: colors.primaryLight,
+  },
+  missionCardCompleted: {
+    borderColor: colors.success + "40",
+    backgroundColor: colors.successLight,
+    opacity: 0.9,
   },
   missionCardLocked: {
-    opacity: 0.5,
-    backgroundColor: colors.background,
-  },
-  missionCardPressed: {
-    opacity: 0.8,
-  },
-  orbContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: colors.surfaceHighlight,
-    justifyContent: "center",
-    alignItems: "center",
-    marginLeft: spacing.md,
-  },
-  pulseDot: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    backgroundColor: colors.primaryDim,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  pulseInner: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: colors.primary,
-    ...shadows.glowCyan,
-  },
-  missionInfo: {
-    flex: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.locked,
+    ...shadows.clayPressed,
   },
   missionHeader: {
     flexDirection: "row-reverse",
@@ -473,21 +446,20 @@ const s = StyleSheet.create({
   },
   missionNumber: {
     fontSize: 12,
+    fontWeight: "700",
     color: colors.textSecondary,
-    fontWeight: "600",
   },
   difficultyBadge: {
-    borderWidth: 1,
     paddingHorizontal: spacing.sm,
     paddingVertical: 2,
-    borderRadius: 8,
+    borderRadius: radius.sm,
   },
   difficultyText: {
     fontSize: 11,
-    fontWeight: "700",
+    fontWeight: "800",
   },
   missionTitle: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: "800",
     color: colors.text,
     marginBottom: 2,
@@ -495,32 +467,27 @@ const s = StyleSheet.create({
   missionRole: {
     fontSize: 13,
     color: colors.textSecondary,
-    marginBottom: spacing.sm,
+    marginBottom: spacing.xs,
   },
-  textLocked: {
+  textMuted: {
     color: colors.lockedText,
   },
-  progressContainer: {
-    flexDirection: "row-reverse",
+  currentBadge: {
+    flexDirection: "row",
     alignItems: "center",
-    gap: spacing.sm,
+    gap: spacing.xs,
+    marginTop: spacing.xs,
   },
-  progressTrack: {
-    flex: 1,
-    height: 4,
-    backgroundColor: colors.border,
-    borderRadius: 2,
-    overflow: "hidden",
+  currentDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.primary,
   },
-  progressFill: {
-    height: "100%",
-    borderRadius: 2,
-  },
-  progressText: {
-    fontSize: 11,
-    color: colors.textSecondary,
-    minWidth: 50,
-    textAlign: "left",
+  currentText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: colors.primary,
   },
   bottomPadding: {
     height: 100,
@@ -533,7 +500,7 @@ const s = StyleSheet.create({
     padding: spacing.lg,
     paddingBottom: spacing.xl,
     backgroundColor: colors.background,
-    borderTopWidth: 1,
+    borderTopWidth: 2,
     borderTopColor: colors.border,
   },
   startButton: {
@@ -543,19 +510,23 @@ const s = StyleSheet.create({
     gap: spacing.sm,
     backgroundColor: colors.primary,
     paddingVertical: spacing.md,
-    borderRadius: 14,
-    ...shadows.glowCyan,
+    borderRadius: radius.xl,
+    borderWidth: 3,
+    borderColor: colors.primary,
+    ...shadows.clayPrimary,
   },
   startButtonDisabled: {
-    backgroundColor: colors.surfaceHighlight,
+    backgroundColor: colors.locked,
+    borderColor: colors.border,
     shadowColor: "transparent",
   },
   startButtonPressed: {
-    opacity: 0.9,
+    transform: [{ scale: 0.98 }],
+    ...shadows.clayPressed,
   },
   startButtonText: {
     fontSize: 18,
-    fontWeight: "800",
-    color: colors.textInverse,
+    fontWeight: "900",
+    color: colors.surface,
   },
 });

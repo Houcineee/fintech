@@ -9,7 +9,7 @@ import {
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, shadows } from "../theme/colors";
-import { spacing } from "../theme/spacing";
+import { spacing, radius } from "../theme/spacing";
 import { Text } from "../theme/typography";
 import { RootStackParamList } from "../types/navigation";
 import { useGameStore } from "../store/gameStore";
@@ -73,7 +73,7 @@ export const MissionIntroScreen = ({ navigation }: Props) => {
 
         {/* Dinar Greeting */}
         <View style={s.dinarContainer}>
-          <View style={[s.dinarOrb, shadows.glowCyan]}>
+          <View style={[s.dinarOrb, shadows.clayPrimary]}>
             <Ionicons name="happy-outline" size={40} color={colors.primary} />
           </View>
           <Text style={s.dinarGreeting}>مرحباً! أنا درهمي</Text>
@@ -84,13 +84,13 @@ export const MissionIntroScreen = ({ navigation }: Props) => {
         <View style={s.divider} />
 
         {/* Situation / Role Story */}
-        <View style={s.section}>
+        <View style={[s.section, shadows.clay]}>
           <Text style={s.sectionLabel}>الموقف</Text>
           <Text style={s.storyText}>{mission.roleStory}</Text>
         </View>
 
         {/* Goals */}
-        <View style={s.section}>
+        <View style={[s.section, shadows.clay]}>
           <Text style={s.sectionLabel}>أهدافك</Text>
           {mission.goals.map((goal) => (
             <View key={goal.label} style={s.goalRow}>
@@ -106,16 +106,16 @@ export const MissionIntroScreen = ({ navigation }: Props) => {
 
         {/* Initial Stats Preview */}
         <View style={s.statsPreview}>
-          <View style={s.statPreviewItem}>
+          <View style={[s.statPreviewItem, shadows.clay]}>
             <Ionicons name="wallet" size={16} color={colors.warning} />
             <Text style={s.statPreviewValue}>{mission.initialMoney} د.م</Text>
           </View>
-          <View style={s.statPreviewItem}>
-            <Ionicons name="people" size={16} color={colors.primary} />
+          <View style={[s.statPreviewItem, shadows.clay]}>
+            <Ionicons name="people" size={16} color={colors.success} />
             <Text style={s.statPreviewValue}>{mission.initialTrust} ثقة</Text>
           </View>
-          <View style={s.statPreviewItem}>
-            <Ionicons name="star" size={16} color={colors.purple} />
+          <View style={[s.statPreviewItem, shadows.clay]}>
+            <Ionicons name="star" size={16} color={colors.barakah} />
             <Text style={s.statPreviewValue}>{mission.initialBarakah} بركة</Text>
           </View>
         </View>
@@ -123,9 +123,9 @@ export const MissionIntroScreen = ({ navigation }: Props) => {
 
       {/* Start Button */}
       <View style={s.buttonContainer}>
-        <Pressable style={s.startButton} onPress={handleStart}>
+        <Pressable style={[s.startButton, shadows.clayPrimary]} onPress={handleStart}>
           <Text style={s.startButtonText}>ابدأ المهمة</Text>
-          <Ionicons name="arrow-forward" size={20} color={colors.textInverse} />
+          <Ionicons name="arrow-forward" size={20} color={colors.surface} />
         </Pressable>
       </View>
     </SafeAreaView>
@@ -152,10 +152,12 @@ const s = StyleSheet.create({
     paddingTop: spacing.lg,
   },
   numberBadge: {
-    backgroundColor: colors.primaryDim,
+    backgroundColor: colors.primaryLight,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
-    borderRadius: 12,
+    borderRadius: radius.lg,
+    borderWidth: 2,
+    borderColor: colors.primaryDim,
     marginBottom: spacing.lg,
   },
   numberText: {
@@ -171,9 +173,9 @@ const s = StyleSheet.create({
   dinarOrb: {
     width: 80,
     height: 80,
-    borderRadius: 40,
+    borderRadius: radius.full,
     backgroundColor: colors.surface,
-    borderWidth: 2,
+    borderWidth: 3,
     borderColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
@@ -192,7 +194,7 @@ const s = StyleSheet.create({
   },
   divider: {
     width: 60,
-    height: 3,
+    height: 4,
     backgroundColor: colors.primary,
     borderRadius: 2,
     marginBottom: spacing.lg,
@@ -201,6 +203,11 @@ const s = StyleSheet.create({
     width: "100%",
     marginBottom: spacing.lg,
     gap: spacing.sm,
+    backgroundColor: colors.surface,
+    borderRadius: radius.xl,
+    padding: spacing.lg,
+    borderWidth: 3,
+    borderColor: colors.border,
   },
   sectionLabel: {
     fontSize: 13,
@@ -219,10 +226,10 @@ const s = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm,
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surfaceRaised,
     padding: spacing.md,
-    borderRadius: 12,
-    borderWidth: 1,
+    borderRadius: radius.lg,
+    borderWidth: 2,
     borderColor: colors.border,
   },
   goalText: {
@@ -233,13 +240,19 @@ const s = StyleSheet.create({
   statsPreview: {
     flexDirection: "row",
     justifyContent: "center",
-    gap: spacing.lg,
+    gap: spacing.md,
     marginTop: spacing.md,
   },
   statPreviewItem: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.xs,
+    backgroundColor: colors.surface,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: radius.lg,
+    borderWidth: 2,
+    borderColor: colors.border,
   },
   statPreviewValue: {
     fontSize: 13,
@@ -257,12 +270,13 @@ const s = StyleSheet.create({
     gap: spacing.sm,
     backgroundColor: colors.primary,
     paddingVertical: spacing.md,
-    borderRadius: 14,
-    ...shadows.glowCyan,
+    borderRadius: radius.xl,
+    borderWidth: 3,
+    borderColor: colors.primary,
   },
   startButtonText: {
     fontSize: 18,
-    fontWeight: "800",
-    color: colors.textInverse,
+    fontWeight: "900",
+    color: colors.surface,
   },
 });

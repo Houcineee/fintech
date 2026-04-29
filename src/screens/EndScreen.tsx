@@ -3,13 +3,12 @@ import { Pressable, SafeAreaView, ScrollView, StyleSheet, View } from "react-nat
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, shadows } from "../theme/colors";
-import { spacing } from "../theme/spacing";
+import { spacing, radius } from "../theme/spacing";
 import { Text } from "../theme/typography";
 import { RootStackParamList } from "../types/navigation";
 import { useGameStore } from "../store/gameStore";
 import { getMissionById } from "../data";
 import { formatMoney } from "../logic/format";
-import type { ResultSummary } from "../types/game";
 
 type Props = NativeStackScreenProps<RootStackParamList, "End">;
 
@@ -20,7 +19,7 @@ const StarRating = ({ count }: { count: number }) => (
         key={i}
         name={i <= count ? "star" : "star-outline"}
         size={28}
-        color={i <= count ? colors.warning : colors.textMuted}
+        color={i <= count ? colors.warning : colors.borderHighlight}
       />
     ))}
   </View>
@@ -31,8 +30,6 @@ export const EndScreen = ({ navigation }: Props) => {
   const game = useGameStore((s) => s.game);
   const clearSession = useGameStore((s) => s.clearSession);
   const totalXP = useGameStore((s) => s.totalXP);
-  const completedMissionIds = useGameStore((s) => s.completedMissionIds);
-  const nextMissionId = useGameStore((s) => s.getNextMissionId);
 
   const mission = game ? getMissionById(game.missionId) : null;
 
@@ -64,7 +61,7 @@ export const EndScreen = ({ navigation }: Props) => {
   return (
     <SafeAreaView style={s.safe}>
       <ScrollView contentContainerStyle={s.scrollContent} showsVerticalScrollIndicator={false}>
-        <View style={[s.banner, result.ending.isGood ? s.bannerSuccess : s.bannerWarning]}>
+        <View style={[s.banner, result.ending.isGood ? s.bannerSuccess : s.bannerWarning, shadows.clayLarge]}>
           <Ionicons
             name={result.ending.isGood ? "trophy" : "refresh"}
             size={40}
@@ -75,23 +72,23 @@ export const EndScreen = ({ navigation }: Props) => {
           <StarRating count={stars} />
         </View>
 
-        <View style={s.card}>
+        <View style={[s.card, shadows.clay]}>
           <Text style={s.cardTitle}>النتائج</Text>
           <View style={s.statsGrid}>
-            <View style={s.statBox}>
+            <View style={[s.statBox, shadows.clay]}>
               <Ionicons name="wallet" size={20} color={colors.warning} />
               <Text style={s.statLabel}>المال</Text>
               <Text style={[s.statValue, { color: game.money >= 0 ? colors.success : colors.danger }]}>
                 {formatMoney(game.money)}
               </Text>
             </View>
-            <View style={s.statBox}>
-              <Ionicons name="people" size={20} color={colors.primary} />
+            <View style={[s.statBox, shadows.clay]}>
+              <Ionicons name="people" size={20} color={colors.success} />
               <Text style={s.statLabel}>الثقة</Text>
               <Text style={s.statValue}>{game.trust}</Text>
             </View>
-            <View style={s.statBox}>
-              <Ionicons name="star" size={20} color={colors.purple} />
+            <View style={[s.statBox, shadows.clay]}>
+              <Ionicons name="star" size={20} color={colors.barakah} />
               <Text style={s.statLabel}>البركة</Text>
               <Text style={s.statValue}>{game.barakah}</Text>
             </View>
@@ -99,7 +96,7 @@ export const EndScreen = ({ navigation }: Props) => {
         </View>
 
         {result.goalsAchieved.length > 0 && (
-          <View style={s.card}>
+          <View style={[s.card, shadows.clay]}>
             <Text style={s.cardTitle}>أهداف محققة</Text>
             {result.goalsAchieved.map((goal) => (
               <View key={goal.label} style={s.achievementRow}>
@@ -111,7 +108,7 @@ export const EndScreen = ({ navigation }: Props) => {
         )}
 
         {result.milestonesHit.length > 0 && mission && (
-          <View style={s.card}>
+          <View style={[s.card, shadows.clay]}>
             <Text style={s.cardTitle}>إنجازات</Text>
             {result.milestonesHit.map((id) => {
               const milestone = mission.milestones.find((m) => m.id === id);
@@ -126,7 +123,7 @@ export const EndScreen = ({ navigation }: Props) => {
           </View>
         )}
 
-        <View style={s.card}>
+        <View style={[s.card, shadows.clay]}>
           <Text style={s.cardTitle}>رحلة قراراتك</Text>
           {game.choiceLog.slice(-5).map((record, i) => (
             <View key={i} style={s.timelineRow}>
@@ -144,7 +141,7 @@ export const EndScreen = ({ navigation }: Props) => {
           ))}
         </View>
 
-        <View style={s.xpCard}>
+        <View style={[s.xpCard, shadows.clay]}>
           <Ionicons name="star" size={24} color={colors.warning} />
           <Text style={s.xpLabel}>مكافأة XP</Text>
           <Text style={s.xpValue}>+{result.xpEarned + game.xp}</Text>
@@ -156,15 +153,15 @@ export const EndScreen = ({ navigation }: Props) => {
       <View style={s.buttonContainer}>
         {result.ending.isGood && game.missionId ? (
           <Pressable
-            style={[s.button, s.buttonPrimary]}
+            style={[s.button, s.buttonPrimary, shadows.clayPrimary]}
             onPress={handleNextMission}
           >
             <Text style={s.buttonTextPrimary}>المهمة التالية</Text>
-            <Ionicons name="arrow-forward" size={20} color={colors.textInverse} />
+            <Ionicons name="arrow-forward" size={20} color={colors.surface} />
           </Pressable>
         ) : (
           <Pressable
-            style={[s.button, s.buttonSecondary]}
+            style={[s.button, s.buttonSecondary, shadows.clay]}
             onPress={handleRetry}
           >
             <Ionicons name="refresh" size={20} color={colors.primary} />
@@ -189,21 +186,20 @@ const s = StyleSheet.create({
     paddingBottom: 120,
   },
   banner: {
-    borderRadius: 20,
+    borderRadius: radius.xl,
     padding: spacing.xl,
     alignItems: "center",
     gap: spacing.sm,
     marginBottom: spacing.lg,
+    borderWidth: 3,
   },
   bannerSuccess: {
-    backgroundColor: colors.successDim,
-    borderWidth: 1,
-    borderColor: colors.success,
+    backgroundColor: colors.successLight,
+    borderColor: colors.successDim,
   },
   bannerWarning: {
-    backgroundColor: colors.warningDim,
-    borderWidth: 1,
-    borderColor: colors.warning,
+    backgroundColor: colors.warningLight,
+    borderColor: colors.warningDim,
   },
   bannerTitle: {
     fontSize: 24,
@@ -224,9 +220,9 @@ const s = StyleSheet.create({
   },
   card: {
     backgroundColor: colors.surface,
-    borderRadius: 16,
+    borderRadius: radius.xl,
     padding: spacing.lg,
-    borderWidth: 1,
+    borderWidth: 3,
     borderColor: colors.border,
     marginBottom: spacing.md,
     gap: spacing.sm,
@@ -240,11 +236,17 @@ const s = StyleSheet.create({
   statsGrid: {
     flexDirection: "row",
     justifyContent: "space-between",
+    gap: spacing.sm,
   },
   statBox: {
     alignItems: "center",
     gap: 4,
     flex: 1,
+    backgroundColor: colors.surfaceRaised,
+    borderRadius: radius.lg,
+    padding: spacing.md,
+    borderWidth: 2,
+    borderColor: colors.border,
   },
   statLabel: {
     fontSize: 11,
@@ -272,10 +274,10 @@ const s = StyleSheet.create({
     fontSize: 12,
     fontWeight: "700",
     color: colors.warning,
-    backgroundColor: colors.warningDim,
+    backgroundColor: colors.warningLight,
     paddingHorizontal: spacing.sm,
     paddingVertical: 2,
-    borderRadius: 8,
+    borderRadius: radius.sm,
   },
   timelineRow: {
     flexDirection: "row",
@@ -314,10 +316,10 @@ const s = StyleSheet.create({
     justifyContent: "center",
     gap: spacing.sm,
     backgroundColor: colors.surface,
-    borderRadius: 16,
+    borderRadius: radius.xl,
     padding: spacing.lg,
-    borderWidth: 1,
-    borderColor: colors.warning + "40",
+    borderWidth: 3,
+    borderColor: colors.warningDim,
   },
   xpLabel: {
     fontSize: 16,
@@ -340,9 +342,8 @@ const s = StyleSheet.create({
     padding: spacing.lg,
     paddingBottom: spacing.xl,
     backgroundColor: colors.background,
-    borderTopWidth: 1,
+    borderTopWidth: 3,
     borderTopColor: colors.border,
-    gap: spacing.sm,
   },
   button: {
     flexDirection: "row",
@@ -350,25 +351,25 @@ const s = StyleSheet.create({
     justifyContent: "center",
     gap: spacing.sm,
     paddingVertical: spacing.md,
-    borderRadius: 14,
+    borderRadius: radius.xl,
+    borderWidth: 3,
   },
   buttonPrimary: {
     backgroundColor: colors.primary,
-    ...shadows.glowCyan,
+    borderColor: colors.primary,
   },
   buttonSecondary: {
-    backgroundColor: colors.primaryDim,
-    borderWidth: 1,
-    borderColor: colors.primary,
+    backgroundColor: colors.primaryLight,
+    borderColor: colors.primaryDim,
   },
   buttonTextPrimary: {
     fontSize: 18,
-    fontWeight: "800",
-    color: colors.textInverse,
+    fontWeight: "900",
+    color: colors.surface,
   },
   buttonTextSecondary: {
     fontSize: 18,
-    fontWeight: "800",
+    fontWeight: "900",
     color: colors.primary,
   },
   homeButton: {
