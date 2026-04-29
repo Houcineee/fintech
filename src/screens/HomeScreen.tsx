@@ -10,6 +10,7 @@ import {
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
 import { missionData } from "../data";
+import { useChoiceSounds } from "../hooks/useChoiceSounds";
 import { useGameStore, getRankForXP, getNextRankXP } from "../store/gameStore";
 import { colors, shadows } from "../theme/colors";
 import { spacing, radius } from "../theme/spacing";
@@ -144,6 +145,7 @@ export const HomeScreen = ({ navigation }: Props) => {
   const completedMissionIds = useGameStore((s) => s.completedMissionIds);
   const isMissionUnlockedFn = useGameStore((s) => s.isMissionUnlocked);
   const totalXP = useGameStore((s) => s.totalXP);
+  const { playClick } = useChoiceSounds();
 
   const [selectedMissionId, setSelectedMissionId] = useState<string | null>(null);
 
@@ -177,6 +179,7 @@ export const HomeScreen = ({ navigation }: Props) => {
 
   const handleStart = () => {
     if (selectedMission && canStart) {
+      playClick();
       startMission(selectedMission.id);
       navigation.navigate("MissionIntro");
     }
@@ -235,7 +238,7 @@ export const HomeScreen = ({ navigation }: Props) => {
               difficulty={mission.difficulty}
               status={mission.status}
               isLast={index === missions.length - 1}
-              onPress={() => setSelectedMissionId(mission.id)}
+              onPress={() => { playClick(); setSelectedMissionId(mission.id); }}
             />
           ))}
         </View>

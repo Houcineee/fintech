@@ -92,6 +92,25 @@
       ]
     },
     {
+      "id": "s3b_small_job",
+      "day": 3,
+      "text": "جار درهمي طلب مساعدة في تنظيف الحديقة. عمل بسيط لمدة ساعة، لكنه يدفع 40 دراهم.",
+      "choices": [
+        {
+          "id": "c3b_accept_job",
+          "text": "يقبل العمل",
+          "effects": { "money": 40, "trust": 5, "setFlag": "small_job_done" },
+          "dinarReaction": "عمل شريف يقربك من حلمك. كل درهم هنا له قيمة."
+        },
+        {
+          "id": "c3b_decline",
+          "text": "يرفض ليرتاح",
+          "effects": {},
+          "dinarReaction": "الراحة لها ثمن، لكن فرصة العمل قد لا تعود."
+        }
+      ]
+    },
+    {
       "id": "s4_charity",
       "day": 3,
       "text": "عند باب الحي، رأى درهمي أماً تحمل كيس خبز صغيراً وطفلين ينتظران بصمت. في جيبه مال الدراجة، وفي قلبه سؤال أصعب من السوق: ماذا يعني أن تدخر وأنت ترى حاجة غيرك؟",
@@ -144,13 +163,13 @@
         {
           "id": "c6_work_full",
           "text": "يعمل اليوم كاملاً",
-          "effects": { "money": 70, "trust": 10, "setFlag": "earned_halal" },
+          "effects": { "money": 70, "trust": 10, "setFlag": "earned_halal_day4" },
           "dinarReaction": "تعبك صار مالاً تعرف مصدره. هذا ربح يقوي الظهر."
         },
         {
           "id": "c6_work_half",
           "text": "يعمل نصف اليوم",
-          "effects": { "money": 35, "trust": 5 },
+          "effects": { "money": 35, "trust": 5, "setFlag": "earned_halal_day4" },
           "dinarReaction": "خطوة نصفها تعب ونصفها راحة. ما زلت تتحرك."
         },
         {
@@ -164,7 +183,7 @@
     {
       "id": "s7_fast_money",
       "day": 4,
-      "condition": { "moneyBelow": 150 },
+      "condition": { "moneyBelow": 150, "flagAbsent": "earned_halal_day4" },
       "text": "حين رأى درهمي أن المال لا يكفي، اقترب رجل لا يعرفه وهمس: 'بضاعة رخيصة، تبيعها بضعف السعر، ولا تسأل كثيراً.' الربح سريع، لكن الكلام ترك غباراً في صدره.",
       "choices": [
         {
@@ -230,12 +249,12 @@
       "id": "s10_bike_sale",
       "day": 6,
       "condition": { "flag": "frugal_start" },
-      "text": "مر درهمي أمام محل الدراجات فرأى ورقة حمراء على الزجاج: تخفيض إلى 250 درهماً. نفس الدراجة الزرقاء، نفس اللمعة، لكن الباب صار أقرب.",
+      "text": "مر درهمي أمام محل الدراجات فرأى ورقة حمراء على الزجاج: تخفيض إلى 180 دراهم. نفس الدراجة الزرقاء، نفس اللمعة، لكن الباب صار أقرب.",
       "choices": [
         {
           "id": "c10_buy_sale",
           "text": "يشتريها بسعر التخفيض",
-          "effects": { "money": -250, "trust": 15, "barakah": 5, "addItem": "bike", "setFlag": "bought_bike" },
+          "effects": { "money": -180, "trust": 15, "barakah": 5, "addItem": "bike", "setFlag": "bought_bike" },
           "dinarReaction": "الاستعداد جعل الفرصة مفيدة. التخفيض لا ينفع من لم يدخر."
         },
         {

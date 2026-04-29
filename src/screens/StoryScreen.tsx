@@ -15,6 +15,7 @@ import { RootStackParamList } from "../types/navigation";
 import { useGameStore } from "../store/gameStore";
 import { getMissionById } from "../data";
 import { evaluateGoalProgress } from "../logic/engine";
+import { useChoiceSounds } from "../hooks/useChoiceSounds";
 import { StatsStrip } from "../components/StatsStrip";
 import { SceneCard } from "../components/SceneCard";
 import { DinarCompanion } from "../components/DinarCompanion";
@@ -34,6 +35,7 @@ export const StoryScreen = ({ navigation }: Props) => {
   const transitionTimerRef = useRef<NodeJS.Timeout | null>(null);
   const readingTimerRef = useRef<NodeJS.Timeout | null>(null);
   const suppressSceneResetRef = useRef(false);
+  const { playChoiceSound, playClick } = useChoiceSounds();
 
   const mission = game ? getMissionById(game.missionId) : null;
   const currentScene = mission?.scenes.find((s) => s.id === game?.currentSceneId);
@@ -72,6 +74,9 @@ export const StoryScreen = ({ navigation }: Props) => {
 
       const choice = currentScene.choices.find((c) => c.id === choiceId);
       if (!choice) return;
+
+      // Play appropriate sound for the choice
+      playChoiceSound(choice.effects);
 
       setSelectedChoiceId(choiceId);
       if (choice.dinarReaction) {
@@ -114,7 +119,7 @@ export const StoryScreen = ({ navigation }: Props) => {
     <SafeAreaView style={s.safe}>
       {/* Header */}
       <View style={s.header}>
-        <Pressable onPress={() => navigation.replace("Home")} style={s.backButton}>
+        <Pressable onPress={() => { playClick(); navigation.replace("Home"); }} style={s.backButton}>
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </Pressable>
         <Text style={s.headerTitle}>{mission.title}</Text>
@@ -165,7 +170,7 @@ export const StoryScreen = ({ navigation }: Props) => {
         <View style={s.bottomBar}>
           <Pressable
             style={[s.goalButton, shadows.clay]}
-            onPress={() => setShowGoalDrawer(true)}
+            onPress={() => { playClick(); setShowGoalDrawer(true); }}
           >
             <Ionicons name="flag" size={16} color={colors.warning} />
             <Text style={s.goalButtonText}>الأهداف</Text>

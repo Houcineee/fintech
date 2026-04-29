@@ -11,6 +11,7 @@ import { colors, shadows } from "../theme/colors";
 import { spacing, radius } from "../theme/spacing";
 import { Text } from "../theme/typography";
 import type { GoalProgress } from "../types/game";
+import { useChoiceSounds } from "../hooks/useChoiceSounds";
 
 type Props = {
   visible: boolean;
@@ -21,6 +22,7 @@ type Props = {
 export const GoalDrawer = ({ visible, onClose, goals }: Props) => {
   const slideAnim = useRef(new Animated.Value(300)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const { playClick } = useChoiceSounds();
 
   useEffect(() => {
     if (visible) {
@@ -66,14 +68,14 @@ export const GoalDrawer = ({ visible, onClose, goals }: Props) => {
   return (
     <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
       <Animated.View style={[s.overlay, { opacity: fadeAnim }]}>
-        <Pressable style={s.overlayPress} onPress={onClose} />
+        <Pressable style={s.overlayPress} onPress={() => { playClick(); onClose(); }} />
 
         <Animated.View style={[s.drawer, { transform: [{ translateY: slideAnim }] }]}>
           <View style={s.handle} />
 
           <View style={s.header}>
             <Text style={s.title}>أهدافك</Text>
-            <Pressable onPress={onClose} style={s.closeButton}>
+            <Pressable onPress={() => { playClick(); onClose(); }} style={s.closeButton}>
               <Ionicons name="close" size={22} color={colors.textSecondary} />
             </Pressable>
           </View>

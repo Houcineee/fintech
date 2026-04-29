@@ -9,6 +9,7 @@ import { RootStackParamList } from "../types/navigation";
 import { useGameStore } from "../store/gameStore";
 import { getMissionById } from "../data";
 import { formatMoney } from "../logic/format";
+import { useChoiceSounds } from "../hooks/useChoiceSounds";
 
 type Props = NativeStackScreenProps<RootStackParamList, "End">;
 
@@ -30,6 +31,7 @@ export const EndScreen = ({ navigation }: Props) => {
   const game = useGameStore((s) => s.game);
   const clearSession = useGameStore((s) => s.clearSession);
   const totalXP = useGameStore((s) => s.totalXP);
+  const { playClick } = useChoiceSounds();
 
   const mission = game ? getMissionById(game.missionId) : null;
 
@@ -44,16 +46,19 @@ export const EndScreen = ({ navigation }: Props) => {
   const stars = Math.max(1, Math.min(5, Math.round((game.trust + game.barakah) / 40)));
 
   const handleNextMission = () => {
+    playClick();
     clearSession();
     navigation.replace("Home");
   };
 
   const handleRetry = () => {
+    playClick();
     clearSession();
     navigation.replace("Home");
   };
 
   const handleHome = () => {
+    playClick();
     clearSession();
     navigation.replace("Home");
   };

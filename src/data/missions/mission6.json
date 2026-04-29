@@ -10,7 +10,7 @@
   "initialTrust": 40,
   "initialBarakah": 30,
   "goals": [
-    { "type": "money", "target": 400, "label": "اربح 400 دراهم" },
+    { "type": "money", "target": 320, "label": "اربح 320 دراهم" },
     { "type": "trust", "target": 60, "label": "ابنِ ثقة الزبائن" },
     { "type": "barakah", "target": 50, "label": "حافظ على البركة" }
   ],
@@ -335,7 +335,7 @@
   "endings": [
     {
       "id": "thriving_business",
-      "condition": { "money": 400, "trust": 60, "barakah": 50 },
+      "condition": { "money": 320, "trust": 60, "barakah": 50 },
       "title": "مشروع مزدهر!",
       "description": "درهمي بنى مشروعاً على الأسس الصحيحة: أمانة + جودة + بركة. الثقة عالية والربح حلال والمستقبل واعد. هذا هو النجاح الحقيقي!",
       "isGood": true,

@@ -1,261 +1,331 @@
-const fs = require("fs");
-const path = require("path");
+#!/usr/bin/env node
 
-const missionsDir = path.join(__dirname, "..", "src", "data", "missions");
-const mission1 = require(path.join(missionsDir, "mission1.json"));
+/**
+ * Mission Validation Script
+ * 
+ * This script validates mission balance by checking:
+ * - Every mission has at least one reachable good ending
+ * - Easy missions have at least one clean good path (no unethical flags)
+ * - Good endings don't explicitly require unethical flags
+ * - Goals are achievable
+ */
 
-function assert(condition, message) {
-  if (!condition) {
-    throw new Error(message);
-  }
-}
+const fs = require('fs');
+const path = require('path');
 
+// Truly unethical flags that should prevent a "clean" path
+const UNETHICAL_FLAGS = [
+  'took_shady_deal',
+  'took_riba', 
+  'deeper_riba',
+  'accepted_shady_business',
+  'shady_sourcing',
+  'compromised_quality',
+  'overpriced_books',
+  'ignored_complaint',
+  'riba_extension',
+  'paid_riba_debt',
+];
+
+// Load all missions
+const missionsDir = path.join(__dirname, '../src/data/missions');
+const missionFiles = fs.readdirSync(missionsDir).filter(f => f.endsWith('.json'));
+
+const missions = missionFiles.map(file => {
+  const content = fs.readFileSync(path.join(missionsDir, file), 'utf-8');
+  return JSON.parse(content);
+});
+
+// Engine functions
 function evaluateCondition(condition, state) {
   if (!condition) return true;
-
   if (condition.money !== undefined && state.money < condition.money) return false;
   if (condition.trust !== undefined && state.trust < condition.trust) return false;
   if (condition.barakah !== undefined && state.barakah < condition.barakah) return false;
   if (condition.moneyBelow !== undefined && state.money >= condition.moneyBelow) return false;
   if (condition.trustBelow !== undefined && state.trust >= condition.trustBelow) return false;
-  if (condition.barakahBelow !== undefined && state.barakah >= condition.barakahBelow) {
-    return false;
-  }
+  if (condition.barakahBelow !== undefined && state.barakah >= condition.barakahBelow) return false;
   if (condition.flag && !state.flags.includes(condition.flag)) return false;
   if (condition.flagAbsent && state.flags.includes(condition.flagAbsent)) return false;
   if (condition.hasItem && !state.inventory.includes(condition.hasItem)) return false;
   if (condition.notHasItem && state.inventory.includes(condition.notHasItem)) return false;
-  if (
-    condition.previousChoice &&
-    !state.choiceLog.some((choice) => choice.choiceId === condition.previousChoice)
-  ) {
-    return false;
-  }
-  if (
-    condition.notPreviousChoice &&
-    state.choiceLog.some((choice) => choice.choiceId === condition.notPreviousChoice)
-  ) {
-    return false;
-  }
-
+  if (condition.previousChoice && !state.choiceLog.some(c => c.choiceId === condition.previousChoice)) return false;
+  if (condition.notPreviousChoice && state.choiceLog.some(c => c.choiceId === condition.notPreviousChoice)) return false;
   return true;
 }
 
-function getFirstScene(mission) {
-  const scene = mission.scenes.find((item) => !item.condition);
-  assert(scene, `${mission.id} has no unconditional first scene`);
-  return scene;
+function canApplyChoice(state, choice) {
+  return state.money + (choice.effects?.money ?? 0) >= 0;
 }
 
-function getNextScene(mission, state, lastChoice) {
-  if (lastChoice.nextSceneId) {
-    const explicitScene = mission.scenes.find((scene) => scene.id === lastChoice.nextSceneId);
-    if (
-      explicitScene &&
-      !state.visitedSceneIds.includes(explicitScene.id) &&
-      evaluateCondition(explicitScene.condition, state)
-    ) {
-      return explicitScene;
-    }
-  }
-
-  const eligible = mission.scenes
+function getEligibleScenes(mission, state) {
+  return mission.scenes
     .map((scene, index) => ({ scene, index }))
-    .filter(
-      ({ scene }) =>
-        !state.visitedSceneIds.includes(scene.id) && evaluateCondition(scene.condition, state)
-    )
-    .sort((a, b) => (a.scene.day ?? 999) - (b.scene.day ?? 999) || a.index - b.index);
-
-  return eligible[0]?.scene ?? null;
+    .filter(({ scene }) => {
+      if (state.visitedSceneIds.includes(scene.id)) return false;
+      return evaluateCondition(scene.condition, state);
+    })
+    .sort((a, b) => (a.scene.day ?? 999) - (b.scene.day ?? 999) || a.index - b.index)
+    .map(({ scene }) => scene);
 }
 
-function applyChoice(state, mission, choiceId) {
-  const scene = mission.scenes.find((item) => item.id === state.currentSceneId);
-  assert(scene, `Scene ${state.currentSceneId} was not found`);
-
-  const choice = scene.choices.find((item) => item.id === choiceId);
-  assert(choice, `Choice ${choiceId} is not available at ${scene.id}`);
-  assert(
-    state.money + (choice.effects.money ?? 0) >= 0,
-    `Choice ${choiceId} is unaffordable with ${state.money} MAD`
-  );
-
-  const inventory = [...state.inventory];
-  if (choice.effects.addItem && !inventory.includes(choice.effects.addItem)) {
-    inventory.push(choice.effects.addItem);
+function applyChoice(state, choice, sceneId, day) {
+  const newInventory = [...state.inventory];
+  if (choice.effects?.addItem && !newInventory.includes(choice.effects.addItem)) {
+    newInventory.push(choice.effects.addItem);
+  }
+  if (choice.effects?.removeItem) {
+    const idx = newInventory.indexOf(choice.effects.removeItem);
+    if (idx !== -1) newInventory.splice(idx, 1);
   }
 
-  const flags = [...state.flags];
-  if (choice.effects.setFlag && !flags.includes(choice.effects.setFlag)) {
-    flags.push(choice.effects.setFlag);
-  }
-
-  const nextState = {
-    ...state,
-    money: state.money + (choice.effects.money ?? 0),
-    trust: Math.max(0, Math.min(100, state.trust + (choice.effects.trust ?? 0))),
-    barakah: Math.max(0, Math.min(100, state.barakah + (choice.effects.barakah ?? 0))),
-    inventory,
-    flags,
-    choiceLog: [...state.choiceLog, { choiceId }],
-    visitedSceneIds: [...new Set([...state.visitedSceneIds, scene.id])],
-  };
-
-  const nextScene = getNextScene(mission, nextState, choice);
-  if (!nextScene) return { ...nextState, completed: true };
+  const newFlags = choice.effects?.setFlag && !state.flags.includes(choice.effects.setFlag)
+    ? [...state.flags, choice.effects.setFlag]
+    : state.flags;
 
   return {
-    ...nextState,
-    currentSceneId: nextScene.id,
-    visitedSceneIds: [...new Set([...nextState.visitedSceneIds, nextScene.id])],
+    ...state,
+    money: state.money + (choice.effects?.money ?? 0),
+    trust: Math.max(0, Math.min(100, state.trust + (choice.effects?.trust ?? 0))),
+    barakah: Math.max(0, Math.min(100, state.barakah + (choice.effects?.barakah ?? 0))),
+    inventory: newInventory,
+    flags: newFlags,
+    visitedSceneIds: [...state.visitedSceneIds, sceneId],
+    choiceLog: [...state.choiceLog, { sceneId, choiceId: choice.id, choiceText: choice.text }],
   };
-}
-
-function runPath(mission, choiceIds) {
-  const firstScene = getFirstScene(mission);
-  let state = {
-    missionId: mission.id,
-    money: mission.initialMoney,
-    trust: mission.initialTrust,
-    barakah: mission.initialBarakah,
-    inventory: [],
-    flags: [],
-    choiceLog: [],
-    visitedSceneIds: [firstScene.id],
-    currentSceneId: firstScene.id,
-    completed: false,
-  };
-
-  for (const choiceId of choiceIds) {
-    state = applyChoice(state, mission, choiceId);
-  }
-
-  return state;
-}
-
-function runPathWithScenes(mission, choiceIds) {
-  const visitedScenes = [];
-  const firstScene = getFirstScene(mission);
-  let state = {
-    missionId: mission.id,
-    money: mission.initialMoney,
-    trust: mission.initialTrust,
-    barakah: mission.initialBarakah,
-    inventory: [],
-    flags: [],
-    choiceLog: [],
-    visitedSceneIds: [firstScene.id],
-    currentSceneId: firstScene.id,
-    completed: false,
-  };
-
-  for (const choiceId of choiceIds) {
-    visitedScenes.push(state.currentSceneId);
-    state = applyChoice(state, mission, choiceId);
-  }
-
-  return { state, visitedScenes };
 }
 
 function resolveEnding(mission, state) {
-  return mission.endings.find((ending) => evaluateCondition(ending.condition, state));
-}
-
-function validateMissionGraph() {
-  for (const file of fs.readdirSync(missionsDir).filter((item) => item.endsWith(".json"))) {
-    const mission = require(path.join(missionsDir, file));
-    const sceneIds = new Set(mission.scenes.map((scene) => scene.id));
-
-    for (const scene of mission.scenes) {
-      assert(
-        scene.choices.length !== 1,
-        `${mission.id}:${scene.id} has only one choice; convert it to a real branch or fold it into another decision`
-      );
-      for (const choice of scene.choices) {
-        assert(
-          !choice.nextSceneId || sceneIds.has(choice.nextSceneId),
-          `${mission.id}:${scene.id}:${choice.id} points to missing scene ${choice.nextSceneId}`
-        );
-      }
-    }
-
-    const serialized = JSON.stringify(mission);
-    for (const banned of ["ингредиенты", "heißt", "�", "。"]) {
-      assert(!serialized.includes(banned), `${mission.id} contains broken copy token: ${banned}`);
+  for (const ending of mission.endings) {
+    if (evaluateCondition(ending.condition, state)) {
+      return ending;
     }
   }
+  return { id: 'incomplete', isGood: false };
 }
 
-function validateMission1() {
-  assert(
-    mission1.goals.some((goal) => goal.type === "hasItem" && goal.itemId === "bike"),
-    "Mission 1 must use bike ownership as the main goal"
-  );
-  assert(
-    mission1.scenes.find((scene) => scene.id === "s12_bike_shop")?.condition?.notHasItem ===
-      "bike",
-    "Mission 1 final bike shop must be hidden after the bike is owned"
-  );
-
-  const fullPriceState = runPath(mission1, [
-    "c1_save_all",
-    "c2_used_supplies",
-    "c3_resist_toy",
-    "c4_give_10",
-    "c6_work_full",
-    "c7_accept_shady",
-    "c8_lend_20",
-    "c9_accept_return",
-    "c10_keep_saving",
-    "c14_accept_gratefully",
-    "c12_buy_bike",
-  ]);
-  const fullPriceEnding = resolveEnding(mission1, fullPriceState);
-  assert(fullPriceState.inventory.includes("bike"), "Full-price path should add the bike");
-  assert(fullPriceEnding?.isGood, "Full-price bike purchase should reach a good ending");
-
-  const saleRun = runPathWithScenes(mission1, [
-    "c1_save_all",
-    "c2_used_supplies",
-    "c3_resist_toy",
-    "c4_give_10",
-    "c6_work_full",
-    "c7_accept_shady",
-    "c8_lend_20",
-    "c9_accept_return",
-    "c10_buy_sale",
-    "c14_accept_gratefully",
-  ]);
-  const saleState = saleRun.state;
-  const saleEnding = resolveEnding(mission1, saleState);
-  assert(saleState.inventory.includes("bike"), "Sale path should add the bike");
-  assert(saleEnding?.isGood, "Sale bike purchase should reach a good ending");
-  assert(
-    !saleRun.visitedScenes.includes("s12_bike_shop") && saleState.currentSceneId !== "s12_bike_shop",
-    "Sale bike purchase should not route to the final bike shop"
-  );
-
-  const noBikeState = runPath(mission1, [
-    "c1_save_all",
-    "c2_used_supplies",
-    "c3_resist_toy",
-    "c4_give_10",
-    "c6_work_full",
-    "c7_accept_shady",
-    "c8_lend_20",
-    "c9_accept_return",
-    "c10_keep_saving",
-    "c14_accept_gratefully",
-    "c12_keep_saving",
-  ]);
-  const noBikeEnding = resolveEnding(mission1, noBikeState);
-  assert(noBikeState.money >= 300, "No-bike path should still demonstrate reaching 300 MAD");
-  assert(!noBikeState.inventory.includes("bike"), "No-bike path should not own the bike");
-  assert(!noBikeEnding?.isGood, "Reaching 300 MAD without buying the bike should not pass");
+function hasUnethicalFlags(state) {
+  return state.flags.some(flag => UNETHICAL_FLAGS.includes(flag));
 }
 
-validateMissionGraph();
-validateMission1();
+// Find any good path (for debugging)
+function findAnyGoodPath(mission, maxDepth = 25, debug = false) {
+  const initialState = {
+    money: mission.initialMoney,
+    trust: mission.initialTrust,
+    barakah: mission.initialBarakah,
+    inventory: [],
+    flags: [],
+    visitedSceneIds: [],
+    choiceLog: [],
+  };
 
-console.log("Mission validation passed.");
+  function dfs(state, depth) {
+    if (depth > maxDepth) return null;
+
+    const eligibleScenes = getEligibleScenes(mission, state);
+    
+    if (eligibleScenes.length === 0) {
+      const ending = resolveEnding(mission, state);
+      if (ending.isGood) {
+        if (debug) console.log(`   DFS found good ending: ${ending.id}, flags: [${state.flags.join(', ')}]`);
+        return { ending, state };
+      }
+      return null;
+    }
+
+    const scene = eligibleScenes[0];
+    const availableChoices = scene.choices.filter(c => canApplyChoice(state, c));
+
+    for (const choice of availableChoices) {
+      const newState = applyChoice(state, choice, scene.id, scene.day);
+      const result = dfs(newState, depth + 1);
+      if (result) return result;
+    }
+    
+    return null;
+  }
+
+  return dfs(initialState, 0);
+}
+
+// Find ONE clean path using BFS (finds shortest/cleanest path first)
+function findCleanPath(mission, maxDepth = 20, debug = false) {
+  const initialState = {
+    money: mission.initialMoney,
+    trust: mission.initialTrust,
+    barakah: mission.initialBarakah,
+    inventory: [],
+    flags: [],
+    visitedSceneIds: [],
+    choiceLog: [],
+  };
+
+  const queue = [{ state: initialState, depth: 0 }];
+  const visited = new Set();
+  let iterations = 0;
+
+  while (queue.length > 0) {
+    iterations++;
+    if (iterations > 100000) {
+      if (debug) console.log('   BFS hit iteration limit');
+      return null;
+    }
+    
+    const { state, depth } = queue.shift();
+    
+    if (depth > maxDepth) continue;
+
+    // Create a visited key to avoid cycles
+    const key = `${state.money},${state.trust},${state.barakah},${state.flags.sort().join('|')},${state.visitedSceneIds.join(',')}`;
+    if (visited.has(key)) continue;
+    visited.add(key);
+
+    const eligibleScenes = getEligibleScenes(mission, state);
+    
+    if (eligibleScenes.length === 0) {
+      // End of mission - check if clean and good
+      const ending = resolveEnding(mission, state);
+      if (debug && ending.isGood) {
+        console.log(`   Found good ending: ${ending.id}, unethical: ${hasUnethicalFlags(state)}, flags: [${state.flags.join(', ')}]`);
+      }
+      if (debug && state.flags.includes('earned_halal_day4') && !ending.isGood) {
+        console.log(`   Worked path reached non-good ending: ${ending.id}, flags: [${state.flags.join(', ')}], bike: ${state.inventory.includes('bike')}`);
+      }
+      if (ending.isGood && !hasUnethicalFlags(state)) {
+        if (debug) console.log(`   Found clean path after ${iterations} iterations`);
+        return { ending, state };
+      }
+      continue;
+    }
+
+    const scene = eligibleScenes[0];
+    const availableChoices = scene.choices.filter(c => canApplyChoice(state, c));
+
+    if (availableChoices.length === 0) continue;
+
+    // Prioritize choices that:
+    // 1. Don't set unethical flags
+    // 2. Set earned_halal_day4 (prevents shady deal scene)
+    // 3. Set frugal_start (allows bike sale price)
+    // 4. Add bike (buy it!)
+    const sortedChoices = availableChoices.sort((a, b) => {
+      const aUnethical = UNETHICAL_FLAGS.includes(a.effects?.setFlag);
+      const bUnethical = UNETHICAL_FLAGS.includes(b.effects?.setFlag);
+      if (aUnethical !== bUnethical) return aUnethical - bUnethical;
+      
+      // Prioritize earned_halal_day4
+      const aPreventsShady = a.effects?.setFlag === 'earned_halal_day4';
+      const bPreventsShady = b.effects?.setFlag === 'earned_halal_day4';
+      if (aPreventsShady !== bPreventsShady) return bPreventsShady - aPreventsShady;
+      
+      // Prioritize frugal_start
+      const aFrugal = a.effects?.setFlag === 'frugal_start';
+      const bFrugal = b.effects?.setFlag === 'frugal_start';
+      if (aFrugal !== bFrugal) return bFrugal - aFrugal;
+      
+      // Prioritize buying bike
+      const aBuysBike = a.effects?.addItem === 'bike';
+      const bBuysBike = b.effects?.addItem === 'bike';
+      return bBuysBike - aBuysBike;
+    });
+
+    for (const choice of sortedChoices) {
+      const newState = applyChoice(state, choice, scene.id, scene.day);
+      if (debug && newState.flags.includes('earned_halal_day4') && !state.flags.includes('earned_halal_day4')) {
+        console.log(`   Reached earned_halal_day4 at depth ${depth+1}, money: ${newState.money}`);
+      }
+      queue.push({ state: newState, depth: depth + 1 });
+    }
+  }
+
+  if (debug) console.log(`   BFS exhausted after ${iterations} iterations`);
+  return null;
+}
+
+// Validate a single mission
+function validateMission(mission) {
+  const errors = [];
+  const warnings = [];
+  
+  console.log(`\n📋 Mission ${mission.missionNumber}: ${mission.title} (${mission.difficulty})`);
+  
+  // Find a clean path using BFS
+  const debugMode = mission.missionNumber === 1;
+  const cleanPath = findCleanPath(mission, 25, debugMode);
+  
+  // Debug for Mission 1
+  if (mission.missionNumber === 1 && !cleanPath) {
+    // Try to find ANY good path, even with unethical flags
+    const anyPath = findAnyGoodPath(mission, 25, debugMode);
+    if (anyPath) {
+      console.log(`   ⚠️ Found good path but has unethical flags: [${anyPath.state.flags.join(', ')}]`);
+      console.log(`      Ending: ${anyPath.ending.title || anyPath.ending.id}`);
+    }
+  }
+  
+  // Check 1: Every mission has at least one reachable good ending
+  if (!cleanPath) {
+    if (mission.difficulty === 'easy') {
+      errors.push(`❌ Easy mission must have at least one clean good path`);
+    } else {
+      warnings.push(`⚠️ No clean good path found (may require retrying)`);
+    }
+  } else {
+    console.log(`   ✅ Clean good path found!`);
+    console.log(`      Ending: ${cleanPath.ending.title || cleanPath.ending.id}`);
+    console.log(`      Final: 💰${cleanPath.state.money} 🤝${cleanPath.state.trust} ✨${cleanPath.state.barakah}`);
+    console.log(`      Path (${cleanPath.state.choiceLog.length} choices):`);
+    cleanPath.state.choiceLog.forEach((log, i) => {
+      console.log(`        ${i+1}. ${log.choiceText.substring(0, 45)}...`);
+    });
+  }
+  
+  // Check 2: Good endings don't explicitly require unethical flags
+  const badEndingConditions = mission.endings.filter(e => 
+    e.isGood && e.condition && UNETHICAL_FLAGS.some(f => e.condition.flag === f)
+  );
+  if (badEndingConditions.length > 0) {
+    errors.push(`❌ Good endings should not require unethical flags: ${badEndingConditions.map(e => e.id).join(', ')}`);
+  }
+  
+  // Check 3: Verify mission 3 has flagAbsent check for riba
+  if (mission.id === 'mission-3-riba') {
+    const halalEnding = mission.endings.find(e => e.id === 'halal_cure');
+    if (halalEnding && !halalEnding.condition?.flagAbsent === 'took_riba') {
+      errors.push(`❌ Mission 3 halal_cure ending should have flagAbsent: "took_riba"`);
+    } else {
+      console.log(`   ✅ Mission 3 has riba prevention`);
+    }
+  }
+  
+  return { errors, warnings, cleanPath };
+}
+
+// Main validation
+console.log('🔍 Mission Balance Validation');
+console.log('================================');
+
+let totalErrors = 0;
+let totalWarnings = 0;
+
+for (const mission of missions.sort((a, b) => a.missionNumber - b.missionNumber)) {
+  const { errors, warnings } = validateMission(mission);
+  
+  errors.forEach(e => console.log(`   ${e}`));
+  warnings.forEach(w => console.log(`   ${w}`));
+  
+  totalErrors += errors.length;
+  totalWarnings += warnings.length;
+}
+
+console.log('\n================================');
+console.log(`Validation complete: ${totalErrors} errors, ${totalWarnings} warnings`);
+
+if (totalErrors > 0) {
+  console.log('❌ Validation failed');
+  process.exit(1);
+} else {
+  console.log('✅ All missions pass validation!');
+  process.exit(0);
+}

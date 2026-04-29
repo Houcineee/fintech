@@ -298,7 +298,7 @@
   "endings": [
     {
       "id": "halal_cure",
-      "condition": { "flag": "paid_treatment", "barakah": 40 },
+      "condition": { "flag": "paid_treatment", "flagAbsent": "took_riba", "barakah": 40 },
       "title": "الطريق الحلال أوصل!",
       "description": "درهمي عالج أمه بالكسب الحلال! الطريق كان أطول لكنه كان مباركاً. أمه شفيت والبركة في ماله ظهرت.",
       "isGood": true,

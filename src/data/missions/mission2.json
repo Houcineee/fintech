@@ -10,7 +10,7 @@
   "initialTrust": 20,
   "initialBarakah": 20,
   "goals": [
-    { "type": "money", "target": 200, "label": "اربح 200 دراهم" },
+    { "type": "money", "target": 150, "label": "اربح 150 دراهم" },
     { "type": "trust", "target": 60, "label": "ابنِ ثقة الزبائن" }
   ],
   "rewardTitle": "شارة الأمانة في التجارة",
@@ -251,7 +251,7 @@
   "endings": [
     {
       "id": "trusted_seller",
-      "condition": { "trust": 60, "money": 200 },
+      "condition": { "trust": 60, "money": 150 },
       "title": "المتجر الموثوق!",
       "description": "درهمي بنى متجراً على أساس الثقة والأمانة! الزبائن يعودون والسمعة تتحدث عن نفسها. الربح الحلال أبطأ لكنه أبقى.",
       "isGood": true,

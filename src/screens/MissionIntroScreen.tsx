@@ -14,6 +14,7 @@ import { Text } from "../theme/typography";
 import { RootStackParamList } from "../types/navigation";
 import { useGameStore } from "../store/gameStore";
 import { getMissionById } from "../data";
+import { useChoiceSounds } from "../hooks/useChoiceSounds";
 
 type Props = NativeStackScreenProps<RootStackParamList, "MissionIntro">;
 
@@ -21,6 +22,7 @@ export const MissionIntroScreen = ({ navigation }: Props) => {
   const game = useGameStore((s) => s.game);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
+  const { playClick } = useChoiceSounds();
 
   const mission = game ? getMissionById(game.missionId) : null;
 
@@ -47,6 +49,7 @@ export const MissionIntroScreen = ({ navigation }: Props) => {
   }, []);
 
   const handleStart = () => {
+    playClick();
     navigation.replace("Story");
   };
 
@@ -55,7 +58,7 @@ export const MissionIntroScreen = ({ navigation }: Props) => {
   return (
     <SafeAreaView style={s.safe}>
       <View style={s.header}>
-        <Pressable onPress={() => navigation.replace("Home")} style={s.backButton}>
+        <Pressable onPress={() => { playClick(); navigation.replace("Home"); }} style={s.backButton}>
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </Pressable>
       </View>
