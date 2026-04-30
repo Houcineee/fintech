@@ -1,12 +1,12 @@
-import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
+import { GoogleGenerativeAI, SchemaType, Schema } from "@google/generative-ai";
 import type { Mission } from "../types/game";
 
-// NOTE: In a production app, never hardcode your API key.
-const API_KEY = "AIzaSyAPvqgleERegi2R58bt5YgQxu5hv3KrnSA";
+// Get API key from environment variables
+const API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || "";
 
 const genAI = new GoogleGenerativeAI(API_KEY);
 
-const CONDITION_SCHEMA = {
+const CONDITION_SCHEMA: Schema = {
   type: SchemaType.OBJECT,
   properties: {
     money: { type: SchemaType.NUMBER },
@@ -24,7 +24,7 @@ const CONDITION_SCHEMA = {
   },
 };
 
-const MISSION_SCHEMA = {
+const MISSION_SCHEMA: Schema = {
   description: "A financial literacy mission/quest",
   type: SchemaType.OBJECT,
   properties: {
@@ -32,7 +32,7 @@ const MISSION_SCHEMA = {
     missionNumber: { type: SchemaType.NUMBER },
     title: { type: SchemaType.STRING },
     summary: { type: SchemaType.STRING },
-    difficulty: { type: SchemaType.STRING, enum: ["easy", "medium", "hard"] },
+    difficulty: { type: SchemaType.STRING, enum: ["easy", "medium", "hard"], format: "enum" },
     roleTitle: { type: SchemaType.STRING },
     roleStory: { type: SchemaType.STRING },
     initialMoney: { type: SchemaType.NUMBER },
@@ -43,7 +43,7 @@ const MISSION_SCHEMA = {
       items: {
         type: SchemaType.OBJECT,
         properties: {
-          type: { type: SchemaType.STRING, enum: ["money", "trust", "barakah", "hasItem", "flag"] },
+          type: { type: SchemaType.STRING, enum: ["money", "trust", "barakah", "hasItem", "flag"], format: "enum" },
           target: { type: SchemaType.NUMBER },
           itemId: { type: SchemaType.STRING },
           flagId: { type: SchemaType.STRING },
