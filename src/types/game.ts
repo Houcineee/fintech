@@ -138,6 +138,7 @@ export type GameState = {
 
 export type PersistedState = {
   completedMissionIds: string[];
+  completedLessonIds: string[];
   totalXP: number;
   hasSeenOnboarding: boolean;
   customMissions: Mission[];

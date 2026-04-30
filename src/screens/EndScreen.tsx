@@ -41,7 +41,7 @@ export const EndScreen = ({ navigation }: Props) => {
 
   useEffect(() => {
     if (!result || !game) {
-      navigation.replace("Home");
+      navigation.replace("MainTabs");
     }
   }, [result, game, navigation]);
 
@@ -52,19 +52,19 @@ export const EndScreen = ({ navigation }: Props) => {
   const handleNextMission = () => {
     playClick();
     clearSession();
-    navigation.replace("Home");
+    navigation.replace("MainTabs");
   };
 
   const handleRetry = () => {
     playClick();
     clearSession();
-    navigation.replace("Home");
+    navigation.replace("MainTabs");
   };
 
   const handleHome = () => {
     playClick();
     clearSession();
-    navigation.replace("Home");
+    navigation.replace("MainTabs");
   };
 
   return (

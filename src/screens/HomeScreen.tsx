@@ -15,9 +15,14 @@ import { useGameStore, getRankForXP, getNextRankXP } from "../store/gameStore";
 import { colors, shadows } from "../theme/colors";
 import { spacing, radius } from "../theme/spacing";
 import { Text } from "../theme/typography";
-import { RootStackParamList } from "../types/navigation";
+import { RootStackParamList, MainTabParamList } from "../types/navigation";
+import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
+import { CompositeScreenProps } from "@react-navigation/native";
 
-type Props = NativeStackScreenProps<RootStackParamList, "Home">;
+type Props = CompositeScreenProps<
+  BottomTabScreenProps<MainTabParamList, "Map">,
+  NativeStackScreenProps<RootStackParamList>
+>;
 
 type MissionStatus = "locked" | "current" | "completed";
 

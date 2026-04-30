@@ -49,7 +49,7 @@ export const StoryScreen = ({ navigation }: Props) => {
   useEffect(() => {
     if (game && !mission) {
       console.warn("Mission not found in Story:", game.missionId);
-      navigation.replace("Home");
+      navigation.replace("MainTabs");
       return;
     }
   }, [game, mission, navigation]);
@@ -125,7 +125,7 @@ export const StoryScreen = ({ navigation }: Props) => {
     <SafeAreaView style={s.safe}>
       {/* Header */}
       <View style={s.header}>
-        <Pressable onPress={() => { playClick(); navigation.replace("Home"); }} style={s.backButton}>
+        <Pressable onPress={() => { playClick(); navigation.replace("MainTabs"); }} style={s.backButton}>
           <Ionicons name="arrow-back" size={24} color={colors.text} />
         </Pressable>
         <Text style={s.headerTitle}>{mission.title}</Text>

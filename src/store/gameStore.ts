@@ -64,6 +64,7 @@ type StoreState = {
   game: GameState | null;
   result: ResultSummary | null;
   completedMissionIds: string[];
+  completedLessonIds: string[];
   totalXP: number;
   hasSeenOnboarding: boolean;
   customMissions: Mission[];
@@ -73,6 +74,7 @@ type StoreState = {
   isMissionUnlocked: (missionId: string) => boolean;
   getNextMissionId: (missionId: string) => string | null;
   addCustomMission: (mission: Mission) => void;
+  completeLesson: (lessonId: string, xpReward: number) => void;
   clearSession: () => void;
   resetAcademy: () => void;
   setHasSeenOnboarding: (seen: boolean) => void;
@@ -84,9 +86,16 @@ export const useGameStore = create<StoreState>()(
       game: null,
       result: null,
       completedMissionIds: [],
+      completedLessonIds: [],
       totalXP: 0,
       hasSeenOnboarding: false,
       customMissions: [],
+
+      // ... existing startMission, makeChoice, finishMission methods ...
+      // I will perform a cleaner replacement below to avoid massive context issues,
+      // but I need to make sure I include the new fields in the state object.
+      // Let's refine the replacement strategy.
+
 
       startMission: (missionId: string) => {
         const mission = getAnyMissionById(missionId, get().customMissions);
@@ -204,6 +213,16 @@ export const useGameStore = create<StoreState>()(
         }));
       },
 
+      completeLesson: (lessonId: string, xpReward: number) => {
+        const completed = get().completedLessonIds;
+        if (completed.includes(lessonId)) return;
+
+        set((state) => ({
+          completedLessonIds: [...state.completedLessonIds, lessonId],
+          totalXP: state.totalXP + xpReward,
+        }));
+      },
+
       clearSession: () =>
         set((state) => ({
           game: null,
@@ -216,6 +235,7 @@ export const useGameStore = create<StoreState>()(
           game: null,
           result: null,
           completedMissionIds: [],
+          completedLessonIds: [],
           totalXP: 0,
           hasSeenOnboarding: false,
           customMissions: [],
@@ -229,10 +249,11 @@ export const useGameStore = create<StoreState>()(
       partialize: (state) =>
         ({
           completedMissionIds: state.completedMissionIds,
+          completedLessonIds: state.completedLessonIds,
           totalXP: state.totalXP,
           hasSeenOnboarding: state.hasSeenOnboarding,
           customMissions: state.customMissions,
-        }) as PersistedState,
+        }) as any,
     }
   )
 );

@@ -6,29 +6,39 @@ import { spacing, radius } from "../theme/spacing";
 import { Text } from "../theme/typography";
 
 type Props = {
-  trust: number;
-  barakah: number;
+  trust?: number;
+  barakah?: number;
   reaction?: string | null;
+  isThinking?: boolean;
 };
 
-export const DinarCompanion = ({ trust, barakah, reaction }: Props) => {
+export const DinarCompanion = ({ 
+  trust = 50, 
+  barakah = 50, 
+  reaction, 
+  isThinking 
+}: Props) => {
   const bounceAnim = useRef(new Animated.Value(0)).current;
   const reactionOpacity = useRef(new Animated.Value(0)).current;
   const reactionScale = useRef(new Animated.Value(0.9)).current;
 
   const expression =
-    trust >= 40 && barakah >= 30
-      ? "happy"
-      : trust >= 20 || barakah >= 15
-        ? "neutral"
-        : "sad";
+    isThinking
+      ? "thinking"
+      : trust >= 40 && barakah >= 30
+        ? "happy"
+        : trust >= 20 || barakah >= 15
+          ? "neutral"
+          : "sad";
 
   const glowColor =
-    expression === "happy"
-      ? colors.success
-      : expression === "neutral"
-        ? colors.warning
-        : colors.barakah;
+    isThinking
+      ? colors.primary
+      : expression === "happy"
+        ? colors.success
+        : expression === "neutral"
+          ? colors.warning
+          : colors.barakah;
 
   useEffect(() => {
     Animated.loop(
@@ -74,11 +84,13 @@ export const DinarCompanion = ({ trust, barakah, reaction }: Props) => {
         <View style={[s.orb, { borderColor: glowColor }]}>
           <Ionicons
             name={
-              expression === "happy"
-                ? "happy-outline"
-                : expression === "neutral"
-                  ? "remove-circle-outline"
-                  : "sad-outline"
+              isThinking
+                ? "sparkles"
+                : expression === "happy"
+                  ? "happy-outline"
+                  : expression === "neutral"
+                    ? "remove-circle-outline"
+                    : "sad-outline"
             }
             size={48}
             color={glowColor}
