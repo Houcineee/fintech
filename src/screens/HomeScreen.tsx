@@ -2,11 +2,11 @@ import React, { useMemo, useState } from "react";
 import {
   Animated,
   Pressable,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
 import { missionData } from "../data";
@@ -143,6 +143,7 @@ const MissionNode = ({
 export const HomeScreen = ({ navigation }: Props) => {
   const startMission = useGameStore((s) => s.startMission);
   const completedMissionIds = useGameStore((s) => s.completedMissionIds);
+  const customMissions = useGameStore((s) => s.customMissions);
   const isMissionUnlockedFn = useGameStore((s) => s.isMissionUnlocked);
   const totalXP = useGameStore((s) => s.totalXP);
   const { playClick } = useChoiceSounds();
@@ -168,8 +169,19 @@ export const HomeScreen = ({ navigation }: Props) => {
     });
   }, [completedMissionIds, isMissionUnlockedFn]);
 
+  const customMissionsData = useMemo(() => {
+    return customMissions.map((mission) => ({
+      id: mission.id,
+      title: mission.title,
+      roleTitle: mission.roleTitle,
+      difficulty: mission.difficulty,
+      isCompleted: completedMissionIds.includes(mission.id),
+    }));
+  }, [customMissions, completedMissionIds]);
+
   const selectedMission =
     missions.find((m) => m.id === selectedMissionId) ||
+    customMissionsData.find((m) => m.id === selectedMissionId) ||
     missions.find((m) => m.status === "current") ||
     missions[0];
 
@@ -192,7 +204,7 @@ export const HomeScreen = ({ navigation }: Props) => {
     : 100;
 
   return (
-    <SafeAreaView style={s.safe}>
+    <SafeAreaView style={s.safe} edges={["top", "left", "right"]}>
       {/* Header */}
       <View style={s.header}>
         <View style={s.logoRow}>
@@ -226,6 +238,27 @@ export const HomeScreen = ({ navigation }: Props) => {
         contentContainerStyle={s.scrollContent}
         showsVerticalScrollIndicator={false}
       >
+        {/* Custom Mission Banner */}
+        <Pressable 
+          onPress={() => {
+            playClick();
+            navigation.navigate("GenerateMission");
+          }}
+          style={({ pressed }) => [
+            s.customBanner,
+            pressed && s.customBannerPressed
+          ]}
+        >
+          <View style={s.customIcon}>
+            <Ionicons name="sparkles" size={24} color={colors.surface} />
+          </View>
+          <View style={s.customTextContainer}>
+            <Text style={s.customTitle}>اصنع مهمتك الخاصة!</Text>
+            <Text style={s.customSubtitle}>استخدم الذكاء الاصطناعي لإنشاء مغامرة جديدة</Text>
+          </View>
+          <Ionicons name="chevron-back" size={20} color={colors.primary} />
+        </Pressable>
+
         <Text style={s.sectionTitle}>رحلتك التعليمية</Text>
 
         <View style={s.roadmap}>
@@ -242,6 +275,38 @@ export const HomeScreen = ({ navigation }: Props) => {
             />
           ))}
         </View>
+
+        {customMissionsData.length > 0 && (
+          <View style={s.customSection}>
+            <Text style={s.sectionTitle}>مهماتك الخاصة</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.customScroll}>
+              {customMissionsData.map((mission) => (
+                <Pressable
+                  key={mission.id}
+                  onPress={() => { playClick(); setSelectedMissionId(mission.id); }}
+                  style={[
+                    s.customCard,
+                    selectedMissionId === mission.id && s.customCardSelected,
+                    mission.isCompleted && s.customCardCompleted,
+                  ]}
+                >
+                  <View style={s.customCardHeader}>
+                    {mission.isCompleted ? (
+                      <Ionicons name="checkmark-circle" size={20} color={colors.success} />
+                    ) : (
+                      <Ionicons name="flask" size={20} color={colors.primary} />
+                    )}
+                    <Text style={s.customCardDiff}>
+                      {mission.difficulty === "easy" ? "سهل" : mission.difficulty === "medium" ? "متوسط" : "متقدم"}
+                    </Text>
+                  </View>
+                  <Text style={s.customCardTitle} numberOfLines={1}>{mission.title}</Text>
+                  <Text style={s.customCardRole} numberOfLines={1}>{mission.roleTitle}</Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+          </View>
+        )}
 
         <View style={s.bottomPadding} />
       </ScrollView>
@@ -354,6 +419,45 @@ const s = StyleSheet.create({
     backgroundColor: colors.primary,
     borderRadius: radius.full,
   },
+  customBanner: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    backgroundColor: colors.primaryLight,
+    padding: spacing.md,
+    borderRadius: radius.xl,
+    borderWidth: 3,
+    borderColor: colors.primary,
+    marginBottom: spacing.xl,
+    gap: spacing.md,
+    ...shadows.clay,
+  },
+  customBannerPressed: {
+    ...shadows.clayPressed,
+    transform: [{ scale: 0.98 }],
+  },
+  customIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: radius.lg,
+    backgroundColor: colors.primary,
+    justifyContent: "center",
+    alignItems: "center",
+    ...shadows.clayPrimary,
+  },
+  customTextContainer: {
+    flex: 1,
+    alignItems: "flex-end",
+  },
+  customTitle: {
+    fontSize: 16,
+    fontWeight: "900",
+    color: colors.primary,
+  },
+  customSubtitle: {
+    fontSize: 12,
+    color: colors.primaryDim,
+    fontWeight: "700",
+  },
   scrollContent: {
     padding: spacing.lg,
   },
@@ -366,6 +470,56 @@ const s = StyleSheet.create({
   },
   roadmap: {
     gap: 0,
+  },
+  customSection: {
+    marginTop: spacing.xl,
+  },
+  customScroll: {
+    paddingBottom: spacing.md,
+    gap: spacing.md,
+    paddingLeft: spacing.lg,
+  },
+  customCard: {
+    width: 200,
+    backgroundColor: colors.surface,
+    borderRadius: radius.xl,
+    padding: spacing.md,
+    borderWidth: 3,
+    borderColor: colors.border,
+    ...shadows.clay,
+  },
+  customCardSelected: {
+    borderColor: colors.primary,
+    backgroundColor: colors.primaryLight,
+  },
+  customCardCompleted: {
+    borderColor: colors.success + "40",
+  },
+  customCardHeader: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: spacing.xs,
+  },
+  customCardDiff: {
+    fontSize: 10,
+    fontWeight: "800",
+    color: colors.textSecondary,
+    backgroundColor: colors.border + "40",
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: radius.sm,
+  },
+  customCardTitle: {
+    fontSize: 14,
+    fontWeight: "800",
+    color: colors.text,
+    textAlign: "right",
+  },
+  customCardRole: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    textAlign: "right",
   },
   missionRow: {
     flexDirection: "row",

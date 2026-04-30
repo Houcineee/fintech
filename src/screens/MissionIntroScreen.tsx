@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useMemo } from "react";
 import {
   Animated,
   Pressable,
@@ -13,21 +13,26 @@ import { spacing, radius } from "../theme/spacing";
 import { Text } from "../theme/typography";
 import { RootStackParamList } from "../types/navigation";
 import { useGameStore } from "../store/gameStore";
-import { getMissionById } from "../data";
+import { getMissionById as getStaticMissionById } from "../data";
 import { useChoiceSounds } from "../hooks/useChoiceSounds";
 
 type Props = NativeStackScreenProps<RootStackParamList, "MissionIntro">;
 
 export const MissionIntroScreen = ({ navigation }: Props) => {
   const game = useGameStore((s) => s.game);
+  const customMissions = useGameStore((s) => s.customMissions);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
   const { playClick } = useChoiceSounds();
 
-  const mission = game ? getMissionById(game.missionId) : null;
+  const mission = useMemo(() => {
+    if (!game) return null;
+    return getStaticMissionById(game.missionId) || customMissions.find(m => m.id === game.missionId);
+  }, [game, customMissions]);
 
   useEffect(() => {
-    if (!game || !mission) {
+    if (game && !mission) {
+      console.warn("Mission not found:", game.missionId);
       navigation.replace("Home");
       return;
     }

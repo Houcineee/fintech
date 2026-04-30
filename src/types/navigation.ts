@@ -3,4 +3,5 @@ export type RootStackParamList = {
   MissionIntro: undefined;
   Story: undefined;
   End: undefined;
+  GenerateMission: undefined;
 };

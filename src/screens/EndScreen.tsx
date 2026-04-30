@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
@@ -7,7 +7,7 @@ import { spacing, radius } from "../theme/spacing";
 import { Text } from "../theme/typography";
 import { RootStackParamList } from "../types/navigation";
 import { useGameStore } from "../store/gameStore";
-import { getMissionById } from "../data";
+import { getMissionById as getStaticMissionById } from "../data";
 import { formatMoney } from "../logic/format";
 import { useChoiceSounds } from "../hooks/useChoiceSounds";
 
@@ -29,11 +29,15 @@ const StarRating = ({ count }: { count: number }) => (
 export const EndScreen = ({ navigation }: Props) => {
   const result = useGameStore((s) => s.result);
   const game = useGameStore((s) => s.game);
+  const customMissions = useGameStore((s) => s.customMissions);
   const clearSession = useGameStore((s) => s.clearSession);
   const totalXP = useGameStore((s) => s.totalXP);
   const { playClick } = useChoiceSounds();
 
-  const mission = game ? getMissionById(game.missionId) : null;
+  const mission = useMemo(() => {
+    if (!game) return null;
+    return getStaticMissionById(game.missionId) || customMissions.find(m => m.id === game.missionId);
+  }, [game, customMissions]);
 
   useEffect(() => {
     if (!result || !game) {

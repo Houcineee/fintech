@@ -9,8 +9,8 @@ import {
   getNextScene,
   getFirstScene,
 } from "../logic/engine";
-import { getMissionById, missionData } from "../data";
-import type { Choice, GameState, PersistedState, ResultSummary } from "../types/game";
+import { getMissionById as getStaticMissionById, missionData } from "../data";
+import type { Choice, GameState, PersistedState, ResultSummary, Mission } from "../types/game";
 
 const appendUnique = <T,>(items: T[], item: T): T[] =>
   items.includes(item) ? items : [...items, item];
@@ -37,12 +37,19 @@ export function getNextRankXP(xp: number): number | null {
   return null;
 }
 
+const getAnyMissionById = (id: string, customMissions: Mission[]): Mission | undefined => {
+  return getStaticMissionById(id) || customMissions.find((m) => m.id === id);
+};
+
 export function isMissionUnlocked(
   missionId: string,
-  completedMissionIds: string[]
+  completedMissionIds: string[],
+  customMissions: Mission[]
 ): boolean {
-  const mission = getMissionById(missionId);
+  const mission = getAnyMissionById(missionId, customMissions);
   if (!mission) return false;
+  // Generated missions are always unlocked
+  if (missionId.startsWith("gen-")) return true;
   if (mission.missionNumber === 1) return true;
   const prevMission = getMissionByNumber(mission.missionNumber - 1);
   if (!prevMission) return false;
@@ -59,11 +66,13 @@ type StoreState = {
   completedMissionIds: string[];
   totalXP: number;
   hasSeenOnboarding: boolean;
+  customMissions: Mission[];
   startMission: (missionId: string) => void;
   makeChoice: (sceneId: string, choiceId: string) => void;
   finishMission: () => void;
   isMissionUnlocked: (missionId: string) => boolean;
   getNextMissionId: (missionId: string) => string | null;
+  addCustomMission: (mission: Mission) => void;
   clearSession: () => void;
   resetAcademy: () => void;
   setHasSeenOnboarding: (seen: boolean) => void;
@@ -77,9 +86,10 @@ export const useGameStore = create<StoreState>()(
       completedMissionIds: [],
       totalXP: 0,
       hasSeenOnboarding: false,
+      customMissions: [],
 
       startMission: (missionId: string) => {
-        const mission = getMissionById(missionId);
+        const mission = getAnyMissionById(missionId, get().customMissions);
         if (!mission) return;
 
         const firstScene = getFirstScene(mission);
@@ -106,7 +116,7 @@ export const useGameStore = create<StoreState>()(
         const current = get().game;
         if (!current || current.completed) return;
 
-        const mission = getMissionById(current.missionId);
+        const mission = getAnyMissionById(current.missionId, get().customMissions);
         if (!mission) return;
 
         const scene = mission.scenes.find((s) => s.id === sceneId);
@@ -158,7 +168,7 @@ export const useGameStore = create<StoreState>()(
         if (!current) return;
         if (current.completed && get().result?.endingId === current.endingId) return;
 
-        const mission = getMissionById(current.missionId);
+        const mission = getAnyMissionById(current.missionId, get().customMissions);
         if (!mission) return;
 
         const summary = createResultSummary(mission, current);
@@ -177,14 +187,21 @@ export const useGameStore = create<StoreState>()(
       },
 
       isMissionUnlocked: (missionId: string) => {
-        return isMissionUnlocked(missionId, get().completedMissionIds);
+        return isMissionUnlocked(missionId, get().completedMissionIds, get().customMissions);
       },
 
       getNextMissionId: (missionId: string) => {
-        const mission = getMissionById(missionId);
+        const mission = getAnyMissionById(missionId, get().customMissions);
         if (!mission) return null;
+        if (missionId.startsWith("gen-")) return null; // No "next" for generated
         const next = getMissionByNumber(mission.missionNumber + 1);
         return next?.id ?? null;
+      },
+
+      addCustomMission: (mission: Mission) => {
+        set((state) => ({
+          customMissions: [mission, ...state.customMissions],
+        }));
       },
 
       clearSession: () =>
@@ -201,6 +218,7 @@ export const useGameStore = create<StoreState>()(
           completedMissionIds: [],
           totalXP: 0,
           hasSeenOnboarding: false,
+          customMissions: [],
         }),
 
       setHasSeenOnboarding: (seen: boolean) => set({ hasSeenOnboarding: seen }),
@@ -213,7 +231,9 @@ export const useGameStore = create<StoreState>()(
           completedMissionIds: state.completedMissionIds,
           totalXP: state.totalXP,
           hasSeenOnboarding: state.hasSeenOnboarding,
+          customMissions: state.customMissions,
         }) as PersistedState,
     }
   )
 );
+

@@ -140,4 +140,5 @@ export type PersistedState = {
   completedMissionIds: string[];
   totalXP: number;
   hasSeenOnboarding: boolean;
+  customMissions: Mission[];
 };

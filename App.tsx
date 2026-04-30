@@ -8,6 +8,7 @@ import { HomeScreen } from "./src/screens/HomeScreen";
 import { MissionIntroScreen } from "./src/screens/MissionIntroScreen";
 import { StoryScreen } from "./src/screens/StoryScreen";
 import { EndScreen } from "./src/screens/EndScreen";
+import { GenerateMissionScreen } from "./src/screens/GenerateMissionScreen";
 import { colors } from "./src/theme/colors";
 import { useAppFonts } from "./src/theme/typography";
 import { Text } from "./src/theme/typography";
@@ -66,6 +67,7 @@ function AppContent() {
         }}
       >
         <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="GenerateMission" component={GenerateMissionScreen} />
         <Stack.Screen name="MissionIntro" component={MissionIntroScreen} />
         <Stack.Screen name="Story" component={StoryScreen} />
         <Stack.Screen name="End" component={EndScreen} />

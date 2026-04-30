@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import {
   Animated,
   Pressable,
@@ -13,7 +13,7 @@ import { spacing, radius } from "../theme/spacing";
 import { Text } from "../theme/typography";
 import { RootStackParamList } from "../types/navigation";
 import { useGameStore } from "../store/gameStore";
-import { getMissionById } from "../data";
+import { getMissionById as getStaticMissionById } from "../data";
 import { evaluateGoalProgress } from "../logic/engine";
 import { useChoiceSounds } from "../hooks/useChoiceSounds";
 import { StatsStrip } from "../components/StatsStrip";
@@ -27,6 +27,7 @@ type Phase = "reading" | "choosing" | "reacting";
 
 export const StoryScreen = ({ navigation }: Props) => {
   const game = useGameStore((s) => s.game);
+  const customMissions = useGameStore((s) => s.customMissions);
   const makeChoice = useGameStore((s) => s.makeChoice);
   const [phase, setPhase] = useState<Phase>("reading");
   const [showGoalDrawer, setShowGoalDrawer] = useState(false);
@@ -37,12 +38,17 @@ export const StoryScreen = ({ navigation }: Props) => {
   const suppressSceneResetRef = useRef(false);
   const { playChoiceSound, playClick } = useChoiceSounds();
 
-  const mission = game ? getMissionById(game.missionId) : null;
+  const mission = useMemo(() => {
+    if (!game) return null;
+    return getStaticMissionById(game.missionId) || customMissions.find(m => m.id === game.missionId);
+  }, [game, customMissions]);
+  
   const currentScene = mission?.scenes.find((s) => s.id === game?.currentSceneId);
 
   // Navigation guard
   useEffect(() => {
-    if (!game || !mission) {
+    if (game && !mission) {
+      console.warn("Mission not found in Story:", game.missionId);
       navigation.replace("Home");
       return;
     }
