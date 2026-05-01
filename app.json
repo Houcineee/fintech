@@ -1,9 +1,10 @@
 {
   "expo": {
-    "name": "MoneyLife Simulator",
-    "slug": "moneylife-simulator",
+    "name": "Dirhami",
+    "slug": "dirhami",
     "version": "1.0.0",
     "orientation": "portrait",
+    "icon": "./logo.png",
     "userInterfaceStyle": "light",
     "splash": {
       "resizeMode": "contain",

@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import {
   Animated,
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -210,30 +211,42 @@ export const HomeScreen = ({ navigation }: Props) => {
 
   return (
     <SafeAreaView style={s.safe} edges={["top", "left", "right"]}>
-      {/* Header */}
-      <View style={s.header}>
-        <View style={s.logoRow}>
-          <View style={s.logoContainer}>
-            <View style={s.logoIcon}>
-              <Ionicons name="wallet" size={20} color={colors.surface} />
+      {/* Header Redesign */}
+      <View style={s.headerContainer}>
+        <View style={s.topRow}>
+          <View style={s.rankBadgeContainer}>
+            <View style={s.rankIconWrapper}>
+              <Ionicons name={rank.icon as any} size={18} color={colors.surface} />
             </View>
-            <Text style={s.logo}>درهمي</Text>
+            <View>
+              <Text style={s.rankLabel}>رتبتك الحالية</Text>
+              <Text style={s.rankValue}>{rank.name}</Text>
+            </View>
           </View>
-          
-          <View style={s.rankBadge}>
-            <Ionicons name={rank.icon as any} size={16} color={colors.primary} />
-            <Text style={s.rankName}>{rank.name}</Text>
+
+          <View style={s.logoWrapper}>
+            <Image 
+              source={require("../../logo.png")} 
+              style={s.headerLogo} 
+              resizeMode="contain"
+            />
           </View>
         </View>
 
-        {/* XP Progress */}
-        <View style={s.xpContainer}>
-          <View style={s.xpHeader}>
-            <Text style={s.xpLabel}>{totalXP} XP</Text>
-            {nextRankXP && <Text style={s.xpNext}>{nextRankXP} للترقية</Text>}
+        {/* XP Progress - Modern Pill Style */}
+        <View style={s.xpSection}>
+          <View style={s.xpInfo}>
+            <Text style={s.xpCurrentText}>{totalXP} <Text style={s.xpUnit}>XP</Text></Text>
+            {nextRankXP && (
+              <Text style={s.xpRemainingText}>بقي {nextRankXP - totalXP} للرتبة التالية</Text>
+            )}
           </View>
-          <View style={s.xpTrack}>
-            <View style={[s.xpFill, { width: `${progressPercent}%` }]} />
+          <View style={s.progressContainer}>
+            <View style={s.progressBarTrack}>
+              <View style={[s.progressBarFill, { width: `${progressPercent}%` }]}>
+                <View style={s.progressGlow} />
+              </View>
+            </View>
           </View>
         </View>
       </View>
@@ -255,13 +268,20 @@ export const HomeScreen = ({ navigation }: Props) => {
           ]}
         >
           <View style={s.customIcon}>
-            <Ionicons name="sparkles" size={24} color={colors.surface} />
+            <Ionicons name="sparkles" size={26} color={colors.surface} />
           </View>
           <View style={s.customTextContainer}>
-            <Text style={s.customTitle}>اصنع مهمتك الخاصة!</Text>
+            <View style={s.newBadgeRow}>
+              <View style={s.newBadge}>
+                <Text style={s.newBadgeText}>جديد</Text>
+              </View>
+              <Text style={s.customTitle}>اصنع مهمتك الخاصة!</Text>
+            </View>
             <Text style={s.customSubtitle}>استخدم الذكاء الاصطناعي لإنشاء مغامرة جديدة</Text>
           </View>
-          <Ionicons name="chevron-back" size={20} color={colors.primary} />
+          <View style={s.chevronCircle}>
+            <Ionicons name="chevron-back" size={18} color={colors.textSecondary} />
+          </View>
         </Pressable>
 
         <Text style={s.sectionTitle}>رحلتك التعليمية</Text>
@@ -346,122 +366,186 @@ const s = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
-  header: {
-    padding: spacing.lg,
-    paddingBottom: spacing.md,
+  headerContainer: {
     backgroundColor: colors.surface,
-    borderBottomWidth: 3,
-    borderBottomColor: colors.border,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.xs,
+    paddingBottom: spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border + "40",
     ...shadows.clay,
   },
-  logoRow: {
-    flexDirection: "row-reverse",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: spacing.md,
-  },
-  logoContainer: {
+  topRow: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 0,
+  },
+  rankBadgeContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.primary + "10",
+    paddingRight: spacing.md,
+    paddingLeft: spacing.sm,
+    paddingVertical: 2,
+    borderRadius: radius.xl,
+    borderWidth: 1.5,
+    borderColor: colors.primary + "30",
     gap: spacing.sm,
   },
-  logoIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: radius.lg,
+  rankIconWrapper: {
+    width: 28,
+    height: 28,
+    borderRadius: radius.full,
     backgroundColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
     ...shadows.clayPrimary,
   },
-  logo: {
-    fontSize: 28,
+  rankLabel: {
+    fontSize: 9,
+    fontWeight: "700",
+    color: colors.primary,
+    opacity: 0.8,
+    textAlign: "left",
+  },
+  rankValue: {
+    fontSize: 12,
     fontWeight: "900",
     color: colors.text,
+    textAlign: "left",
   },
-  rankBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
-    backgroundColor: colors.primaryLight,
+  logoWrapper: {
+    flex: 1,
+    alignItems: "flex-end",
+    marginRight: -spacing.lg,
+  },
+  headerLogo: {
+    width: 120,
+    height: 100,
+  },
+  xpSection: {
+    backgroundColor: colors.background,
+    paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-    borderRadius: radius.lg,
+    borderRadius: radius.xl,
     borderWidth: 2,
-    borderColor: colors.primaryDim,
+    borderColor: colors.border,
   },
-  rankName: {
-    fontSize: 14,
-    fontWeight: "800",
+  xpInfo: {
+    flexDirection: "row-reverse",
+    justifyContent: "space-between",
+    alignItems: "baseline",
+    marginBottom: 2,
+  },
+  xpCurrentText: {
+    fontSize: 16,
+    fontWeight: "900",
     color: colors.primary,
   },
-  xpContainer: {
-    gap: spacing.xs,
+  xpUnit: {
+    fontSize: 10,
+    fontWeight: "700",
+    color: colors.primary,
+    opacity: 0.7,
   },
-  xpHeader: {
-    flexDirection: "row-reverse",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  xpLabel: {
-    fontSize: 14,
-    fontWeight: "800",
-    color: colors.text,
-  },
-  xpNext: {
-    fontSize: 12,
-    fontWeight: "600",
+  xpRemainingText: {
+    fontSize: 11,
+    fontWeight: "700",
     color: colors.textSecondary,
   },
-  xpTrack: {
+  progressContainer: {
     height: 8,
+    width: "100%",
     backgroundColor: colors.border,
     borderRadius: radius.full,
     overflow: "hidden",
   },
-  xpFill: {
+  progressBarTrack: {
+    flex: 1,
+    backgroundColor: colors.border + "80",
+  },
+  progressBarFill: {
     height: "100%",
     backgroundColor: colors.primary,
     borderRadius: radius.full,
+    position: "relative",
+  },
+  progressGlow: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    width: 20,
+    backgroundColor: "rgba(255,255,255,0.3)",
   },
   customBanner: {
     flexDirection: "row-reverse",
     alignItems: "center",
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.surface,
     padding: spacing.md,
-    borderRadius: radius.xl,
-    borderWidth: 3,
-    borderColor: colors.primary,
+    borderRadius: radius.xl, // Fixed from xxl
+    borderWidth: 1,
+    borderColor: colors.border,
     marginBottom: spacing.xl,
     gap: spacing.md,
-    ...shadows.clay,
+    ...shadows.clayLarge, // Stronger shadow
   },
   customBannerPressed: {
-    ...shadows.clayPressed,
-    transform: [{ scale: 0.98 }],
+    transform: [{ scale: 0.97 }],
+    backgroundColor: colors.surfaceRaised,
   },
   customIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: radius.lg,
-    backgroundColor: colors.primary,
+    width: 52,
+    height: 52,
+    borderRadius: radius.xl,
+    backgroundColor: colors.barakah, // Purple for AI 'magic'
     justifyContent: "center",
     alignItems: "center",
-    ...shadows.clayPrimary,
+    ...shadows.clayPrimary, // Glowing shadow
   },
   customTextContainer: {
     flex: 1,
     alignItems: "flex-end",
   },
   customTitle: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: "900",
-    color: colors.primary,
+    color: colors.text,
   },
   customSubtitle: {
-    fontSize: 12,
-    color: colors.primaryDim,
-    fontWeight: "700",
+    fontSize: 11,
+    color: colors.textSecondary,
+    fontWeight: "600",
+    marginTop: 2,
+  },
+  newBadgeRow: {
+    flexDirection: "row-reverse",
+    alignItems: "center",
+    gap: spacing.sm,
+  },
+  newBadge: {
+    backgroundColor: colors.successDim,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: radius.full,
+    borderWidth: 1,
+    borderColor: colors.success + "40",
+  },
+  newBadgeText: {
+    fontSize: 10,
+    fontWeight: "900",
+    color: colors.success,
+  },
+  chevronCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: radius.full,
+    backgroundColor: colors.background,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   scrollContent: {
     padding: spacing.lg,
