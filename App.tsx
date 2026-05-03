@@ -11,6 +11,7 @@ import { StoryScreen } from "./src/screens/StoryScreen";
 import { EndScreen } from "./src/screens/EndScreen";
 import { GenerateMissionScreen } from "./src/screens/GenerateMissionScreen";
 import { AcademyScreen } from "./src/screens/AcademyScreen";
+import { StoreScreen } from "./src/screens/StoreScreen";
 import { LessonScreen } from "./src/screens/LessonScreen";
 import { colors } from "./src/theme/colors";
 import { useAppFonts } from "./src/theme/typography";
@@ -32,6 +33,8 @@ function TabNavigator() {
             iconName = focused ? "map" : "map-outline";
           } else if (route.name === "Academy") {
             iconName = focused ? "school" : "school-outline";
+          } else if (route.name === "Store") {
+            iconName = focused ? "cart" : "cart-outline";
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
@@ -60,6 +63,11 @@ function TabNavigator() {
         name="Academy" 
         component={AcademyScreen} 
         options={{ tabBarLabel: "الأكاديمية" }}
+      />
+      <Tab.Screen 
+        name="Store" 
+        component={StoreScreen} 
+        options={{ tabBarLabel: "المتجر" }}
       />
     </Tab.Navigator>
   );

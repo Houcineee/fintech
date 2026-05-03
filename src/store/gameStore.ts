@@ -75,6 +75,7 @@ type StoreState = {
   getNextMissionId: (missionId: string) => string | null;
   addCustomMission: (mission: Mission) => void;
   completeLesson: (lessonId: string, xpReward: number) => void;
+  spendXP: (amount: number) => boolean;
   clearSession: () => void;
   resetAcademy: () => void;
   setHasSeenOnboarding: (seen: boolean) => void;
@@ -221,6 +222,16 @@ export const useGameStore = create<StoreState>()(
           completedLessonIds: [...state.completedLessonIds, lessonId],
           totalXP: state.totalXP + xpReward,
         }));
+      },
+
+      spendXP: (amount: number) => {
+        const currentXP = get().totalXP;
+        if (currentXP < amount) return false;
+
+        set((state) => ({
+          totalXP: state.totalXP - amount,
+        }));
+        return true;
       },
 
       clearSession: () =>

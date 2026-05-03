@@ -10,4 +10,5 @@ export type RootStackParamList = {
 export type MainTabParamList = {
   Map: undefined;
   Academy: undefined;
+  Store: undefined;
 };
